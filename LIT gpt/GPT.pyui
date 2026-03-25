@@ -1,0 +1,87 @@
+[
+  {
+    "nodes" : [
+      {
+        "nodes" : [
+
+        ],
+        "frame" : "{{55, 443}, {770, 137}}",
+        "class" : "TextField",
+        "attributes" : {
+          "uuid" : "1A1A1D98-DECB-4B76-9A81-483BC9E5CD71",
+          "corner_radius" : 40,
+          "frame" : "{{20, 104}, {200, 32}}",
+          "border_width" : 3,
+          "alignment" : "left",
+          "autocorrection_type" : "default",
+          "action" : "",
+          "text" : "",
+          "placeholder" : "Введите запрос",
+          "font_name" : "<System>",
+          "spellchecking_type" : "default",
+          "class" : "TextField",
+          "name" : "what",
+          "font_size" : 30
+        },
+        "selected" : true
+      },
+      {
+        "nodes" : [
+
+        ],
+        "frame" : "{{844, 443}, {154, 137}}",
+        "class" : "Button",
+        "attributes" : {
+          "uuid" : "AC404ACE-7BD0-4E6C-8E19-482292BB3DB0",
+          "image_name" : "iob:arrow_right_c_256",
+          "corner_radius" : 30,
+          "frame" : "{{80, 104}, {80, 32}}",
+          "border_color" : "RGBA(0.000000,0.000000,0.000000,1.000000)",
+          "border_width" : 3,
+          "custom_attributes" : "",
+          "title" : "",
+          "action" : "PresentAnswer",
+          "class" : "Button",
+          "name" : "button1",
+          "font_size" : 40
+        },
+        "selected" : false
+      },
+      {
+        "nodes" : [
+
+        ],
+        "frame" : "{{55, 43}, {943, 447}}",
+        "class" : "TextView",
+        "attributes" : {
+          "uuid" : "71F147FE-9FA2-4D3B-ACE1-9AAEF4072ED5",
+          "font_size" : 30,
+          "corner_radius" : 30,
+          "frame" : "{{20, 20}, {200, 200}}",
+          "border_color" : "RGBA(0.007075,0.007075,0.007075,1.000000)",
+          "editable" : true,
+          "border_width" : 3,
+          "alignment" : "left",
+          "autocorrection_type" : "default",
+          "font_name" : "<System>",
+          "spellchecking_type" : "default",
+          "class" : "TextView",
+          "name" : "answer",
+          "flex" : "WH"
+        },
+        "selected" : false
+      }
+    ],
+    "frame" : "{{0, 0}, {1024, 768}}",
+    "class" : "View",
+    "attributes" : {
+      "tint_color" : "RGBA(0.000000,0.000000,0.000000,1.000000)",
+      "enabled" : true,
+      "border_color" : "RGBA(0.000000,0.000000,0.000000,1.000000)",
+      "background_color" : "RGBA(1.000000,0.937500,0.812500,1.000000)",
+      "name" : "LIT gpt",
+      "flex" : ""
+    },
+    "selected" : false
+  }
+]

@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Пружинная гравитация Луки — Симуляция</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #05050f; color: #c8d0ff; font-family: 'Courier New', monospace; overflow: hidden; }
+    canvas { display: block; }
+
+    #panel {
+      position: absolute; top: 16px; right: 16px;
+      background: rgba(5, 8, 25, 0.88);
+      border: 1px solid #2a3060; border-radius: 8px;
+      padding: 16px; width: 250px; font-size: 12px; line-height: 1.7;
+    }
+    #panel h2 { font-size: 13px; color: #aac4ff; margin-bottom: 10px; }
+    .formula { background: rgba(30,50,120,0.4); border-left: 2px solid #4466cc; padding: 4px 8px; margin: 4px 0; color: #d0e4ff; }
+    .label { color: #7890cc; font-size: 11px; }
+    #stats { margin-top: 12px; border-top: 1px solid #2a3060; padding-top: 10px; min-height: 90px; }
+    .stat-val { color: #88ffcc; }
+    .stat-hi  { color: #ffcc66; }
+
+    #controls {
+      position: absolute; bottom: 16px; left: 16px;
+      background: rgba(5, 8, 25, 0.88);
+      border: 1px solid #2a3060; border-radius: 8px;
+      padding: 12px 16px;
+      display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    }
+    button {
+      background: #111830; color: #9ab0ff;
+      border: 1px solid #334488; border-radius: 4px;
+      padding: 6px 12px; cursor: pointer; font-size: 12px; font-family: inherit;
+    }
+    button:hover { background: #1a2848; border-color: #5577cc; }
+    button.active { background: #1a3060; border-color: #5599ff; color: #aaccff; }
+    label { font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+    input[type=checkbox] { accent-color: #5577cc; }
+    input[type=range] { width: 80px; accent-color: #5577cc; }
+
+    #legend {
+      position: absolute; bottom: 16px; right: 16px;
+      background: rgba(5, 8, 25, 0.88);
+      border: 1px solid #2a3060; border-radius: 8px;
+      padding: 10px 14px; font-size: 11px; line-height: 1.9;
+    }
+    .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+
+    #principle {
+      position: absolute; top: 16px; left: 16px;
+      background: rgba(5, 8, 25, 0.88);
+      border: 1px solid #2a3060; border-radius: 8px;
+      padding: 12px 16px; font-size: 12px; line-height: 1.7; max-width: 230px;
+    }
+    #principle h3 { color: #88ffaa; font-size: 12px; margin-bottom: 6px; }
+    #principle .hi { color: #ffcc66; }
+    #principle .lo { color: #88ffcc; }
+  </style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div id="panel">
+  <h2>Пружинная гравитация Луки</h2>
+  <div class="label">Формула 1 — давление:</div>
+  <div class="formula">P = b·k / (2·r)</div>
+  <div class="label">Механизм: A(k) = r/k → P = b/A(k)/2</div>
+  <div class="formula" style="font-size:11px">A(k)↓ с расстоянием → P↑ (пружина)</div>
+  <div class="label" style="margin-top:6px">Формула 2 — радиус поля:</div>
+  <div class="formula">k_макс = b^(1/g)</div>
+  <div class="label">Формула 3 — ускорение:</div>
+  <div class="formula">a = G·b·k / R_b³</div>
+  <div id="stats"><span class="label">Наведи курсор на объект</span></div>
+</div>
+
+<div id="principle">
+  <h3>Геометрический принцип</h3>
+  <span class="hi">Поле круга → круг</span><br>
+  <span class="hi">Поле квадрата → квадрат</span><br>
+  Поле не расходится (как Ньютон),<br>
+  а сохраняет форму источника.<br><br>
+  <span class="lo">Поток концентрируется к краю:</span><br>
+  у ядра: A→∞ (слабо)<br>
+  у границы: A→1 (максимум)
+</div>
+
+<div id="controls">
+  <button id="btnAdd">+ Объект</button>
+  <button id="btnEject">→ За поле</button>
+  <button id="btnReset">Сброс</button>
+  <button id="btnCircle" class="active">○ Круг</button>
+  <button id="btnSquare">□ Квадрат</button>
+  <label><input type="checkbox" id="chkField" checked> Поле</label>
+  <label><input type="checkbox" id="chkFlux" checked> A(k)</label>
+  <label><input type="checkbox" id="chkForce" checked> Силы</label>
+  <label><input type="checkbox" id="chkTrail" checked> Следы</label>
+  <label>Скорость: <input type="range" id="rngSpeed" min="1" max="5" value="2" step="0.5"></label>
+</div>
+
+<div id="legend">
+  <div><span class="dot" style="background:#fffacc"></span>Ядро (b)</div>
+  <div><span class="dot" style="background:#88aaff"></span>Орбитальный объект</div>
+  <div><span class="dot" style="background:#ff4444"></span>Вылетел за k_макс</div>
+  <div style="color:#4466cc; margin-top:4px">── граница поля k_макс</div>
+  <div style="color:#ff8844">≡ линии потока A(k)</div>
+  <div style="color:#22aa44">→ сила (длина ∝ k)</div>
+</div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+
+function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+resize();
+window.addEventListener('resize', resize);
+
+const CX = () => canvas.width / 2;
+const CY = () => canvas.height / 2;
+
+const K_SPRING = 0.00025;
+const K_MAX_PX = Math.min(window.innerWidth, window.innerHeight) * 0.38;
+const CORE_R = 22;
+const TRAIL_LEN = 200;
+const ORBIT_COLORS = ['#88aaff', '#88ffcc', '#ffcc66', '#ff88cc', '#aaffaa', '#cc88ff'];
+
+let fieldShape = 'circle'; // 'circle' | 'square'
+
+// ─── Field boundary check ───
+function inField(dx, dy) {
+  if (fieldShape === 'circle') {
+    return Math.sqrt(dx*dx + dy*dy) <= K_MAX_PX;
+  } else {
+    return Math.abs(dx) <= K_MAX_PX && Math.abs(dy) <= K_MAX_PX;
+  }
+}
+
+function distToCenter(dx, dy) {
+  return Math.sqrt(dx*dx + dy*dy);
+}
+
+// ─── Body class ───
+class Body {
+  constructor(x, y, vx, vy, r, color) {
+    this.x = x; this.y = y; this.vx = vx; this.vy = vy;
+    this.r = r; this.color = color;
+    this.trail = []; this.inField = true;
+    this.dist = 0; this.speed = 0; this.force = 0;
+  }
+
+  update(dt) {
+    const dx = this.x - CX(), dy = this.y - CY();
+    this.dist = distToCenter(dx, dy);
+
+    if (this.dist > CORE_R) {
+      if (inField(dx, dy)) {
+        const ax = -K_SPRING * dx;
+        const ay = -K_SPRING * dy;
+        this.vx += ax * dt; this.vy += ay * dt;
+        this.inField = true;
+        this.force = K_SPRING * this.dist;
+      } else {
+        this.inField = false; this.force = 0;
+      }
+    }
+
+    this.speed = Math.sqrt(this.vx*this.vx + this.vy*this.vy);
+    this.trail.push({x: this.x, y: this.y});
+    if (this.trail.length > TRAIL_LEN) this.trail.shift();
+    this.x += this.vx * dt; this.y += this.vy * dt;
+  }
+
+  draw(showTrail, showForce) {
+    if (showTrail && this.trail.length > 1) {
+      const col = this.inField ? this.color : '#ff4444';
+      const [r,g,b] = hexRgb(col);
+      ctx.lineWidth = 1;
+      for (let i = 1; i < this.trail.length; i++) {
+        const alpha = (i / this.trail.length) * 0.5;
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(${r},${g},${b},${alpha})`;
+        ctx.moveTo(this.trail[i-1].x, this.trail[i-1].y);
+        ctx.lineTo(this.trail[i].x, this.trail[i].y);
+        ctx.stroke();
+      }
+    }
+
+    if (showForce && this.inField && this.dist > 5) {
+      const dx = CX()-this.x, dy = CY()-this.y;
+      const nx = dx/this.dist, ny = dy/this.dist;
+      const arrowLen = this.dist * 0.28;
+      const ex = this.x + nx*arrowLen, ey = this.y + ny*arrowLen;
+      const t = Math.min(this.dist / K_MAX_PX, 1);
+      const fr = Math.floor(t*220), fg = Math.floor((1-t)*180+60);
+      ctx.beginPath(); ctx.moveTo(this.x, this.y); ctx.lineTo(ex, ey);
+      ctx.strokeStyle = `rgba(${fr},${fg},60,0.75)`; ctx.lineWidth = 1.5; ctx.stroke();
+      const ang = Math.atan2(ey-this.y, ex-this.x);
+      ctx.beginPath(); ctx.moveTo(ex, ey);
+      ctx.lineTo(ex-9*Math.cos(ang-0.45), ey-9*Math.sin(ang-0.45));
+      ctx.lineTo(ex-9*Math.cos(ang+0.45), ey-9*Math.sin(ang+0.45));
+      ctx.closePath(); ctx.fillStyle = `rgba(${fr},${fg},60,0.75)`; ctx.fill();
+    }
+
+    const bodyColor = this.inField ? this.color : '#ff4444';
+    const [r,g,b] = hexRgb(bodyColor);
+    const glow = ctx.createRadialGradient(this.x,this.y,0,this.x,this.y,this.r*3);
+    glow.addColorStop(0, `rgba(${r},${g},${b},0.6)`);
+    glow.addColorStop(1, `rgba(${r},${g},${b},0)`);
+    ctx.beginPath(); ctx.arc(this.x, this.y, this.r*3, 0, Math.PI*2);
+    ctx.fillStyle = glow; ctx.fill();
+    ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
+    ctx.fillStyle = bodyColor; ctx.fill();
+  }
+}
+
+function hexRgb(hex) {
+  if (hex.startsWith('#')) hex = hex.slice(1);
+  return [parseInt(hex.slice(0,2),16), parseInt(hex.slice(2,4),16), parseInt(hex.slice(4,6),16)];
+}
+
+function makeOrbital(radius, colorIdx) {
+  const omega = Math.sqrt(K_SPRING);
+  const v = radius * omega;
+  const angle = Math.random() * Math.PI * 2;
+  const x = CX() + radius * Math.cos(angle);
+  const y = CY() + radius * Math.sin(angle);
+  return new Body(x, y, -v*Math.sin(angle), v*Math.cos(angle), 5, ORBIT_COLORS[colorIdx % ORBIT_COLORS.length]);
+}
+
+let bodies = [], colorIdx = 0;
+
+function init() {
+  bodies = []; colorIdx = 0;
+  [0.22, 0.38, 0.52, 0.66, 0.82].forEach(f => bodies.push(makeOrbital(K_MAX_PX * f, colorIdx++)));
+}
+init();
+
+// ─── Draw field background ───
+function drawField() {
+  if (fieldShape === 'circle') {
+    const grad = ctx.createRadialGradient(CX(),CY(),CORE_R,CX(),CY(),K_MAX_PX);
+    grad.addColorStop(0,   'rgba(10,20,80,0)');
+    grad.addColorStop(0.5, 'rgba(10,30,110,0.05)');
+    grad.addColorStop(0.8, 'rgba(20,50,180,0.1)');
+    grad.addColorStop(0.95,'rgba(40,80,220,0.18)');
+    grad.addColorStop(1,   'rgba(80,130,255,0.28)');
+    ctx.beginPath(); ctx.arc(CX(),CY(),K_MAX_PX,0,Math.PI*2);
+    ctx.fillStyle = grad; ctx.fill();
+
+    ctx.beginPath(); ctx.arc(CX(),CY(),K_MAX_PX,0,Math.PI*2);
+    ctx.strokeStyle = 'rgba(80,140,255,0.55)'; ctx.lineWidth = 1.5;
+    ctx.setLineDash([10,5]); ctx.stroke(); ctx.setLineDash([]);
+  } else {
+    // Square field
+    const s = K_MAX_PX;
+    const gradient = ctx.createRadialGradient(CX(),CY(),CORE_R,CX(),CY(),s*1.4);
+    gradient.addColorStop(0,   'rgba(10,20,80,0)');
+    gradient.addColorStop(0.5, 'rgba(10,30,110,0.04)');
+    gradient.addColorStop(0.85,'rgba(20,50,180,0.12)');
+    gradient.addColorStop(1,   'rgba(80,130,255,0.22)');
+    ctx.save(); ctx.beginPath();
+    ctx.rect(CX()-s, CY()-s, s*2, s*2);
+    ctx.fillStyle = gradient; ctx.fill();
+
+    ctx.strokeStyle = 'rgba(80,140,255,0.55)'; ctx.lineWidth = 1.5;
+    ctx.setLineDash([10,5]); ctx.stroke(); ctx.setLineDash([]);
+    ctx.restore();
+  }
+
+  // Label
+  ctx.fillStyle = 'rgba(100,160,255,0.7)'; ctx.font = '11px Courier New';
+  if (fieldShape === 'circle') {
+    ctx.fillText('k_макс', CX() + K_MAX_PX + 6, CY() - 4);
+  } else {
+    ctx.fillText('k_макс', CX() + K_MAX_PX + 6, CY() - 4);
+  }
+}
+
+// ─── Draw A(k) flux lines ───
+// Shows that flux CONCENTRATES toward boundary (A decreasing)
+// Lines are brighter / more opaque near the edge — opposite of Newtonian
+function drawFluxLines() {
+  const N = 24; // number of radial lines
+  const maxR = K_MAX_PX;
+
+  for (let i = 0; i < N; i++) {
+    const angle = (i / N) * Math.PI * 2;
+    const cos = Math.cos(angle), sin = Math.sin(angle);
+
+    // Draw radial segment with gradient: faint at center, bright at edge
+    // This shows A(k) = r/k: less area (higher density) at larger k
+    const segments = 40;
+    for (let s = 0; s < segments; s++) {
+      const k0 = (s / segments) * maxR;
+      const k1 = ((s+1) / segments) * maxR;
+      const t = (s+0.5) / segments; // 0 at center, 1 at edge
+
+      // A(k) = r/k → normalized A = 1/t → flux density = t (increases toward edge)
+      const fluxDensity = t * t; // quadratic for visual clarity
+      const alpha = fluxDensity * 0.35;
+
+      // For square field, clip lines to square boundary
+      const x0 = CX() + cos * k0, y0 = CY() + sin * k0;
+      const x1 = CX() + cos * k1, y1 = CY() + sin * k1;
+
+      if (fieldShape === 'square') {
+        if (Math.abs(cos*k1) > K_MAX_PX || Math.abs(sin*k1) > K_MAX_PX) break;
+      }
+
+      ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1);
+      ctx.strokeStyle = `rgba(255,140,60,${alpha})`;
+      ctx.lineWidth = 1.2; ctx.stroke();
+    }
+  }
+
+  // Show A(k) value at a few radii as labels
+  const sampleK = [0.3, 0.6, 0.9];
+  sampleK.forEach(f => {
+    const k = f * maxR;
+    const A = (1/f).toFixed(1); // A(k) = r/k, normalized → A = 1/f
+    const x = CX() + k * 0.707, y = CY() - k * 0.707; // 45° direction
+    ctx.fillStyle = `rgba(255,160,80,${0.4 + f*0.4})`;
+    ctx.font = '10px Courier New';
+    ctx.fillText(`A=${A}`, x+3, y-3);
+  });
+}
+
+// ─── Draw core ───
+function drawCore() {
+  const glow = ctx.createRadialGradient(CX(),CY(),0,CX(),CY(),CORE_R*4);
+  glow.addColorStop(0,'rgba(255,220,100,0.5)');
+  glow.addColorStop(0.4,'rgba(255,150,30,0.15)');
+  glow.addColorStop(1,'rgba(255,80,0,0)');
+  ctx.beginPath(); ctx.arc(CX(),CY(),CORE_R*4,0,Math.PI*2); ctx.fillStyle=glow; ctx.fill();
+
+  const core = ctx.createRadialGradient(CX(),CY(),0,CX(),CY(),CORE_R);
+  core.addColorStop(0,'#ffffff'); core.addColorStop(0.4,'#fff8cc');
+  core.addColorStop(0.8,'#ffaa40'); core.addColorStop(1,'#ff6600');
+  ctx.beginPath(); ctx.arc(CX(),CY(),CORE_R,0,Math.PI*2); ctx.fillStyle=core; ctx.fill();
+
+  ctx.fillStyle='rgba(255,220,130,0.8)'; ctx.font='bold 11px Courier New';
+  ctx.fillText('b (ядро)', CX()+CORE_R+5, CY()+4);
+}
+
+// ─── Stars ───
+let starCanvas = null;
+function makeStars() {
+  starCanvas = document.createElement('canvas');
+  starCanvas.width = canvas.width; starCanvas.height = canvas.height;
+  const sc = starCanvas.getContext('2d');
+  sc.fillStyle='#05050f'; sc.fillRect(0,0,canvas.width,canvas.height);
+  for (let i=0; i<200; i++) {
+    sc.beginPath(); sc.arc(Math.random()*canvas.width, Math.random()*canvas.height, Math.random()*1.2, 0, Math.PI*2);
+    sc.fillStyle=`rgba(200,210,255,${0.2+Math.random()*0.6})`; sc.fill();
+  }
+}
+makeStars();
+
+// ─── Hover ───
+let hoveredBody = null;
+canvas.addEventListener('mousemove', e => {
+  hoveredBody = null;
+  for (const b of bodies) {
+    const dx=b.x-e.clientX, dy=b.y-e.clientY;
+    if (Math.sqrt(dx*dx+dy*dy) < 15) { hoveredBody=b; break; }
+  }
+});
+
+// ─── Stats ───
+function updateStats() {
+  const el = document.getElementById('stats');
+  const b = hoveredBody || (bodies.length > 0 ? bodies[0] : null);
+  if (!b) { el.innerHTML='<span class="label">Нет объектов</span>'; return; }
+  const omega = Math.sqrt(K_SPRING);
+  const period = (2 * Math.PI / omega).toFixed(0);
+  // A(k) normalized: A = K_MAX_PX / k (using field radius as r)
+  const Ak = b.dist > 1 ? (K_MAX_PX / b.dist).toFixed(2) : '∞';
+  const Pnorm = b.dist > 1 ? (b.dist / K_MAX_PX / 2).toFixed(3) : '0';
+  el.innerHTML = `
+    <span class="label">k (расст.):</span> <span class="stat-val">${b.dist.toFixed(0)} px</span><br>
+    <span class="label">A(k) = r/k:</span> <span class="stat-hi">${Ak}</span> <span class="label">↓ с расст.</span><br>
+    <span class="label">P норм.:</span> <span class="stat-hi">${Pnorm}</span> <span class="label">↑ с расст.</span><br>
+    <span class="label">v (скор.):</span> <span class="stat-val">${b.speed.toFixed(2)} px/кадр</span><br>
+    <span class="label">Период T:</span> <span class="stat-val">${period} кадров (= у всех)</span><br>
+    <span class="label">В поле:</span> <span class="stat-val">${b.inField ? '✓ да' : '✗ вылетел'}</span>
+  `;
+}
+
+// ─── Loop ───
+let lastTime = performance.now();
+function animate(now) {
+  const rawDt = Math.min((now-lastTime)/16, 3);
+  const speed = parseFloat(document.getElementById('rngSpeed').value);
+  const dt = rawDt * speed; lastTime = now;
+
+  const showField = document.getElementById('chkField').checked;
+  const showFlux  = document.getElementById('chkFlux').checked;
+  const showForce = document.getElementById('chkForce').checked;
+  const showTrail = document.getElementById('chkTrail').checked;
+
+  ctx.drawImage(starCanvas, 0, 0);
+  if (showField) drawField();
+  if (showFlux)  drawFluxLines();
+
+  bodies.forEach(b => b.update(dt));
+  bodies.forEach(b => b.draw(showTrail, showForce));
+  drawCore();
+  updateStats();
+  requestAnimationFrame(animate);
+}
+requestAnimationFrame(animate);
+
+// ─── Controls ───
+document.getElementById('btnAdd').onclick = () => {
+  const r = K_MAX_PX * (0.15 + Math.random()*0.75);
+  bodies.push(makeOrbital(r, colorIdx++));
+};
+
+document.getElementById('btnEject').onclick = () => {
+  const r = K_MAX_PX * 0.7;
+  const omega = Math.sqrt(K_SPRING);
+  bodies.push(new Body(CX()+r, CY(), 0, r*omega*2.2, 6, '#ff4444'));
+};
+
+document.getElementById('btnReset').onclick = () => { colorIdx=0; init(); };
+
+document.getElementById('btnCircle').onclick = () => {
+  fieldShape = 'circle';
+  document.getElementById('btnCircle').classList.add('active');
+  document.getElementById('btnSquare').classList.remove('active');
+};
+
+document.getElementById('btnSquare').onclick = () => {
+  fieldShape = 'square';
+  document.getElementById('btnSquare').classList.add('active');
+  document.getElementById('btnCircle').classList.remove('active');
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "self:">
+   </FileRef>
+   <FileRef
+      location = "group:GitHubUpdater.swift">
+   </FileRef>
+   <FileRef
+      location = "group:GITHUB_UPDATE_SETUP.md">
+   </FileRef>
+   <FileRef
+      location = "group:UpdateDebugView.swift">
+   </FileRef>
+   <FileRef
+      location = "group:CHECKLIST.md">
+   </FileRef>
+   <FileRef
+      location = "group:LoadingGameView.swift">
+   </FileRef>
+   <FileRef
+      location = "group:App.swift">
+   </FileRef>
+</Workspace>
