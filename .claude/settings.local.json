@@ -8,7 +8,10 @@
       "Bash(curl -s --max-time 60 \"https://raw.githubusercontent.com/danakt/russian-words/master/russian.txt\")",
       "Bash(iconv -f ISO-8859-1 -t UTF-8)",
       "Bash(gh auth:*)",
-      "Bash(/tmp/gh_cli/gh_2.67.0_macOS_arm64/bin/gh auth:*)"
+      "Bash(/tmp/gh_cli/gh_2.67.0_macOS_arm64/bin/gh auth:*)",
+      "Bash(find /workspaces/My-Projects/Механика Ниндзя -type f -name *.md -o -name *.txt -o -name *.json)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ]
   }
 }
