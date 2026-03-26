@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<title>Creative an invention</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0f0f0f;
+  --surface: #1a1a1a;
+  --surface2: #232323;
+  --border: #2e2e2e;
+  --accent: #f0a500;
+  --accent2: #e05c2a;
+  --accent3: #8b5cf6;
+  --text: #f0ebe0;
+  --text2: #9a9286;
+  --green: #22c55e;
+  --red: #ef4444;
+  --blue: #3b82f6;
+  --radius: 14px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bot: env(safe-area-inset-bottom, 0px);
+}
+
+html, body {
+  width: 100%; height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, 'SF Pro Text', sans-serif;
+  overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ===== LAYOUT ===== */
+#app { width: 100%; height: 100%; display: flex; flex-direction: column; }
+
+.screen { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+.screen.active { display: flex; }
+
+.topbar {
+  padding: calc(var(--safe-top) + 14px) 20px 14px;
+  display: flex; align-items: center; gap: 12px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.topbar h1 { font-size: 20px; font-weight: 700; flex: 1; }
+.topbar .subtitle { font-size: 12px; color: var(--text2); }
+
+.scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px; }
+.scroll::-webkit-scrollbar { display: none; }
+
+/* ===== BUTTONS ===== */
+.btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px 20px; border-radius: 12px; border: none; cursor: pointer;
+  font-size: 15px; font-weight: 600; transition: opacity .15s, transform .1s;
+  -webkit-user-select: none;
+}
+.btn:active { opacity: 0.75; transform: scale(0.97); }
+.btn-accent { background: var(--accent); color: #000; }
+.btn-ghost { background: var(--surface2); color: var(--text); }
+.btn-danger { background: #2a1010; color: var(--red); }
+.btn-icon {
+  width: 40px; height: 40px; padding: 0; border-radius: 10px;
+  background: var(--surface2); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; transition: opacity .15s;
+}
+.btn-icon:active { opacity: 0.6; }
+
+.fab {
+  position: fixed; bottom: calc(var(--safe-bot) + 24px); right: 20px;
+  width: 56px; height: 56px; border-radius: 18px;
+  background: var(--accent); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; box-shadow: 0 4px 20px rgba(240,165,0,.35);
+  transition: transform .15s;
+}
+.fab:active { transform: scale(0.92); }
+
+/* ===== CARDS ===== */
+.card {
+  background: var(--surface); border-radius: var(--radius);
+  border: 1px solid var(--border); padding: 16px; margin-bottom: 12px;
+  cursor: pointer; transition: border-color .15s;
+}
+.card:active { border-color: var(--accent); }
+
+.card-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+.card-icon {
+  width: 44px; height: 44px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+}
+.card-title { font-size: 17px; font-weight: 700; line-height: 1.3; }
+.card-desc { font-size: 13px; color: var(--text2); margin-top: 3px; line-height: 1.4; }
+
+.tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 10px; border-radius: 8px;
+  font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .4px;
+}
+.tag-idea { background: rgba(240,165,0,.15); color: var(--accent); }
+.tag-proto { background: rgba(59,130,246,.15); color: var(--blue); }
+.tag-patent { background: rgba(139,92,246,.15); color: var(--accent3); }
+.tag-done { background: rgba(34,197,94,.15); color: var(--green); }
+.tag-paused { background: rgba(154,146,134,.15); color: var(--text2); }
+
+.card-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border);
+}
+.card-meta { font-size: 12px; color: var(--text2); }
+
+/* Progress bar */
+.progress-bar { height: 4px; background: var(--border); border-radius: 2px; margin-top: 8px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 2px; background: var(--accent); transition: width .3s; }
+
+/* ===== TABS ===== */
+.tabs {
+  display: flex; gap: 4px; padding: 12px 16px;
+  border-bottom: 1px solid var(--border); overflow-x: auto; flex-shrink: 0;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 7px 14px; border-radius: 9px; font-size: 13px; font-weight: 600;
+  background: none; border: none; color: var(--text2); cursor: pointer;
+  white-space: nowrap; transition: all .15s;
+}
+.tab.active { background: var(--accent); color: #000; }
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ===== FORM ===== */
+.field { margin-bottom: 16px; }
+.field label { display: block; font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .5px; }
+.field input, .field textarea, .field select {
+  width: 100%; background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 14px; color: var(--text); font-size: 15px;
+  font-family: inherit; outline: none; resize: vertical;
+  transition: border-color .15s; -webkit-appearance: none;
+}
+.field input:focus, .field textarea:focus { border-color: var(--accent); }
+.field textarea { min-height: 90px; }
+
+.emoji-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.emoji-btn {
+  width: 44px; height: 44px; border-radius: 10px; background: var(--surface2);
+  border: 2px solid transparent; font-size: 22px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: border-color .15s;
+}
+.emoji-btn.selected { border-color: var(--accent); }
+
+/* ===== STATUS PICKER ===== */
+.status-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.status-btn {
+  padding: 8px 14px; border-radius: 9px; border: 2px solid transparent;
+  font-size: 13px; font-weight: 600; cursor: pointer; background: var(--surface2);
+  color: var(--text2); transition: all .15s;
+}
+.status-btn.selected { border-color: var(--accent); color: var(--accent); }
+
+/* ===== NOTES ===== */
+.note {
+  background: var(--surface); border-radius: 12px; border: 1px solid var(--border);
+  padding: 14px; margin-bottom: 10px;
+}
+.note-text { font-size: 15px; line-height: 1.5; white-space: pre-wrap; }
+.note-time { font-size: 11px; color: var(--text2); margin-top: 8px; }
+.note-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+
+.quick-input {
+  position: sticky; bottom: calc(var(--safe-bot) + 8px);
+  display: flex; gap: 10px; padding: 0 0 8px;
+  background: var(--bg);
+}
+.quick-input input {
+  flex: 1; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 12px 16px; color: var(--text); font-size: 15px;
+  font-family: inherit; outline: none;
+}
+.quick-input input:focus { border-color: var(--accent); }
+.quick-input button {
+  width: 46px; height: 46px; border-radius: 12px;
+  background: var(--accent); border: none; cursor: pointer;
+  font-size: 20px; display: flex; align-items: center; justify-content: center;
+}
+
+/* ===== ROADMAP ===== */
+.task {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px; background: var(--surface); border-radius: 10px;
+  margin-bottom: 8px; border: 1px solid var(--border);
+}
+.task-check {
+  width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--border);
+  flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all .15s; margin-top: 1px;
+}
+.task-check.done { background: var(--green); border-color: var(--green); }
+.task-text { flex: 1; font-size: 15px; line-height: 1.4; }
+.task-text.done { text-decoration: line-through; color: var(--text2); }
+.task-del { font-size: 16px; cursor: pointer; color: var(--text2); padding: 2px; }
+
+.section-label {
+  font-size: 11px; font-weight: 700; color: var(--text2); text-transform: uppercase;
+  letter-spacing: .8px; margin: 16px 0 8px;
+}
+.section-label:first-child { margin-top: 0; }
+
+/* ===== PATENT ===== */
+.patent-field {
+  background: var(--surface); border-radius: 12px; border: 1px solid var(--border);
+  padding: 14px; margin-bottom: 10px;
+}
+.patent-field h3 { font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+.patent-field p { font-size: 14px; line-height: 1.6; color: var(--text); white-space: pre-wrap; }
+.patent-field textarea {
+  width: 100%; background: transparent; border: none; color: var(--text);
+  font-size: 14px; font-family: inherit; outline: none; resize: none;
+  line-height: 1.6; min-height: 60px;
+}
+
+.ipc-tag {
+  display: inline-flex; padding: 5px 10px; background: rgba(139,92,246,.15);
+  color: var(--accent3); border-radius: 7px; font-size: 12px; font-weight: 600;
+  margin: 3px; cursor: pointer;
+}
+.ipc-tag:active { opacity: 0.6; }
+
+/* ===== AI ===== */
+.ai-bubble {
+  padding: 14px 16px; border-radius: 14px; margin-bottom: 10px;
+  font-size: 15px; line-height: 1.5; max-width: 88%;
+}
+.ai-bubble.bot { background: var(--surface); align-self: flex-start; border: 1px solid var(--border); }
+.ai-bubble.user { background: var(--accent); color: #000; align-self: flex-end; margin-left: auto; }
+.ai-chat { display: flex; flex-direction: column; padding: 16px; flex: 1; overflow-y: auto; }
+.ai-chat::-webkit-scrollbar { display: none; }
+
+/* ===== EMPTY STATE ===== */
+.empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 60px 30px; text-align: center; gap: 12px;
+}
+.empty .emoji { font-size: 52px; }
+.empty h2 { font-size: 20px; font-weight: 700; }
+.empty p { font-size: 15px; color: var(--text2); line-height: 1.5; }
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.7);
+  display: flex; align-items: flex-end; z-index: 100;
+  opacity: 0; pointer-events: none; transition: opacity .25s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--surface); border-radius: 20px 20px 0 0;
+  padding: 20px 20px calc(var(--safe-bot) + 20px);
+  width: 100%; transform: translateY(100%); transition: transform .25s;
+  max-height: 90vh; overflow-y: auto;
+}
+.modal-overlay.open .modal { transform: translateY(0); }
+.modal-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 20px; }
+.modal h2 { font-size: 20px; font-weight: 700; margin-bottom: 20px; }
+
+/* ===== DIVIDER ===== */
+.divider { height: 1px; background: var(--border); margin: 12px 0; }
+
+/* ===== CONTEXT BAR ===== */
+.ctx-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 16px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+}
+.ctx-icon { font-size: 22px; }
+.ctx-name { font-size: 16px; font-weight: 700; flex: 1; }
+.ctx-status { font-size: 12px; }
+
+/* ===== COLORS for icons ===== */
+.color-amber { background: rgba(240,165,0,.2); }
+.color-blue { background: rgba(59,130,246,.2); }
+.color-purple { background: rgba(139,92,246,.2); }
+.color-green { background: rgba(34,197,94,.2); }
+.color-red { background: rgba(239,68,68,.2); }
+.color-pink { background: rgba(236,72,153,.2); }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ===== HOME SCREEN ===== -->
+  <div class="screen active" id="screen-home">
+    <div class="topbar">
+      <div style="flex:1">
+        <div style="font-size:22px;font-weight:800;letter-spacing:-.3px">
+          💡 Inventions
+        </div>
+        <div class="subtitle" id="home-count">0 проектов</div>
+      </div>
+      <button class="btn-icon" onclick="openAI()" title="AI помощник">🤖</button>
+    </div>
+    <div class="scroll" id="projects-list"></div>
+    <button class="fab" onclick="openNewProject()">+</button>
+  </div>
+
+  <!-- ===== PROJECT SCREEN ===== -->
+  <div class="screen" id="screen-project">
+    <div class="topbar">
+      <button class="btn-icon" onclick="goHome()">←</button>
+      <div style="flex:1">
+        <div id="proj-title" style="font-size:18px;font-weight:700"></div>
+      </div>
+      <button class="btn-icon" onclick="openEditProject()">✏️</button>
+      <button class="btn-icon" onclick="deleteCurrentProject()">🗑</button>
+    </div>
+    <div class="ctx-bar">
+      <div class="ctx-icon" id="proj-icon"></div>
+      <div class="ctx-name" id="proj-subtitle"></div>
+      <div class="ctx-status" id="proj-tag"></div>
+    </div>
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab(this,'concept')">Концепт</button>
+      <button class="tab" onclick="switchTab(this,'notes')">Заметки</button>
+      <button class="tab" onclick="switchTab(this,'roadmap')">Роадмап</button>
+      <button class="tab" onclick="switchTab(this,'patent')">Патент</button>
+    </div>
+    <div class="scroll" id="proj-scroll">
+      <!-- CONCEPT -->
+      <div class="tab-content active" id="tab-concept"></div>
+      <!-- NOTES -->
+      <div class="tab-content" id="tab-notes"></div>
+      <!-- ROADMAP -->
+      <div class="tab-content" id="tab-roadmap"></div>
+      <!-- PATENT -->
+      <div class="tab-content" id="tab-patent"></div>
+    </div>
+  </div>
+
+  <!-- ===== AI SCREEN ===== -->
+  <div class="screen" id="screen-ai">
+    <div class="topbar">
+      <button class="btn-icon" onclick="goHome()">←</button>
+      <div>
+        <div style="font-size:18px;font-weight:700">🤖 AI Помощник</div>
+        <div class="subtitle">Помогает с изобретениями</div>
+      </div>
+    </div>
+    <div class="ai-chat" id="ai-chat"></div>
+    <div style="padding:8px 16px calc(var(--safe-bot) + 12px); border-top:1px solid var(--border)">
+      <div style="display:flex;gap:10px">
+        <input id="ai-input" placeholder="Спроси что-нибудь..." style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 16px;color:var(--text);font-size:15px;font-family:inherit;outline:none;" onkeydown="if(event.key==='Enter')sendAI()" />
+        <button onclick="sendAI()" style="width:46px;height:46px;border-radius:12px;background:var(--accent);border:none;cursor:pointer;font-size:20px">↑</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== MODAL: New / Edit Project ===== -->
+<div class="modal-overlay" id="modal-project">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h2 id="modal-title">Новый проект</h2>
+    <div class="field">
+      <label>Название</label>
+      <input id="f-name" placeholder="Как называется изобретение?" />
+    </div>
+    <div class="field">
+      <label>Короткое описание</label>
+      <input id="f-desc" placeholder="Одним предложением..." />
+    </div>
+    <div class="field">
+      <label>Иконка</label>
+      <div class="emoji-row" id="emoji-row">
+        💡🔧⚙️🚀🧪🔬🌱💎🎯🦾🤖🛸🔋🧲🪄🌀
+      </div>
+    </div>
+    <div class="field">
+      <label>Статус</label>
+      <div class="status-row" id="status-row">
+        <button class="status-btn selected" data-s="idea">💡 Идея</button>
+        <button class="status-btn" data-s="proto">🔧 Прототип</button>
+        <button class="status-btn" data-s="patent">📋 Патент</button>
+        <button class="status-btn" data-s="done">✅ Готово</button>
+        <button class="status-btn" data-s="paused">⏸ Пауза</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>Проблема которую решает</label>
+      <textarea id="f-problem" placeholder="Какую задачу решает изобретение?"></textarea>
+    </div>
+    <div class="field">
+      <label>Как устроено</label>
+      <textarea id="f-how" placeholder="Опиши механику или принцип работы..."></textarea>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <button class="btn btn-ghost" style="flex:1" onclick="closeModal()">Отмена</button>
+      <button class="btn btn-accent" style="flex:1" id="modal-save-btn" onclick="saveProject()">Создать</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== DATA =====
+let projects = JSON.parse(localStorage.getItem('inventions_projects') || '[]');
+let currentProjectId = null;
+let editingProjectId = null;
+let selectedEmoji = '💡';
+let selectedStatus = 'idea';
+
+function save() {
+  localStorage.setItem('inventions_projects', JSON.stringify(projects));
+}
+
+function getProject(id) {
+  return projects.find(p => p.id === id);
+}
+
+// ===== STATUS HELPERS =====
+const STATUS = {
+  idea:   { tag: 'tag-idea',   label: '💡 Идея' },
+  proto:  { tag: 'tag-proto',  label: '🔧 Прототип' },
+  patent: { tag: 'tag-patent', label: '📋 Патент' },
+  done:   { tag: 'tag-done',   label: '✅ Готово' },
+  paused: { tag: 'tag-paused', label: '⏸ Пауза' },
+};
+const ICON_COLORS = {
+  '💡':'color-amber','🔧':'color-blue','⚙️':'color-blue','🚀':'color-purple',
+  '🧪':'color-green','🔬':'color-green','🌱':'color-green','💎':'color-purple',
+  '🎯':'color-red','🦾':'color-blue','🤖':'color-blue','🛸':'color-purple',
+  '🔋':'color-amber','🧲':'color-blue','🪄':'color-purple','🌀':'color-blue',
+};
+function iconColor(emoji) { return ICON_COLORS[emoji] || 'color-amber'; }
+
+// ===== HOME =====
+function renderHome() {
+  const list = document.getElementById('projects-list');
+  document.getElementById('home-count').textContent =
+    projects.length + ' ' + pluralize(projects.length, 'проект','проекта','проектов');
+
+  if (projects.length === 0) {
+    list.innerHTML = `<div class="empty">
+      <div class="emoji">🔭</div>
+      <h2>Пока пусто</h2>
+      <p>Нажми + чтобы добавить первое изобретение</p>
+    </div>`;
+    return;
+  }
+
+  list.innerHTML = projects.map(p => {
+    const st = STATUS[p.status] || STATUS.idea;
+    const done = (p.tasks || []).filter(t => t.done).length;
+    const total = (p.tasks || []).length;
+    const pct = total ? Math.round(done/total*100) : 0;
+    return `<div class="card" onclick="openProject('${p.id}')">
+      <div class="card-header">
+        <div class="card-icon ${iconColor(p.emoji)}">${p.emoji}</div>
+        <div style="flex:1">
+          <div class="card-title">${esc(p.name)}</div>
+          ${p.desc ? `<div class="card-desc">${esc(p.desc)}</div>` : ''}
+        </div>
+        <span class="tag ${st.tag}">${st.label}</span>
+      </div>
+      ${total ? `<div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+        <div style="font-size:11px;color:var(--text2);margin-top:5px">${done}/${total} задач</div>` : ''}
+      <div class="card-footer">
+        <span class="card-meta">${(p.notes||[]).length} заметок</span>
+        <span class="card-meta">${formatDate(p.created)}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ===== PROJECT =====
+function openProject(id) {
+  currentProjectId = id;
+  const p = getProject(id);
+  if (!p) return;
+
+  document.getElementById('proj-title').textContent = p.name;
+  document.getElementById('proj-icon').textContent = p.emoji;
+  document.getElementById('proj-subtitle').textContent = p.desc || '';
+  const st = STATUS[p.status] || STATUS.idea;
+  document.getElementById('proj-tag').innerHTML = `<span class="tag ${st.tag}">${st.label}</span>`;
+
+  // Reset tabs
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelector('.tab').classList.add('active');
+  document.getElementById('tab-concept').classList.add('active');
+
+  renderConcept(p);
+  renderNotes(p);
+  renderRoadmap(p);
+  renderPatent(p);
+
+  showScreen('screen-project');
+}
+
+function goHome() {
+  showScreen('screen-home');
+  renderHome();
+}
+
+// ===== TABS =====
+function switchTab(btn, name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+  document.getElementById('proj-scroll').scrollTop = 0;
+}
+
+// ===== CONCEPT TAB =====
+function renderConcept(p) {
+  const el = document.getElementById('tab-concept');
+  el.innerHTML = `
+    <div class="patent-field">
+      <h3>Проблема</h3>
+      <textarea placeholder="Какую проблему решает..." onblur="saveField('${p.id}','problem',this.value)">${esc(p.problem||'')}</textarea>
+    </div>
+    <div class="patent-field">
+      <h3>Идея</h3>
+      <textarea placeholder="Суть изобретения..." onblur="saveField('${p.id}','idea',this.value)">${esc(p.idea||'')}</textarea>
+    </div>
+    <div class="patent-field">
+      <h3>Как устроено</h3>
+      <textarea placeholder="Механика, принцип работы..." onblur="saveField('${p.id}','how',this.value)">${esc(p.how||'')}</textarea>
+    </div>
+    <div class="patent-field">
+      <h3>Уникальность</h3>
+      <textarea placeholder="Чем отличается от аналогов..." onblur="saveField('${p.id}','unique',this.value)">${esc(p.unique||'')}</textarea>
+    </div>
+    <div class="patent-field">
+      <h3>Аналоги</h3>
+      <textarea placeholder="Похожие продукты или решения..." onblur="saveField('${p.id}','analogs',this.value)">${esc(p.analogs||'')}</textarea>
+    </div>
+    <div class="patent-field">
+      <h3>Аудитория</h3>
+      <textarea placeholder="Для кого это изобретение..." onblur="saveField('${p.id}','audience',this.value)">${esc(p.audience||'')}</textarea>
+    </div>
+  `;
+}
+
+function saveField(id, field, value) {
+  const p = getProject(id);
+  if (p) { p[field] = value; save(); }
+}
+
+// ===== NOTES TAB =====
+function renderNotes(p) {
+  const el = document.getElementById('tab-notes');
+  const notes = p.notes || [];
+  const notesHTML = notes.length
+    ? notes.slice().reverse().map((n,ri) => {
+        const i = notes.length - 1 - ri;
+        return `<div class="note">
+          <div class="note-text">${esc(n.text)}</div>
+          <div class="note-footer">
+            <span class="note-time">${formatDateTime(n.created)}</span>
+            <span style="cursor:pointer;color:var(--text2);font-size:14px" onclick="deleteNote('${p.id}',${i})">✕</span>
+          </div>
+        </div>`;
+      }).join('')
+    : `<div class="empty" style="padding:40px 20px">
+        <div class="emoji">📝</div>
+        <p>Заметок пока нет</p>
+      </div>`;
+
+  el.innerHTML = `
+    <div>${notesHTML}</div>
+    <div class="quick-input">
+      <input id="note-input-${p.id}" placeholder="Новая заметка..." onkeydown="if(event.key==='Enter')addNote('${p.id}')" />
+      <button onclick="addNote('${p.id}')">↑</button>
+    </div>
+  `;
+}
+
+function addNote(id) {
+  const input = document.getElementById('note-input-' + id);
+  const text = input.value.trim();
+  if (!text) return;
+  const p = getProject(id);
+  if (!p.notes) p.notes = [];
+  p.notes.push({ text, created: Date.now() });
+  save();
+  input.value = '';
+  renderNotes(p);
+}
+
+function deleteNote(id, idx) {
+  const p = getProject(id);
+  p.notes.splice(idx, 1);
+  save();
+  renderNotes(p);
+}
+
+// ===== ROADMAP TAB =====
+function renderRoadmap(p) {
+  const el = document.getElementById('tab-roadmap');
+  const tasks = p.tasks || [];
+  const active = tasks.filter(t => !t.done);
+  const done = tasks.filter(t => t.done);
+
+  const taskHTML = (list, offset) => list.map((t, i) => {
+    const realIdx = tasks.indexOf(t);
+    return `<div class="task">
+      <div class="task-check ${t.done?'done':''}" onclick="toggleTask('${p.id}',${realIdx})">
+        ${t.done ? '✓' : ''}
+      </div>
+      <div class="task-text ${t.done?'done':''}">${esc(t.text)}</div>
+      <div class="task-del" onclick="deleteTask('${p.id}',${realIdx})">✕</div>
+    </div>`;
+  }).join('');
+
+  el.innerHTML = `
+    ${active.length ? `<div class="section-label">В работе (${active.length})</div>${taskHTML(active)}` : ''}
+    ${done.length ? `<div class="section-label">Готово (${done.length})</div>${taskHTML(done)}` : ''}
+    ${!tasks.length ? `<div class="empty" style="padding:40px 20px"><div class="emoji">📋</div><p>Задач пока нет</p></div>` : ''}
+    <div class="quick-input">
+      <input id="task-input-${p.id}" placeholder="Новая задача..." onkeydown="if(event.key==='Enter')addTask('${p.id}')" />
+      <button onclick="addTask('${p.id}')">↑</button>
+    </div>
+  `;
+}
+
+function addTask(id) {
+  const input = document.getElementById('task-input-' + id);
+  const text = input.value.trim();
+  if (!text) return;
+  const p = getProject(id);
+  if (!p.tasks) p.tasks = [];
+  p.tasks.push({ text, done: false });
+  save(); input.value = '';
+  renderRoadmap(p);
+}
+
+function toggleTask(id, idx) {
+  const p = getProject(id);
+  p.tasks[idx].done = !p.tasks[idx].done;
+  save(); renderRoadmap(p);
+}
+
+function deleteTask(id, idx) {
+  const p = getProject(id);
+  p.tasks.splice(idx, 1);
+  save(); renderRoadmap(p);
+}
+
+// ===== PATENT TAB =====
+function renderPatent(p) {
+  const el = document.getElementById('tab-patent');
+  el.innerHTML = `
+    <div class="patent-field">
+      <h3>Реферат</h3>
+      <textarea placeholder="Краткое описание изобретения для патента..." onblur="saveField('${p.id}','pat_abstract',this.value)">${esc(p.pat_abstract||'')}</textarea>
+    </div>
+    <div class="patent-field">
+      <h3>Формула изобретения</h3>
+      <textarea placeholder="Независимый пункт формулы..." onblur="saveField('${p.id}','pat_claim',this.value)" style="min-height:100px">${esc(p.pat_claim||'')}</textarea>
+    </div>
+    <div class="patent-field">
+      <h3>Описание</h3>
+      <textarea placeholder="Подробное описание для патентного ведомства..." onblur="saveField('${p.id}','pat_desc',this.value)" style="min-height:120px">${esc(p.pat_desc||'')}</textarea>
+    </div>
+    <div class="patent-field">
+      <h3>Классы МПК</h3>
+      <p style="color:var(--text2);font-size:13px;margin-bottom:10px">Международная патентная классификация:</p>
+      <div style="margin-bottom:10px">
+        <span class="ipc-tag" onclick="addIPC('${p.id}','A63H 33/00')">A63H 33/00</span>
+        <span class="ipc-tag" onclick="addIPC('${p.id}','A63H 3/00')">A63H 3/00</span>
+        <span class="ipc-tag" onclick="addIPC('${p.id}','G06F 3/00')">G06F 3/00</span>
+        <span class="ipc-tag" onclick="addIPC('${p.id}','H04L 67/00')">H04L 67/00</span>
+      </div>
+      <div id="ipc-list-${p.id}" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">
+        ${(p.ipc||[]).map((c,i) => `<span style="display:inline-flex;align-items:center;gap:6px;padding:5px 10px;background:rgba(139,92,246,.15);color:var(--accent3);border-radius:7px;font-size:12px;font-weight:600">${esc(c)} <span onclick="removeIPC('${p.id}',${i})" style="cursor:pointer;opacity:.6">✕</span></span>`).join('')}
+      </div>
+      <input placeholder="Добавить класс МПК..." style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--text);font-size:14px;font-family:inherit;outline:none" onkeydown="if(event.key==='Enter'){addIPC('${p.id}',this.value);this.value=''}" />
+    </div>
+    <div class="patent-field">
+      <h3>Статус</h3>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        ${['Патентный поиск','Подготовка заявки','Подача заявки','Экспертиза','Выдача патента'].map((s,i) =>
+          `<label style="display:flex;align-items:center;gap:10px;cursor:pointer">
+            <input type="checkbox" ${(p.pat_steps||[])[i] ? 'checked' : ''} onchange="togglePatStep('${p.id}',${i},this.checked)" style="width:18px;height:18px;accent-color:var(--accent)" />
+            <span style="font-size:15px">${s}</span>
+          </label>`
+        ).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function addIPC(id, code) {
+  const p = getProject(id);
+  if (!p.ipc) p.ipc = [];
+  if (code && !p.ipc.includes(code)) { p.ipc.push(code); save(); renderPatent(p); }
+}
+
+function removeIPC(id, idx) {
+  const p = getProject(id);
+  p.ipc.splice(idx, 1);
+  save(); renderPatent(p);
+}
+
+function togglePatStep(id, idx, val) {
+  const p = getProject(id);
+  if (!p.pat_steps) p.pat_steps = [false,false,false,false,false];
+  p.pat_steps[idx] = val;
+  save();
+}
+
+// ===== NEW / EDIT PROJECT MODAL =====
+function openNewProject() {
+  editingProjectId = null;
+  selectedEmoji = '💡';
+  selectedStatus = 'idea';
+  document.getElementById('modal-title').textContent = 'Новый проект';
+  document.getElementById('modal-save-btn').textContent = 'Создать';
+  document.getElementById('f-name').value = '';
+  document.getElementById('f-desc').value = '';
+  document.getElementById('f-problem').value = '';
+  document.getElementById('f-how').value = '';
+  buildEmojiRow();
+  buildStatusRow();
+  openModal('modal-project');
+}
+
+function openEditProject() {
+  const p = getProject(currentProjectId);
+  if (!p) return;
+  editingProjectId = p.id;
+  selectedEmoji = p.emoji;
+  selectedStatus = p.status;
+  document.getElementById('modal-title').textContent = 'Редактировать';
+  document.getElementById('modal-save-btn').textContent = 'Сохранить';
+  document.getElementById('f-name').value = p.name;
+  document.getElementById('f-desc').value = p.desc || '';
+  document.getElementById('f-problem').value = p.problem || '';
+  document.getElementById('f-how').value = p.how || '';
+  buildEmojiRow();
+  buildStatusRow();
+  openModal('modal-project');
+}
+
+function buildEmojiRow() {
+  const emojis = ['💡','🔧','⚙️','🚀','🧪','🔬','🌱','💎','🎯','🦾','🤖','🛸','🔋','🧲','🪄','🌀'];
+  document.getElementById('emoji-row').innerHTML = emojis.map(e =>
+    `<button class="emoji-btn ${e===selectedEmoji?'selected':''}" onclick="selectEmoji('${e}',this)">${e}</button>`
+  ).join('');
+}
+
+function buildStatusRow() {
+  document.querySelectorAll('#status-row .status-btn').forEach(b => {
+    b.classList.toggle('selected', b.dataset.s === selectedStatus);
+  });
+}
+
+function selectEmoji(e, btn) {
+  selectedEmoji = e;
+  document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+document.querySelectorAll('#status-row .status-btn').forEach(b => {
+  b.onclick = function() {
+    selectedStatus = this.dataset.s;
+    document.querySelectorAll('#status-row .status-btn').forEach(x => x.classList.remove('selected'));
+    this.classList.add('selected');
+  };
+});
+
+function saveProject() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { document.getElementById('f-name').focus(); return; }
+  if (editingProjectId) {
+    const p = getProject(editingProjectId);
+    p.name = name;
+    p.desc = document.getElementById('f-desc').value.trim();
+    p.emoji = selectedEmoji;
+    p.status = selectedStatus;
+    p.problem = document.getElementById('f-problem').value.trim();
+    p.how = document.getElementById('f-how').value.trim();
+    save();
+    closeModal();
+    openProject(editingProjectId);
+  } else {
+    const p = {
+      id: 'p' + Date.now(),
+      name,
+      desc: document.getElementById('f-desc').value.trim(),
+      emoji: selectedEmoji,
+      status: selectedStatus,
+      problem: document.getElementById('f-problem').value.trim(),
+      how: document.getElementById('f-how').value.trim(),
+      created: Date.now(),
+      notes: [], tasks: [], ipc: [],
+    };
+    projects.unshift(p);
+    save();
+    closeModal();
+    openProject(p.id);
+  }
+}
+
+function deleteCurrentProject() {
+  const p = getProject(currentProjectId);
+  if (!p) return;
+  if (!confirm(`Удалить "${p.name}"?`)) return;
+  projects = projects.filter(x => x.id !== currentProjectId);
+  save();
+  goHome();
+}
+
+// ===== AI =====
+const AI_PROMPTS = [
+  'Как улучшить это изобретение?',
+  'Найди аналоги на рынке',
+  'Помоги написать патентный реферат',
+  'Какие классы МПК подойдут?',
+  'Как монетизировать эту идею?',
+];
+
+function openAI() {
+  const chat = document.getElementById('ai-chat');
+  if (!chat.innerHTML) {
+    chat.innerHTML = `
+      <div class="ai-bubble bot">
+        Привет! Я помогаю с изобретениями. Могу помочь:<br><br>
+        ${AI_PROMPTS.map(p => `• ${p}`).join('<br>')}
+        <br><br>Спрашивай!
+      </div>
+    `;
+  }
+  showScreen('screen-ai');
+}
+
+function sendAI() {
+  const input = document.getElementById('ai-input');
+  const text = input.value.trim();
+  if (!text) return;
+  const chat = document.getElementById('ai-chat');
+  chat.innerHTML += `<div class="ai-bubble user">${esc(text)}</div>`;
+  input.value = '';
+  setTimeout(() => {
+    chat.innerHTML += `<div class="ai-bubble bot">
+      Функция AI помощника будет подключена позже через API.<br><br>
+      Сейчас ты можешь вручную заполнить концепт, заметки и патентные поля — это даст Claude контекст для работы.
+    </div>`;
+    chat.scrollTop = chat.scrollHeight;
+  }, 600);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+// ===== UTILS =====
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+}
+
+function closeModal() {
+  document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function formatDate(ts) {
+  if (!ts) return '';
+  return new Date(ts).toLocaleDateString('ru',{day:'numeric',month:'short'});
+}
+
+function formatDateTime(ts) {
+  if (!ts) return '';
+  return new Date(ts).toLocaleString('ru',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+}
+
+function pluralize(n, one, few, many) {
+  if (n % 10 === 1 && n % 100 !== 11) return n + ' ' + one;
+  if ([2,3,4].includes(n%10) && ![12,13,14].includes(n%100)) return n + ' ' + few;
+  return n + ' ' + many;
+}
+
+// Close modal on backdrop click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+});
+
+// ===== INIT =====
+renderHome();
+</script>
+</body>
+</html>
