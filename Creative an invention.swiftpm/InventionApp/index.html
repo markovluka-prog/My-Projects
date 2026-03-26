@@ -1,906 +1,3819 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<title>Creative an invention</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Creative an Invention</title>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0b0f14;
+    --panel: #11161d;
+    --panel-2: #161c24;
+    --panel-3: #1c2430;
+    --panel-4: #222d3b;
+    --line: #2a3646;
+    --line-soft: #1d2632;
+    --text: #edf5ff;
+    --muted: #9db2ca;
+    --muted-2: #6e8197;
+    --blue: #2d9cff;
+    --blue-2: #77c5ff;
+    --blue-3: #0f3f70;
+    --blue-4: #0a2742;
+    --white: #ffffff;
+    --danger: #ff6b7d;
+    --ok: #41d39f;
+    --warn: #ffbf5a;
+    --shadow: 0 18px 60px rgba(0, 0, 0, 0.45);
+    --radius: 12px;
+  }
 
-:root {
-  --bg: #0f0f0f;
-  --surface: #1a1a1a;
-  --surface2: #232323;
-  --border: #2e2e2e;
-  --accent: #f0a500;
-  --accent2: #e05c2a;
-  --accent3: #8b5cf6;
-  --text: #f0ebe0;
-  --text2: #9a9286;
-  --green: #22c55e;
-  --red: #ef4444;
-  --blue: #3b82f6;
-  --radius: 14px;
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-bot: env(safe-area-inset-bottom, 0px);
-}
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 
-html, body {
-  width: 100%; height: 100%;
-  background: var(--bg);
-  color: var(--text);
-  font-family: -apple-system, 'SF Pro Text', sans-serif;
-  overflow: hidden;
-  overscroll-behavior: none;
-  -webkit-tap-highlight-color: transparent;
-}
+  html,
+  body {
+    height: 100%;
+  }
 
-/* ===== LAYOUT ===== */
-#app { width: 100%; height: 100%; display: flex; flex-direction: column; }
+  body {
+    font-family: "Segoe UI", "SF Pro Display", system-ui, sans-serif;
+    background:
+      radial-gradient(circle at top right, rgba(45, 156, 255, 0.18), transparent 24%),
+      radial-gradient(circle at bottom left, rgba(119, 197, 255, 0.12), transparent 20%),
+      var(--bg);
+    color: var(--text);
+    overflow: auto;
+  }
 
-.screen { display: none; flex: 1; flex-direction: column; overflow: hidden; }
-.screen.active { display: flex; }
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
 
-.topbar {
-  padding: calc(var(--safe-top) + 14px) 20px 14px;
-  display: flex; align-items: center; gap: 12px;
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-}
-.topbar h1 { font-size: 20px; font-weight: 700; flex: 1; }
-.topbar .subtitle { font-size: 12px; color: var(--text2); }
+  button {
+    cursor: pointer;
+  }
 
-.scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px; }
-.scroll::-webkit-scrollbar { display: none; }
+  .app {
+    min-height: 100vh;
+    height: 100dvh;
+    display: grid;
+    grid-template-rows: 32px 34px 1fr auto 24px;
+    border: 1px solid #0a0d12;
+  }
 
-/* ===== BUTTONS ===== */
-.btn {
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  padding: 12px 20px; border-radius: 12px; border: none; cursor: pointer;
-  font-size: 15px; font-weight: 600; transition: opacity .15s, transform .1s;
-  -webkit-user-select: none;
-}
-.btn:active { opacity: 0.75; transform: scale(0.97); }
-.btn-accent { background: var(--accent); color: #000; }
-.btn-ghost { background: var(--surface2); color: var(--text); }
-.btn-danger { background: #2a1010; color: var(--red); }
-.btn-icon {
-  width: 40px; height: 40px; padding: 0; border-radius: 10px;
-  background: var(--surface2); border: none; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px; transition: opacity .15s;
-}
-.btn-icon:active { opacity: 0.6; }
+  .titlebar,
+  .topbar,
+  .statusbar {
+    display: flex;
+    align-items: center;
+  }
 
-.fab {
-  position: fixed; bottom: calc(var(--safe-bot) + 24px); right: 20px;
-  width: 56px; height: 56px; border-radius: 18px;
-  background: var(--accent); border: none; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 26px; box-shadow: 0 4px 20px rgba(240,165,0,.35);
-  transition: transform .15s;
-}
-.fab:active { transform: scale(0.92); }
+  .titlebar {
+    padding: 0 12px;
+    justify-content: space-between;
+    background: linear-gradient(180deg, #0e131a 0%, #0b1016 100%);
+    border-bottom: 1px solid #111923;
+    color: var(--muted);
+    user-select: none;
+  }
 
-/* ===== CARDS ===== */
-.card {
-  background: var(--surface); border-radius: var(--radius);
-  border: 1px solid var(--border); padding: 16px; margin-bottom: 12px;
-  cursor: pointer; transition: border-color .15s;
-}
-.card:active { border-color: var(--accent); }
+  .traffic {
+    display: flex;
+    gap: 7px;
+    width: 72px;
+  }
 
-.card-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
-.card-icon {
-  width: 44px; height: 44px; border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 22px; flex-shrink: 0;
-}
-.card-title { font-size: 17px; font-weight: 700; line-height: 1.3; }
-.card-desc { font-size: 13px; color: var(--text2); margin-top: 3px; line-height: 1.4; }
+  .dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 999px;
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  }
 
-.tag {
-  display: inline-flex; align-items: center; gap: 4px;
-  padding: 4px 10px; border-radius: 8px;
-  font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .4px;
-}
-.tag-idea { background: rgba(240,165,0,.15); color: var(--accent); }
-.tag-proto { background: rgba(59,130,246,.15); color: var(--blue); }
-.tag-patent { background: rgba(139,92,246,.15); color: var(--accent3); }
-.tag-done { background: rgba(34,197,94,.15); color: var(--green); }
-.tag-paused { background: rgba(154,146,134,.15); color: var(--text2); }
+  .dot.red { background: #ff5f57; }
+  .dot.yellow { background: #febc2e; }
+  .dot.green { background: #28c840; }
 
-.card-footer {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border);
-}
-.card-meta { font-size: 12px; color: var(--text2); }
+  .title {
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    color: #c7d7ea;
+  }
 
-/* Progress bar */
-.progress-bar { height: 4px; background: var(--border); border-radius: 2px; margin-top: 8px; overflow: hidden; }
-.progress-fill { height: 100%; border-radius: 2px; background: var(--accent); transition: width .3s; }
+  .title-note {
+    width: 72px;
+    text-align: right;
+    font-size: 11px;
+    color: var(--muted-2);
+  }
 
-/* ===== TABS ===== */
-.tabs {
-  display: flex; gap: 4px; padding: 12px 16px;
-  border-bottom: 1px solid var(--border); overflow-x: auto; flex-shrink: 0;
-}
-.tabs::-webkit-scrollbar { display: none; }
-.tab {
-  padding: 7px 14px; border-radius: 9px; font-size: 13px; font-weight: 600;
-  background: none; border: none; color: var(--text2); cursor: pointer;
-  white-space: nowrap; transition: all .15s;
-}
-.tab.active { background: var(--accent); color: #000; }
+  .topbar {
+    padding: 0 10px;
+    background: #121922;
+    border-bottom: 1px solid #18212d;
+    gap: 8px;
+  }
 
-.tab-content { display: none; }
-.tab-content.active { display: block; }
+  .menu {
+    display: flex;
+    gap: 2px;
+  }
 
-/* ===== FORM ===== */
-.field { margin-bottom: 16px; }
-.field label { display: block; font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .5px; }
-.field input, .field textarea, .field select {
-  width: 100%; background: var(--surface2); border: 1px solid var(--border);
-  border-radius: 10px; padding: 12px 14px; color: var(--text); font-size: 15px;
-  font-family: inherit; outline: none; resize: vertical;
-  transition: border-color .15s; -webkit-appearance: none;
-}
-.field input:focus, .field textarea:focus { border-color: var(--accent); }
-.field textarea { min-height: 90px; }
+  .menu button {
+    padding: 5px 9px;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    border-radius: 7px;
+    font-size: 12px;
+  }
 
-.emoji-row { display: flex; gap: 10px; flex-wrap: wrap; }
-.emoji-btn {
-  width: 44px; height: 44px; border-radius: 10px; background: var(--surface2);
-  border: 2px solid transparent; font-size: 22px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: border-color .15s;
-}
-.emoji-btn.selected { border-color: var(--accent); }
+  .menu button:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--white);
+  }
 
-/* ===== STATUS PICKER ===== */
-.status-row { display: flex; gap: 8px; flex-wrap: wrap; }
-.status-btn {
-  padding: 8px 14px; border-radius: 9px; border: 2px solid transparent;
-  font-size: 13px; font-weight: 600; cursor: pointer; background: var(--surface2);
-  color: var(--text2); transition: all .15s;
-}
-.status-btn.selected { border-color: var(--accent); color: var(--accent); }
+  .workspace-pill {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: rgba(45, 156, 255, 0.08);
+    border: 1px solid rgba(119, 197, 255, 0.18);
+    color: #d8edff;
+    font-size: 11px;
+    white-space: nowrap;
+  }
 
-/* ===== NOTES ===== */
-.note {
-  background: var(--surface); border-radius: 12px; border: 1px solid var(--border);
-  padding: 14px; margin-bottom: 10px;
-}
-.note-text { font-size: 15px; line-height: 1.5; white-space: pre-wrap; }
-.note-time { font-size: 11px; color: var(--text2); margin-top: 8px; }
-.note-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+  .shell {
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 50px 280px minmax(0, 1fr);
+    overflow: hidden;
+  }
 
-.quick-input {
-  position: sticky; bottom: calc(var(--safe-bot) + 8px);
-  display: flex; gap: 10px; padding: 0 0 8px;
-  background: var(--bg);
-}
-.quick-input input {
-  flex: 1; background: var(--surface); border: 1px solid var(--border);
-  border-radius: 12px; padding: 12px 16px; color: var(--text); font-size: 15px;
-  font-family: inherit; outline: none;
-}
-.quick-input input:focus { border-color: var(--accent); }
-.quick-input button {
-  width: 46px; height: 46px; border-radius: 12px;
-  background: var(--accent); border: none; cursor: pointer;
-  font-size: 20px; display: flex; align-items: center; justify-content: center;
-}
+  .activitybar {
+    background: linear-gradient(180deg, #0f141b 0%, #0c1118 100%);
+    border-right: 1px solid #131c27;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 0;
+  }
 
-/* ===== ROADMAP ===== */
-.task {
-  display: flex; align-items: flex-start; gap: 12px;
-  padding: 12px; background: var(--surface); border-radius: 10px;
-  margin-bottom: 8px; border: 1px solid var(--border);
-}
-.task-check {
-  width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--border);
-  flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: all .15s; margin-top: 1px;
-}
-.task-check.done { background: var(--green); border-color: var(--green); }
-.task-text { flex: 1; font-size: 15px; line-height: 1.4; }
-.task-text.done { text-decoration: line-through; color: var(--text2); }
-.task-del { font-size: 16px; cursor: pointer; color: var(--text2); padding: 2px; }
+  .activity-btn {
+    width: 38px;
+    height: 38px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--muted-2);
+    position: relative;
+    font-size: 18px;
+  }
 
-.section-label {
-  font-size: 11px; font-weight: 700; color: var(--text2); text-transform: uppercase;
-  letter-spacing: .8px; margin: 16px 0 8px;
-}
-.section-label:first-child { margin-top: 0; }
+  .activity-btn:hover,
+  .activity-btn.active {
+    color: var(--white);
+    background: rgba(255, 255, 255, 0.05);
+  }
 
-/* ===== PATENT ===== */
-.patent-field {
-  background: var(--surface); border-radius: 12px; border: 1px solid var(--border);
-  padding: 14px; margin-bottom: 10px;
-}
-.patent-field h3 { font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
-.patent-field p { font-size: 14px; line-height: 1.6; color: var(--text); white-space: pre-wrap; }
-.patent-field textarea {
-  width: 100%; background: transparent; border: none; color: var(--text);
-  font-size: 14px; font-family: inherit; outline: none; resize: none;
-  line-height: 1.6; min-height: 60px;
-}
+  .activity-btn.active::before {
+    content: "";
+    position: absolute;
+    left: -6px;
+    top: 8px;
+    bottom: 8px;
+    width: 3px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, var(--blue-2), var(--blue));
+  }
 
-.ipc-tag {
-  display: inline-flex; padding: 5px 10px; background: rgba(139,92,246,.15);
-  color: var(--accent3); border-radius: 7px; font-size: 12px; font-weight: 600;
-  margin: 3px; cursor: pointer;
-}
-.ipc-tag:active { opacity: 0.6; }
+  .activity-spacer {
+    flex: 1;
+  }
 
-/* ===== AI ===== */
-.ai-bubble {
-  padding: 14px 16px; border-radius: 14px; margin-bottom: 10px;
-  font-size: 15px; line-height: 1.5; max-width: 88%;
-}
-.ai-bubble.bot { background: var(--surface); align-self: flex-start; border: 1px solid var(--border); }
-.ai-bubble.user { background: var(--accent); color: #000; align-self: flex-end; margin-left: auto; }
-.ai-chat { display: flex; flex-direction: column; padding: 16px; flex: 1; overflow-y: auto; }
-.ai-chat::-webkit-scrollbar { display: none; }
+  .sidebar {
+    min-width: 0;
+    min-height: 0;
+    background: linear-gradient(180deg, #111821 0%, #0f151d 100%);
+    border-right: 1px solid #17202b;
+    display: flex;
+    flex-direction: column;
+  }
 
-/* ===== EMPTY STATE ===== */
-.empty {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 60px 30px; text-align: center; gap: 12px;
-}
-.empty .emoji { font-size: 52px; }
-.empty h2 { font-size: 20px; font-weight: 700; }
-.empty p { font-size: 15px; color: var(--text2); line-height: 1.5; }
+  .sidebar-header {
+    padding: 14px 14px 8px;
+    border-bottom: 1px solid var(--line-soft);
+  }
 
-/* ===== MODAL ===== */
-.modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,.7);
-  display: flex; align-items: flex-end; z-index: 100;
-  opacity: 0; pointer-events: none; transition: opacity .25s;
-}
-.modal-overlay.open { opacity: 1; pointer-events: all; }
-.modal {
-  background: var(--surface); border-radius: 20px 20px 0 0;
-  padding: 20px 20px calc(var(--safe-bot) + 20px);
-  width: 100%; transform: translateY(100%); transition: transform .25s;
-  max-height: 90vh; overflow-y: auto;
-}
-.modal-overlay.open .modal { transform: translateY(0); }
-.modal-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 20px; }
-.modal h2 { font-size: 20px; font-weight: 700; margin-bottom: 20px; }
+  .sidebar-kicker {
+    color: var(--muted-2);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    margin-bottom: 8px;
+  }
 
-/* ===== DIVIDER ===== */
-.divider { height: 1px; background: var(--border); margin: 12px 0; }
+  .sidebar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
 
-/* ===== CONTEXT BAR ===== */
-.ctx-bar {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 16px; border-bottom: 1px solid var(--border); flex-shrink: 0;
-}
-.ctx-icon { font-size: 22px; }
-.ctx-name { font-size: 16px; font-weight: 700; flex: 1; }
-.ctx-status { font-size: 12px; }
+  .sidebar-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--white);
+    flex: 1;
+  }
 
-/* ===== COLORS for icons ===== */
-.color-amber { background: rgba(240,165,0,.2); }
-.color-blue { background: rgba(59,130,246,.2); }
-.color-purple { background: rgba(139,92,246,.2); }
-.color-green { background: rgba(34,197,94,.2); }
-.color-red { background: rgba(239,68,68,.2); }
-.color-pink { background: rgba(236,72,153,.2); }
+  .icon-btn {
+    width: 30px;
+    height: 30px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--muted);
+  }
+
+  .icon-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.06);
+    color: var(--white);
+  }
+
+  .sidebar-search {
+    margin-top: 10px;
+    position: relative;
+  }
+
+  .sidebar-search input {
+    width: 100%;
+    background: #0d131a;
+    border: 1px solid #1b2531;
+    color: var(--text);
+    border-radius: 10px;
+    padding: 9px 10px 9px 34px;
+    outline: none;
+    font-size: 12px;
+  }
+
+  .sidebar-search span {
+    position: absolute;
+    left: 12px;
+    top: 8px;
+    color: var(--muted-2);
+    font-size: 14px;
+  }
+
+  .sidebar-body {
+    min-height: 0;
+    overflow: auto;
+    padding: 10px 8px 14px;
+  }
+
+  .explorer-group {
+    margin-bottom: 16px;
+  }
+
+  .group-label {
+    padding: 6px 10px;
+    color: var(--muted-2);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+  }
+
+  .project-item {
+    display: grid;
+    grid-template-columns: 18px 1fr auto;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px 10px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background: transparent;
+    color: var(--text);
+    text-align: left;
+    margin-bottom: 4px;
+  }
+
+  .project-item:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .project-item.active {
+    background: linear-gradient(180deg, rgba(45, 156, 255, 0.16), rgba(45, 156, 255, 0.08));
+    border-color: rgba(119, 197, 255, 0.2);
+    box-shadow: inset 0 0 0 1px rgba(119, 197, 255, 0.08);
+  }
+
+  .file-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--muted);
+    text-align: left;
+    margin-bottom: 4px;
+    font-size: 12px;
+  }
+
+  .file-item:hover,
+  .file-item.active {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--white);
+    border-color: rgba(119, 197, 255, 0.14);
+  }
+
+  .file-item-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .file-meta {
+    color: var(--muted-2);
+    font-size: 10px;
+    margin-left: auto;
+  }
+
+  .file-view {
+    display: grid;
+    gap: 16px;
+  }
+
+  .file-toolbar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .file-preview {
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 16px;
+  }
+
+  .file-preview pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: var(--text);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .workspace-grid {
+    display: grid;
+    grid-template-columns: 320px minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .workspace-list {
+    max-height: 70vh;
+    overflow: auto;
+  }
+
+  .workspace-toolbar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+    margin-bottom: 12px;
+  }
+
+  .workspace-path {
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .workspace-editor {
+    width: 100%;
+    min-height: 60vh;
+    resize: vertical;
+    border-radius: 16px;
+    background: #0d131a;
+    border: 1px solid #1b2531;
+    color: var(--text);
+    padding: 16px;
+    outline: none;
+    line-height: 1.6;
+  }
+
+  .terminal-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .terminal-form input {
+    flex: 1;
+    min-width: 260px;
+    background: #0d131a;
+    border: 1px solid #1b2531;
+    color: var(--text);
+    border-radius: 10px;
+    padding: 10px 12px;
+    outline: none;
+  }
+
+  .terminal-output {
+    margin-top: 14px;
+    min-height: 300px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 16px;
+  }
+
+  .terminal-output pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: var(--text);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 9px 10px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background: transparent;
+    color: var(--muted);
+    text-align: left;
+    margin-bottom: 4px;
+    font-size: 12px;
+  }
+
+  .nav-item:hover {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--white);
+    border-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .nav-item.active {
+    background: rgba(45, 156, 255, 0.14);
+    color: var(--white);
+    border-color: rgba(119, 197, 255, 0.18);
+  }
+
+  .nav-item small {
+    margin-left: auto;
+    color: var(--muted-2);
+    font-size: 10px;
+  }
+
+  .quick-stats {
+    display: grid;
+    gap: 8px;
+  }
+
+  .workspace-mini-tree {
+    display: grid;
+    gap: 4px;
+  }
+
+  .workspace-mini-path {
+    margin: 6px 10px 8px;
+    font-size: 10px;
+    color: var(--muted-2);
+    word-break: break-word;
+  }
+
+  .quick-stat {
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .quick-stat strong {
+    display: block;
+    color: var(--white);
+    font-size: 12px;
+    margin-bottom: 3px;
+  }
+
+  .quick-stat span {
+    color: var(--muted-2);
+    font-size: 11px;
+  }
+
+  .project-name {
+    min-width: 0;
+  }
+
+  .project-name strong {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--white);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .project-name small {
+    display: block;
+    font-size: 11px;
+    color: var(--muted-2);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+
+  .status-chip {
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 10px;
+    white-space: nowrap;
+    border: 1px solid transparent;
+  }
+
+  .status-idea { background: rgba(119, 197, 255, 0.08); color: var(--blue-2); border-color: rgba(119, 197, 255, 0.12); }
+  .status-dev { background: rgba(45, 156, 255, 0.12); color: #9cd4ff; border-color: rgba(45, 156, 255, 0.18); }
+  .status-test { background: rgba(255, 191, 90, 0.12); color: #ffd58d; border-color: rgba(255, 191, 90, 0.16); }
+  .status-ready { background: rgba(65, 211, 159, 0.12); color: #9ef3d2; border-color: rgba(65, 211, 159, 0.16); }
+  .status-paused { background: rgba(157, 178, 202, 0.08); color: #b8c8d8; border-color: rgba(157, 178, 202, 0.14); }
+
+  .sidebar-card {
+    margin-top: 10px;
+    padding: 12px;
+    border-radius: 14px;
+    background: linear-gradient(180deg, rgba(20, 32, 45, 0.92), rgba(12, 19, 27, 0.92));
+    border: 1px solid rgba(119, 197, 255, 0.14);
+  }
+
+  .sidebar-card strong {
+    display: block;
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+
+  .sidebar-card p {
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
+  .editor-shell {
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: 40px 28px 1fr;
+    background: linear-gradient(180deg, #0f141b 0%, #0b1016 100%);
+  }
+
+  .tabs {
+    display: flex;
+    align-items: stretch;
+    overflow-x: auto;
+    background: #101722;
+    border-bottom: 1px solid #17202b;
+  }
+
+  .tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    padding: 0 14px;
+    border-right: 1px solid #17202b;
+    background: #101722;
+    color: var(--muted);
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+    font-size: 12px;
+  }
+
+  .tab:hover {
+    color: var(--white);
+    background: #121d2a;
+  }
+
+  .tab.active {
+    color: var(--white);
+    background: #16212e;
+    box-shadow: inset 0 2px 0 var(--blue);
+  }
+
+  .tab-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 6px;
+    color: var(--muted-2);
+  }
+
+  .tab-close:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--white);
+  }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 16px;
+    font-size: 11px;
+    color: var(--muted-2);
+    border-bottom: 1px solid #17202b;
+    background: rgba(11, 17, 24, 0.8);
+  }
+
+  .editor {
+    min-height: 0;
+    overflow: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    padding: 22px 24px 28px;
+  }
+
+  .editor::-webkit-scrollbar,
+  .sidebar-body::-webkit-scrollbar,
+  .tabs::-webkit-scrollbar,
+  .chat-messages::-webkit-scrollbar,
+  .palette-results::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .editor::-webkit-scrollbar-thumb,
+  .sidebar-body::-webkit-scrollbar-thumb,
+  .tabs::-webkit-scrollbar-thumb,
+  .chat-messages::-webkit-scrollbar-thumb,
+  .palette-results::-webkit-scrollbar-thumb {
+    background: #233141;
+    border-radius: 999px;
+  }
+
+  .welcome {
+    min-height: 100%;
+    display: grid;
+    place-items: center;
+  }
+
+  .welcome-card {
+    width: min(860px, 100%);
+    border-radius: 24px;
+    background:
+      linear-gradient(135deg, rgba(45, 156, 255, 0.12), rgba(11, 17, 24, 0.96) 32%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+    border: 1px solid rgba(119, 197, 255, 0.18);
+    box-shadow: var(--shadow);
+    padding: 34px;
+  }
+
+  .hero {
+    display: grid;
+    grid-template-columns: 1.3fr 0.9fr;
+    gap: 18px;
+    margin-bottom: 22px;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: rgba(45, 156, 255, 0.12);
+    border: 1px solid rgba(119, 197, 255, 0.16);
+    color: #dff1ff;
+    font-size: 11px;
+    margin-bottom: 16px;
+  }
+
+  .hero h1 {
+    font-size: clamp(28px, 5vw, 42px);
+    line-height: 1.04;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .hero p {
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 48ch;
+  }
+
+  .hero-panel,
+  .metric-card,
+  .section-card,
+  .console-card {
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba(19, 27, 37, 0.96), rgba(12, 18, 26, 0.98));
+    border: 1px solid rgba(119, 197, 255, 0.12);
+  }
+
+  .hero-panel {
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    justify-content: center;
+  }
+
+  .hero-panel strong {
+    font-size: 12px;
+    color: var(--white);
+  }
+
+  .hero-panel ul {
+    list-style: none;
+    display: grid;
+    gap: 10px;
+  }
+
+  .hero-panel li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .hero-panel span:last-child {
+    color: #dff1ff;
+  }
+
+  .welcome-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .metric-card {
+    padding: 16px;
+  }
+
+  .metric-label {
+    font-size: 11px;
+    color: var(--muted-2);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    margin-bottom: 12px;
+  }
+
+  .metric-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+
+  .metric-card p {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+
+  .btn,
+  .btn-ghost {
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 12px;
+    border: 1px solid transparent;
+  }
+
+  .btn {
+    background: linear-gradient(180deg, #35a7ff, #1f88ef);
+    color: var(--white);
+    box-shadow: 0 10px 24px rgba(45, 156, 255, 0.25);
+  }
+
+  .btn:hover {
+    filter: brightness(1.06);
+  }
+
+  .btn-ghost {
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--muted);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--white);
+  }
+
+  .project-shell {
+    display: grid;
+    gap: 16px;
+  }
+
+  .project-header {
+    display: grid;
+    grid-template-columns: 1.3fr 0.7fr;
+    gap: 16px;
+  }
+
+  .section-card {
+    padding: 18px;
+  }
+
+  .project-name-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+
+  .project-name-row h2 {
+    font-size: 28px;
+    line-height: 1.1;
+  }
+
+  .subline {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .status-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+
+  .status-toggle {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    padding: 7px 11px;
+    font-size: 11px;
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--muted);
+  }
+
+  .status-toggle:hover {
+    color: var(--white);
+  }
+
+  .status-toggle.active {
+    background: rgba(45, 156, 255, 0.16);
+    border-color: rgba(119, 197, 255, 0.22);
+    color: #dff1ff;
+  }
+
+  .meta-stack {
+    display: grid;
+    gap: 10px;
+  }
+
+  .meta-item {
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .meta-item small {
+    display: block;
+    color: var(--muted-2);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    margin-bottom: 6px;
+  }
+
+  .meta-item strong {
+    display: block;
+    color: var(--white);
+    font-size: 14px;
+  }
+
+  .tab-strip {
+    display: flex;
+    gap: 6px;
+    overflow: auto;
+    padding-bottom: 2px;
+  }
+
+  .mini-tab {
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--muted);
+    border-radius: 12px;
+    padding: 9px 12px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .mini-tab.active {
+    background: rgba(45, 156, 255, 0.16);
+    color: var(--white);
+    border-color: rgba(119, 197, 255, 0.22);
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .section-head h3 {
+    font-size: 15px;
+  }
+
+  .section-head p {
+    color: var(--muted-2);
+    font-size: 11px;
+  }
+
+  .field {
+    margin-bottom: 12px;
+  }
+
+  .field:last-child {
+    margin-bottom: 0;
+  }
+
+  .field label {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--muted-2);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  .field input,
+  .field textarea,
+  .field select,
+  .chat-input input,
+  .palette-input {
+    width: 100%;
+    background: #0e151d;
+    border: 1px solid #1d2935;
+    color: var(--text);
+    border-radius: 12px;
+    outline: none;
+  }
+
+  .field input,
+  .field select {
+    padding: 10px 12px;
+  }
+
+  .field textarea {
+    min-height: 112px;
+    padding: 11px 12px;
+    resize: vertical;
+    line-height: 1.55;
+  }
+
+  .field input:focus,
+  .field textarea:focus,
+  .field select:focus,
+  .chat-input input:focus,
+  .palette-input:focus {
+    border-color: rgba(119, 197, 255, 0.28);
+    box-shadow: 0 0 0 3px rgba(45, 156, 255, 0.1);
+  }
+
+  .notes-add,
+  .task-add,
+  .modal-row {
+    display: flex;
+    gap: 10px;
+  }
+
+  .note-list,
+  .task-list,
+  .steps {
+    display: grid;
+    gap: 10px;
+  }
+
+  .note,
+  .task,
+  .step {
+    padding: 14px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.025);
+  }
+
+  .note {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 10px;
+    align-items: start;
+  }
+
+  .note time,
+  .task small,
+  .step small {
+    color: var(--muted-2);
+    font-size: 11px;
+  }
+
+  .ghost-x {
+    width: 28px;
+    height: 28px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--muted-2);
+  }
+
+  .ghost-x:hover {
+    background: rgba(255, 107, 125, 0.12);
+    color: #ffc7cf;
+  }
+
+  .task {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .task.done .task-text {
+    text-decoration: line-through;
+    color: var(--muted-2);
+  }
+
+  .task input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--blue);
+  }
+
+  .split-label {
+    color: var(--muted-2);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    margin: 12px 0 6px;
+  }
+
+  .step {
+    display: grid;
+    grid-template-columns: 34px 1fr auto;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .step-index {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: rgba(45, 156, 255, 0.12);
+    color: #dff1ff;
+    border: 1px solid rgba(119, 197, 255, 0.16);
+    font-weight: 700;
+  }
+
+  .step.done .step-index {
+    background: rgba(65, 211, 159, 0.14);
+    border-color: rgba(65, 211, 159, 0.2);
+    color: #b8f6df;
+  }
+
+  .step-btn {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--muted);
+    border-radius: 10px;
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+
+  .step-btn:hover {
+    color: var(--white);
+  }
+
+  .chat-shell {
+    border-top: 1px solid #17202b;
+    background: linear-gradient(180deg, #0d131a 0%, #0b1016 100%);
+    transition: height 0.24s ease;
+    overflow: hidden;
+  }
+
+  .chat-progress {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.16s ease;
+  }
+
+  .chat-progress.active {
+    opacity: 1;
+  }
+
+  .chat-progress-bar {
+    display: block;
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent 0%, var(--blue-2) 28%, var(--blue) 70%, transparent 100%);
+    box-shadow: 0 0 18px rgba(45, 156, 255, 0.4);
+    transition: width 0.22s ease;
+  }
+
+  .chat-shell.collapsed {
+    height: 38px;
+  }
+
+  .chat-shell.expanded {
+    height: 300px;
+  }
+
+  .chat-header {
+    height: 38px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 14px;
+    border-bottom: 1px solid #17202b;
+    cursor: pointer;
+  }
+
+  .chat-header:hover {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .chat-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #dff1ff;
+  }
+
+  .chat-sub {
+    font-size: 11px;
+    color: var(--muted-2);
+  }
+
+  .chat-arrow {
+    margin-left: auto;
+    color: var(--muted-2);
+  }
+
+  .chat-body {
+    height: calc(100% - 41px);
+    display: grid;
+    grid-template-rows: 1fr auto;
+  }
+
+  .chat-messages {
+    overflow: auto;
+    overscroll-behavior: contain;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .msg {
+    display: grid;
+    gap: 5px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    width: fit-content;
+    max-width: min(760px, 100%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    align-self: flex-start;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .msg.assistant {
+    background: rgba(45, 156, 255, 0.08);
+  }
+
+  .msg.user {
+    align-self: flex-end;
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .msg strong {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--blue-2);
+  }
+
+  .msg.user strong {
+    color: var(--white);
+  }
+
+  .msg p {
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.6;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .chat-input {
+    padding: 12px 14px 14px;
+    display: flex;
+    gap: 10px;
+    border-top: 1px solid #17202b;
+  }
+
+  .chat-input input {
+    padding: 11px 12px;
+    border-radius: 12px;
+  }
+
+  .statusbar {
+    padding: 0 12px;
+    gap: 14px;
+    background: linear-gradient(180deg, #188ef3 0%, #0f7fe1 100%);
+    color: var(--white);
+    font-size: 11px;
+  }
+
+  .statusbar .right {
+    margin-left: auto;
+    display: flex;
+    gap: 14px;
+  }
+
+  .status-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 4, 7, 0.72);
+    display: none;
+    z-index: 50;
+  }
+
+  .overlay.show {
+    display: grid;
+  }
+
+  .palette-wrap {
+    align-items: start;
+    justify-items: center;
+    padding-top: 72px;
+  }
+
+  .palette {
+    width: min(720px, calc(100vw - 24px));
+    border-radius: 20px;
+    background: linear-gradient(180deg, rgba(16, 23, 34, 0.98), rgba(11, 17, 24, 0.98));
+    border: 1px solid rgba(119, 197, 255, 0.16);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .palette-input {
+    padding: 14px 16px;
+    border: 0;
+    border-bottom: 1px solid #17202b;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .palette-results {
+    max-height: 340px;
+    overflow: auto;
+    padding: 6px;
+  }
+
+  .palette-item {
+    display: grid;
+    grid-template-columns: 22px 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 11px 12px;
+    border-radius: 14px;
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  .palette-item:hover,
+  .palette-item.selected {
+    background: rgba(45, 156, 255, 0.12);
+  }
+
+  .palette-item small {
+    color: var(--muted-2);
+  }
+
+  .modal-wrap {
+    place-items: center;
+    padding: 18px;
+  }
+
+  .modal {
+    width: min(520px, 100%);
+    border-radius: 22px;
+    background: linear-gradient(180deg, rgba(16, 23, 34, 0.98), rgba(11, 17, 24, 0.98));
+    border: 1px solid rgba(119, 197, 255, 0.16);
+    box-shadow: var(--shadow);
+    padding: 22px;
+  }
+
+  .modal h3 {
+    font-size: 20px;
+    margin-bottom: 6px;
+  }
+
+  .modal p {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.5;
+    margin-bottom: 18px;
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .empty {
+    padding: 20px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px dashed rgba(119, 197, 255, 0.14);
+    color: var(--muted-2);
+    text-align: center;
+    font-size: 12px;
+  }
+
+  @media (max-width: 1100px) {
+    .shell {
+      grid-template-columns: 50px 240px minmax(0, 1fr);
+    }
+
+    .hero,
+    .project-header,
+    .grid-2 {
+      grid-template-columns: 1fr;
+    }
+
+    .welcome-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 820px) {
+    .shell {
+      grid-template-columns: 44px minmax(0, 1fr);
+    }
+
+    .sidebar {
+      display: none;
+    }
+
+    .app {
+      grid-template-rows: 32px 34px 1fr auto 28px;
+    }
+
+    .editor {
+      padding: 16px;
+    }
+
+    .welcome-card,
+    .modal {
+      padding: 18px;
+    }
+
+    .notes-add,
+    .task-add,
+    .modal-row,
+    .chat-input {
+      flex-direction: column;
+    }
+
+    .btn,
+    .btn-ghost {
+      width: 100%;
+    }
+  }
 </style>
 </head>
 <body>
-<div id="app">
+<div class="app">
+  <div class="titlebar">
+    <div class="traffic">
+      <span class="dot red"></span>
+      <span class="dot yellow"></span>
+      <span class="dot green"></span>
+    </div>
+    <div class="title">Creative an Invention</div>
+    <div class="title-note" id="title-note">VS Code Shell</div>
+  </div>
 
-  <!-- ===== HOME SCREEN ===== -->
-  <div class="screen active" id="screen-home">
-    <div class="topbar">
-      <div style="flex:1">
-        <div style="font-size:22px;font-weight:800;letter-spacing:-.3px">
-          💡 Inventions
+  <div class="topbar">
+    <div class="menu">
+      <button type="button" onclick="openNewProject()">Файл</button>
+      <button type="button" onclick="openPalette()">Проект</button>
+      <button type="button" onclick="toggleChat(true)">Лука AI</button>
+      <button type="button" onclick="showWelcome()">Вид</button>
+    </div>
+    <div class="workspace-pill">
+      <span>●</span>
+      <span>inventor.workspace</span>
+    </div>
+  </div>
+
+  <input id="browser-file-input" type="file" multiple style="display:none" onchange="handleSelectedFiles(event)">
+  <input id="browser-folder-input" type="file" webkitdirectory directory multiple style="display:none" onchange="handleSelectedFiles(event)">
+
+  <div class="shell">
+    <aside class="activitybar">
+      <button class="activity-btn active" id="activity-explorer" title="Explorer" onclick="setActivity('explorer')">⌘</button>
+      <button class="activity-btn" id="activity-search" title="Поиск" onclick="setActivity('search')">⌕</button>
+      <button class="activity-btn" id="activity-patent" title="Патент" onclick="setActivity('patent')">⌬</button>
+      <button class="activity-btn" id="activity-chat" title="Лука AI" onclick="toggleChat()">✦</button>
+      <div class="activity-spacer"></div>
+      <button class="activity-btn" title="Новый проект" onclick="openNewProject()">＋</button>
+    </aside>
+
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-kicker">Explorer</div>
+        <div class="sidebar-row">
+          <div class="sidebar-title">Проекты изобретений</div>
+          <button class="icon-btn" type="button" title="Сканировать workspace" onclick="scanWorkspaceProjects()">↻</button>
+          <button class="icon-btn" type="button" title="Открыть файлы" onclick="openFilePicker()">⤴</button>
+          <button class="icon-btn" type="button" title="Открыть папку" onclick="openFolderPicker()">▣</button>
+          <button class="icon-btn" type="button" title="Новый проект" onclick="openNewProject()">＋</button>
         </div>
-        <div class="subtitle" id="home-count">0 проектов</div>
+        <div class="sidebar-search">
+          <span>⌕</span>
+          <input id="project-search" type="text" placeholder="Фильтр проектов..." oninput="renderSidebar()">
+        </div>
       </div>
-      <button class="btn-icon" onclick="openAI()" title="AI помощник">🤖</button>
-    </div>
-    <div class="scroll" id="projects-list"></div>
-    <button class="fab" onclick="openNewProject()">+</button>
+      <div class="sidebar-body">
+        <div class="explorer-group">
+          <div class="group-label">Workspace</div>
+          <div id="project-list"></div>
+        </div>
+        <div class="sidebar-card">
+          <strong>Лука AI</strong>
+          <p>Снизу живёт локальный ассистент для идей, резюме проекта и следующих шагов без внешних API.</p>
+        </div>
+      </div>
+    </aside>
+
+    <main class="editor-shell">
+      <div class="tabs" id="tabs"></div>
+      <div class="breadcrumb" id="breadcrumb"></div>
+      <div class="editor" id="editor"></div>
+    </main>
   </div>
 
-  <!-- ===== PROJECT SCREEN ===== -->
-  <div class="screen" id="screen-project">
-    <div class="topbar">
-      <button class="btn-icon" onclick="goHome()">←</button>
-      <div style="flex:1">
-        <div id="proj-title" style="font-size:18px;font-weight:700"></div>
+  <section class="chat-shell collapsed" id="chat-shell">
+    <div class="chat-header" onclick="toggleChat()">
+      <div class="chat-title">ЛУКА AI</div>
+      <div class="chat-sub" id="chat-subtitle">Локальный ассистент по изобретениям</div>
+      <div class="chat-arrow" id="chat-arrow">▲</div>
+    </div>
+    <div class="chat-progress" id="chat-progress"><span class="chat-progress-bar" id="chat-progress-bar"></span></div>
+    <div class="chat-body">
+      <div class="chat-messages" id="chat-messages"></div>
+      <div class="chat-input">
+        <input id="chat-input" type="text" placeholder="Спроси про идею, роадмап, прототип или патент..." onkeydown="handleChatKey(event)">
+        <button class="btn" type="button" onclick="sendChat()">Отправить</button>
       </div>
-      <button class="btn-icon" onclick="openEditProject()">✏️</button>
-      <button class="btn-icon" onclick="deleteCurrentProject()">🗑</button>
     </div>
-    <div class="ctx-bar">
-      <div class="ctx-icon" id="proj-icon"></div>
-      <div class="ctx-name" id="proj-subtitle"></div>
-      <div class="ctx-status" id="proj-tag"></div>
-    </div>
-    <div class="tabs">
-      <button class="tab active" onclick="switchTab(this,'concept')">Концепт</button>
-      <button class="tab" onclick="switchTab(this,'notes')">Заметки</button>
-      <button class="tab" onclick="switchTab(this,'roadmap')">Роадмап</button>
-      <button class="tab" onclick="switchTab(this,'patent')">Патент</button>
-    </div>
-    <div class="scroll" id="proj-scroll">
-      <!-- CONCEPT -->
-      <div class="tab-content active" id="tab-concept"></div>
-      <!-- NOTES -->
-      <div class="tab-content" id="tab-notes"></div>
-      <!-- ROADMAP -->
-      <div class="tab-content" id="tab-roadmap"></div>
-      <!-- PATENT -->
-      <div class="tab-content" id="tab-patent"></div>
+  </section>
+
+  <div class="statusbar">
+    <div class="status-item">⚡ Creative an Invention</div>
+    <div class="status-item">📁 <span id="status-project-count">0</span> проектов</div>
+    <div class="status-item" id="status-active-wrap" style="display:none;">✦ <span id="status-active-name"></span></div>
+    <div class="right">
+      <div class="status-item">⌘K Команды</div>
+      <div class="status-item">🕒 <span id="status-time"></span></div>
     </div>
   </div>
-
-  <!-- ===== AI SCREEN ===== -->
-  <div class="screen" id="screen-ai">
-    <div class="topbar">
-      <button class="btn-icon" onclick="goHome()">←</button>
-      <div>
-        <div style="font-size:18px;font-weight:700">🤖 AI Помощник</div>
-        <div class="subtitle">Помогает с изобретениями</div>
-      </div>
-    </div>
-    <div class="ai-chat" id="ai-chat"></div>
-    <div style="padding:8px 16px calc(var(--safe-bot) + 12px); border-top:1px solid var(--border)">
-      <div style="display:flex;gap:10px">
-        <input id="ai-input" placeholder="Спроси что-нибудь..." style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 16px;color:var(--text);font-size:15px;font-family:inherit;outline:none;" onkeydown="if(event.key==='Enter')sendAI()" />
-        <button onclick="sendAI()" style="width:46px;height:46px;border-radius:12px;background:var(--accent);border:none;cursor:pointer;font-size:20px">↑</button>
-      </div>
-    </div>
-  </div>
-
 </div>
 
-<!-- ===== MODAL: New / Edit Project ===== -->
-<div class="modal-overlay" id="modal-project">
+<div class="overlay palette-wrap" id="palette-overlay" onclick="closePalette(event)">
+  <div class="palette">
+    <input class="palette-input" id="palette-input" type="text" placeholder="Введите команду..." oninput="renderPalette()" onkeydown="handlePaletteKey(event)">
+    <div class="palette-results" id="palette-results"></div>
+  </div>
+</div>
+
+<div class="overlay modal-wrap" id="modal-overlay" onclick="closeModal(event)">
   <div class="modal">
-    <div class="modal-handle"></div>
-    <h2 id="modal-title">Новый проект</h2>
+    <h3>Новый проект</h3>
+    <p>Создадим новое изобретение в стиле рабочей станции: карточка, заметки, роадмап и патентный блок появятся сразу.</p>
     <div class="field">
-      <label>Название</label>
-      <input id="f-name" placeholder="Как называется изобретение?" />
+      <label for="np-name">Название</label>
+      <input id="np-name" type="text" placeholder="Например: Smart Mirror for Makers" onkeydown="if(event.key==='Enter') createProject()">
     </div>
     <div class="field">
-      <label>Короткое описание</label>
-      <input id="f-desc" placeholder="Одним предложением..." />
+      <label for="np-desc">Краткое описание</label>
+      <textarea id="np-desc" placeholder="Что это делает?"></textarea>
     </div>
-    <div class="field">
-      <label>Иконка</label>
-      <div class="emoji-row" id="emoji-row">
-        💡🔧⚙️🚀🧪🔬🌱💎🎯🦾🤖🛸🔋🧲🪄🌀
+    <div class="modal-row">
+      <div class="field" style="flex:1;">
+        <label for="np-status">Статус</label>
+        <select id="np-status">
+          <option value="idea">Идея</option>
+          <option value="dev">Разработка</option>
+          <option value="test">Тестирование</option>
+          <option value="ready">Готово</option>
+          <option value="paused">Пауза</option>
+        </select>
+      </div>
+      <div class="field" style="flex:1;">
+        <label for="np-field">Категория</label>
+        <input id="np-field" type="text" placeholder="AI, hardware, materials...">
       </div>
     </div>
-    <div class="field">
-      <label>Статус</label>
-      <div class="status-row" id="status-row">
-        <button class="status-btn selected" data-s="idea">💡 Идея</button>
-        <button class="status-btn" data-s="proto">🔧 Прототип</button>
-        <button class="status-btn" data-s="patent">📋 Патент</button>
-        <button class="status-btn" data-s="done">✅ Готово</button>
-        <button class="status-btn" data-s="paused">⏸ Пауза</button>
-      </div>
-    </div>
-    <div class="field">
-      <label>Проблема которую решает</label>
-      <textarea id="f-problem" placeholder="Какую задачу решает изобретение?"></textarea>
-    </div>
-    <div class="field">
-      <label>Как устроено</label>
-      <textarea id="f-how" placeholder="Опиши механику или принцип работы..."></textarea>
-    </div>
-    <div style="display:flex;gap:10px;margin-top:8px">
-      <button class="btn btn-ghost" style="flex:1" onclick="closeModal()">Отмена</button>
-      <button class="btn btn-accent" style="flex:1" id="modal-save-btn" onclick="saveProject()">Создать</button>
+    <div class="modal-actions">
+      <button class="btn-ghost" type="button" onclick="closeModal()">Отмена</button>
+      <button class="btn" type="button" onclick="createProject()">Создать</button>
     </div>
   </div>
 </div>
 
 <script>
-// ===== DATA =====
-let projects = JSON.parse(localStorage.getItem('inventions_projects') || '[]');
-let currentProjectId = null;
-let editingProjectId = null;
-let selectedEmoji = '💡';
-let selectedStatus = 'idea';
-
-function save() {
-  localStorage.setItem('inventions_projects', JSON.stringify(projects));
-}
-
-function getProject(id) {
-  return projects.find(p => p.id === id);
-}
-
-// ===== STATUS HELPERS =====
-const STATUS = {
-  idea:   { tag: 'tag-idea',   label: '💡 Идея' },
-  proto:  { tag: 'tag-proto',  label: '🔧 Прототип' },
-  patent: { tag: 'tag-patent', label: '📋 Патент' },
-  done:   { tag: 'tag-done',   label: '✅ Готово' },
-  paused: { tag: 'tag-paused', label: '⏸ Пауза' },
-};
-const ICON_COLORS = {
-  '💡':'color-amber','🔧':'color-blue','⚙️':'color-blue','🚀':'color-purple',
-  '🧪':'color-green','🔬':'color-green','🌱':'color-green','💎':'color-purple',
-  '🎯':'color-red','🦾':'color-blue','🤖':'color-blue','🛸':'color-purple',
-  '🔋':'color-amber','🧲':'color-blue','🪄':'color-purple','🌀':'color-blue',
-};
-function iconColor(emoji) { return ICON_COLORS[emoji] || 'color-amber'; }
-
-// ===== HOME =====
-function renderHome() {
-  const list = document.getElementById('projects-list');
-  document.getElementById('home-count').textContent =
-    projects.length + ' ' + pluralize(projects.length, 'проект','проекта','проектов');
-
-  if (projects.length === 0) {
-    list.innerHTML = `<div class="empty">
-      <div class="emoji">🔭</div>
-      <h2>Пока пусто</h2>
-      <p>Нажми + чтобы добавить первое изобретение</p>
-    </div>`;
-    return;
-  }
-
-  list.innerHTML = projects.map(p => {
-    const st = STATUS[p.status] || STATUS.idea;
-    const done = (p.tasks || []).filter(t => t.done).length;
-    const total = (p.tasks || []).length;
-    const pct = total ? Math.round(done/total*100) : 0;
-    return `<div class="card" onclick="openProject('${p.id}')">
-      <div class="card-header">
-        <div class="card-icon ${iconColor(p.emoji)}">${p.emoji}</div>
-        <div style="flex:1">
-          <div class="card-title">${esc(p.name)}</div>
-          ${p.desc ? `<div class="card-desc">${esc(p.desc)}</div>` : ''}
-        </div>
-        <span class="tag ${st.tag}">${st.label}</span>
-      </div>
-      ${total ? `<div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
-        <div style="font-size:11px;color:var(--text2);margin-top:5px">${done}/${total} задач</div>` : ''}
-      <div class="card-footer">
-        <span class="card-meta">${(p.notes||[]).length} заметок</span>
-        <span class="card-meta">${formatDate(p.created)}</span>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-// ===== PROJECT =====
-function openProject(id) {
-  currentProjectId = id;
-  const p = getProject(id);
-  if (!p) return;
-
-  document.getElementById('proj-title').textContent = p.name;
-  document.getElementById('proj-icon').textContent = p.emoji;
-  document.getElementById('proj-subtitle').textContent = p.desc || '';
-  const st = STATUS[p.status] || STATUS.idea;
-  document.getElementById('proj-tag').innerHTML = `<span class="tag ${st.tag}">${st.label}</span>`;
-
-  // Reset tabs
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-  document.querySelector('.tab').classList.add('active');
-  document.getElementById('tab-concept').classList.add('active');
-
-  renderConcept(p);
-  renderNotes(p);
-  renderRoadmap(p);
-  renderPatent(p);
-
-  showScreen('screen-project');
-}
-
-function goHome() {
-  showScreen('screen-home');
-  renderHome();
-}
-
-// ===== TABS =====
-function switchTab(btn, name) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('tab-' + name).classList.add('active');
-  document.getElementById('proj-scroll').scrollTop = 0;
-}
-
-// ===== CONCEPT TAB =====
-function renderConcept(p) {
-  const el = document.getElementById('tab-concept');
-  el.innerHTML = `
-    <div class="patent-field">
-      <h3>Проблема</h3>
-      <textarea placeholder="Какую проблему решает..." onblur="saveField('${p.id}','problem',this.value)">${esc(p.problem||'')}</textarea>
-    </div>
-    <div class="patent-field">
-      <h3>Идея</h3>
-      <textarea placeholder="Суть изобретения..." onblur="saveField('${p.id}','idea',this.value)">${esc(p.idea||'')}</textarea>
-    </div>
-    <div class="patent-field">
-      <h3>Как устроено</h3>
-      <textarea placeholder="Механика, принцип работы..." onblur="saveField('${p.id}','how',this.value)">${esc(p.how||'')}</textarea>
-    </div>
-    <div class="patent-field">
-      <h3>Уникальность</h3>
-      <textarea placeholder="Чем отличается от аналогов..." onblur="saveField('${p.id}','unique',this.value)">${esc(p.unique||'')}</textarea>
-    </div>
-    <div class="patent-field">
-      <h3>Аналоги</h3>
-      <textarea placeholder="Похожие продукты или решения..." onblur="saveField('${p.id}','analogs',this.value)">${esc(p.analogs||'')}</textarea>
-    </div>
-    <div class="patent-field">
-      <h3>Аудитория</h3>
-      <textarea placeholder="Для кого это изобретение..." onblur="saveField('${p.id}','audience',this.value)">${esc(p.audience||'')}</textarea>
-    </div>
-  `;
-}
-
-function saveField(id, field, value) {
-  const p = getProject(id);
-  if (p) { p[field] = value; save(); }
-}
-
-// ===== NOTES TAB =====
-function renderNotes(p) {
-  const el = document.getElementById('tab-notes');
-  const notes = p.notes || [];
-  const notesHTML = notes.length
-    ? notes.slice().reverse().map((n,ri) => {
-        const i = notes.length - 1 - ri;
-        return `<div class="note">
-          <div class="note-text">${esc(n.text)}</div>
-          <div class="note-footer">
-            <span class="note-time">${formatDateTime(n.created)}</span>
-            <span style="cursor:pointer;color:var(--text2);font-size:14px" onclick="deleteNote('${p.id}',${i})">✕</span>
-          </div>
-        </div>`;
-      }).join('')
-    : `<div class="empty" style="padding:40px 20px">
-        <div class="emoji">📝</div>
-        <p>Заметок пока нет</p>
-      </div>`;
-
-  el.innerHTML = `
-    <div>${notesHTML}</div>
-    <div class="quick-input">
-      <input id="note-input-${p.id}" placeholder="Новая заметка..." onkeydown="if(event.key==='Enter')addNote('${p.id}')" />
-      <button onclick="addNote('${p.id}')">↑</button>
-    </div>
-  `;
-}
-
-function addNote(id) {
-  const input = document.getElementById('note-input-' + id);
-  const text = input.value.trim();
-  if (!text) return;
-  const p = getProject(id);
-  if (!p.notes) p.notes = [];
-  p.notes.push({ text, created: Date.now() });
-  save();
-  input.value = '';
-  renderNotes(p);
-}
-
-function deleteNote(id, idx) {
-  const p = getProject(id);
-  p.notes.splice(idx, 1);
-  save();
-  renderNotes(p);
-}
-
-// ===== ROADMAP TAB =====
-function renderRoadmap(p) {
-  const el = document.getElementById('tab-roadmap');
-  const tasks = p.tasks || [];
-  const active = tasks.filter(t => !t.done);
-  const done = tasks.filter(t => t.done);
-
-  const taskHTML = (list, offset) => list.map((t, i) => {
-    const realIdx = tasks.indexOf(t);
-    return `<div class="task">
-      <div class="task-check ${t.done?'done':''}" onclick="toggleTask('${p.id}',${realIdx})">
-        ${t.done ? '✓' : ''}
-      </div>
-      <div class="task-text ${t.done?'done':''}">${esc(t.text)}</div>
-      <div class="task-del" onclick="deleteTask('${p.id}',${realIdx})">✕</div>
-    </div>`;
-  }).join('');
-
-  el.innerHTML = `
-    ${active.length ? `<div class="section-label">В работе (${active.length})</div>${taskHTML(active)}` : ''}
-    ${done.length ? `<div class="section-label">Готово (${done.length})</div>${taskHTML(done)}` : ''}
-    ${!tasks.length ? `<div class="empty" style="padding:40px 20px"><div class="emoji">📋</div><p>Задач пока нет</p></div>` : ''}
-    <div class="quick-input">
-      <input id="task-input-${p.id}" placeholder="Новая задача..." onkeydown="if(event.key==='Enter')addTask('${p.id}')" />
-      <button onclick="addTask('${p.id}')">↑</button>
-    </div>
-  `;
-}
-
-function addTask(id) {
-  const input = document.getElementById('task-input-' + id);
-  const text = input.value.trim();
-  if (!text) return;
-  const p = getProject(id);
-  if (!p.tasks) p.tasks = [];
-  p.tasks.push({ text, done: false });
-  save(); input.value = '';
-  renderRoadmap(p);
-}
-
-function toggleTask(id, idx) {
-  const p = getProject(id);
-  p.tasks[idx].done = !p.tasks[idx].done;
-  save(); renderRoadmap(p);
-}
-
-function deleteTask(id, idx) {
-  const p = getProject(id);
-  p.tasks.splice(idx, 1);
-  save(); renderRoadmap(p);
-}
-
-// ===== PATENT TAB =====
-function renderPatent(p) {
-  const el = document.getElementById('tab-patent');
-  el.innerHTML = `
-    <div class="patent-field">
-      <h3>Реферат</h3>
-      <textarea placeholder="Краткое описание изобретения для патента..." onblur="saveField('${p.id}','pat_abstract',this.value)">${esc(p.pat_abstract||'')}</textarea>
-    </div>
-    <div class="patent-field">
-      <h3>Формула изобретения</h3>
-      <textarea placeholder="Независимый пункт формулы..." onblur="saveField('${p.id}','pat_claim',this.value)" style="min-height:100px">${esc(p.pat_claim||'')}</textarea>
-    </div>
-    <div class="patent-field">
-      <h3>Описание</h3>
-      <textarea placeholder="Подробное описание для патентного ведомства..." onblur="saveField('${p.id}','pat_desc',this.value)" style="min-height:120px">${esc(p.pat_desc||'')}</textarea>
-    </div>
-    <div class="patent-field">
-      <h3>Классы МПК</h3>
-      <p style="color:var(--text2);font-size:13px;margin-bottom:10px">Международная патентная классификация:</p>
-      <div style="margin-bottom:10px">
-        <span class="ipc-tag" onclick="addIPC('${p.id}','A63H 33/00')">A63H 33/00</span>
-        <span class="ipc-tag" onclick="addIPC('${p.id}','A63H 3/00')">A63H 3/00</span>
-        <span class="ipc-tag" onclick="addIPC('${p.id}','G06F 3/00')">G06F 3/00</span>
-        <span class="ipc-tag" onclick="addIPC('${p.id}','H04L 67/00')">H04L 67/00</span>
-      </div>
-      <div id="ipc-list-${p.id}" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">
-        ${(p.ipc||[]).map((c,i) => `<span style="display:inline-flex;align-items:center;gap:6px;padding:5px 10px;background:rgba(139,92,246,.15);color:var(--accent3);border-radius:7px;font-size:12px;font-weight:600">${esc(c)} <span onclick="removeIPC('${p.id}',${i})" style="cursor:pointer;opacity:.6">✕</span></span>`).join('')}
-      </div>
-      <input placeholder="Добавить класс МПК..." style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--text);font-size:14px;font-family:inherit;outline:none" onkeydown="if(event.key==='Enter'){addIPC('${p.id}',this.value);this.value=''}" />
-    </div>
-    <div class="patent-field">
-      <h3>Статус</h3>
-      <div style="display:flex;flex-direction:column;gap:8px">
-        ${['Патентный поиск','Подготовка заявки','Подача заявки','Экспертиза','Выдача патента'].map((s,i) =>
-          `<label style="display:flex;align-items:center;gap:10px;cursor:pointer">
-            <input type="checkbox" ${(p.pat_steps||[])[i] ? 'checked' : ''} onchange="togglePatStep('${p.id}',${i},this.checked)" style="width:18px;height:18px;accent-color:var(--accent)" />
-            <span style="font-size:15px">${s}</span>
-          </label>`
-        ).join('')}
-      </div>
-    </div>
-  `;
-}
-
-function addIPC(id, code) {
-  const p = getProject(id);
-  if (!p.ipc) p.ipc = [];
-  if (code && !p.ipc.includes(code)) { p.ipc.push(code); save(); renderPatent(p); }
-}
-
-function removeIPC(id, idx) {
-  const p = getProject(id);
-  p.ipc.splice(idx, 1);
-  save(); renderPatent(p);
-}
-
-function togglePatStep(id, idx, val) {
-  const p = getProject(id);
-  if (!p.pat_steps) p.pat_steps = [false,false,false,false,false];
-  p.pat_steps[idx] = val;
-  save();
-}
-
-// ===== NEW / EDIT PROJECT MODAL =====
-function openNewProject() {
-  editingProjectId = null;
-  selectedEmoji = '💡';
-  selectedStatus = 'idea';
-  document.getElementById('modal-title').textContent = 'Новый проект';
-  document.getElementById('modal-save-btn').textContent = 'Создать';
-  document.getElementById('f-name').value = '';
-  document.getElementById('f-desc').value = '';
-  document.getElementById('f-problem').value = '';
-  document.getElementById('f-how').value = '';
-  buildEmojiRow();
-  buildStatusRow();
-  openModal('modal-project');
-}
-
-function openEditProject() {
-  const p = getProject(currentProjectId);
-  if (!p) return;
-  editingProjectId = p.id;
-  selectedEmoji = p.emoji;
-  selectedStatus = p.status;
-  document.getElementById('modal-title').textContent = 'Редактировать';
-  document.getElementById('modal-save-btn').textContent = 'Сохранить';
-  document.getElementById('f-name').value = p.name;
-  document.getElementById('f-desc').value = p.desc || '';
-  document.getElementById('f-problem').value = p.problem || '';
-  document.getElementById('f-how').value = p.how || '';
-  buildEmojiRow();
-  buildStatusRow();
-  openModal('modal-project');
-}
-
-function buildEmojiRow() {
-  const emojis = ['💡','🔧','⚙️','🚀','🧪','🔬','🌱','💎','🎯','🦾','🤖','🛸','🔋','🧲','🪄','🌀'];
-  document.getElementById('emoji-row').innerHTML = emojis.map(e =>
-    `<button class="emoji-btn ${e===selectedEmoji?'selected':''}" onclick="selectEmoji('${e}',this)">${e}</button>`
-  ).join('');
-}
-
-function buildStatusRow() {
-  document.querySelectorAll('#status-row .status-btn').forEach(b => {
-    b.classList.toggle('selected', b.dataset.s === selectedStatus);
-  });
-}
-
-function selectEmoji(e, btn) {
-  selectedEmoji = e;
-  document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-}
-
-document.querySelectorAll('#status-row .status-btn').forEach(b => {
-  b.onclick = function() {
-    selectedStatus = this.dataset.s;
-    document.querySelectorAll('#status-row .status-btn').forEach(x => x.classList.remove('selected'));
-    this.classList.add('selected');
+  const STORAGE_KEY = "creative_invention_projects_v2";
+  const CHAT_STORAGE_KEY = "creative_invention_luka_chat_v1";
+  const STATUS = {
+    idea: { label: "Идея", emoji: "◌", cls: "status-idea" },
+    dev: { label: "Разработка", emoji: "◔", cls: "status-dev" },
+    test: { label: "Тест", emoji: "◑", cls: "status-test" },
+    ready: { label: "Готово", emoji: "●", cls: "status-ready" },
+    paused: { label: "Пауза", emoji: "◍", cls: "status-paused" }
   };
-});
+  const TABS = {
+    concept: "Концепт",
+    notes: "Заметки",
+    roadmap: "Роадмап",
+    patent: "Патент",
+    docs: "Документы",
+    code: "Код",
+    terminal: "Терминал"
+  };
 
-function saveProject() {
-  const name = document.getElementById('f-name').value.trim();
-  if (!name) { document.getElementById('f-name').focus(); return; }
-  if (editingProjectId) {
-    const p = getProject(editingProjectId);
-    p.name = name;
-    p.desc = document.getElementById('f-desc').value.trim();
-    p.emoji = selectedEmoji;
-    p.status = selectedStatus;
-    p.problem = document.getElementById('f-problem').value.trim();
-    p.how = document.getElementById('f-how').value.trim();
-    save();
-    closeModal();
-    openProject(editingProjectId);
-  } else {
-    const p = {
-      id: 'p' + Date.now(),
-      name,
-      desc: document.getElementById('f-desc').value.trim(),
-      emoji: selectedEmoji,
-      status: selectedStatus,
-      problem: document.getElementById('f-problem').value.trim(),
-      how: document.getElementById('f-how').value.trim(),
-      created: Date.now(),
-      notes: [], tasks: [], ipc: [],
-    };
-    projects.unshift(p);
-    save();
-    closeModal();
-    openProject(p.id);
+  let projects = loadProjects();
+  let activeProjectId = projects[0] ? projects[0].id : null;
+  let activeTab = "concept";
+  let chatOpen = false;
+  let paletteIndex = 0;
+  let chatBusy = false;
+  let lukaContext = {
+    lastIntent: null
+  };
+  let chatHistory = loadChatHistory();
+  let workspacePath = ".";
+  let workspaceEntries = [];
+  let workspaceSelectedPath = "";
+  let workspaceFileContent = "";
+  let workspaceFileDirty = false;
+  let workspaceBusy = false;
+  let terminalCommand = "pwd";
+  let terminalOutput = "";
+  let terminalBusy = false;
+  const LIVE_FILE_PROJECTS = new Set(["Звезда Луки"]);
+
+  function makeId(prefix = "id") {
+    return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2, 10)}`;
   }
-}
 
-function deleteCurrentProject() {
-  const p = getProject(currentProjectId);
-  if (!p) return;
-  if (!confirm(`Удалить "${p.name}"?`)) return;
-  projects = projects.filter(x => x.id !== currentProjectId);
-  save();
-  goHome();
-}
+  function normalizeProjects(list) {
+    if (!Array.isArray(list)) return [];
+    const seen = new Set();
+    return list.map((project, index) => {
+      const next = project && typeof project === "object" ? { ...project } : createProjectModel(`Проект ${index + 1}`, "", "idea", "");
+      if (!next.id || seen.has(next.id)) {
+        next.id = makeId("project");
+      }
+      seen.add(next.id);
+      if (!next.source) next.source = "local";
+      next.liveFromFiles = Boolean(next.liveFromFiles);
+      if (!next.concept) {
+        next.concept = { problem: "", idea: "", howItWorks: "", uniqueness: "", analogs: "", audience: "" };
+      }
+      if (!Array.isArray(next.notes)) next.notes = [];
+      if (!Array.isArray(next.tasks)) next.tasks = [];
+      if (!next.patent) {
+        next.patent = {
+          abstract: "",
+          claims: "",
+          description: "",
+          ipcClasses: "",
+          steps: [
+            { name: "Определить новизну и область применения", done: false },
+            { name: "Собрать аналоги и патентные классы", done: false },
+            { name: "Сформулировать независимый пункт", done: false },
+            { name: "Подготовить описание и схемы", done: false },
+            { name: "Подать заявку", done: false }
+          ]
+        };
+      }
+      return next;
+    });
+  }
 
-// ===== AI =====
-const AI_PROMPTS = [
-  'Как улучшить это изобретение?',
-  'Найди аналоги на рынке',
-  'Помоги написать патентный реферат',
-  'Какие классы МПК подойдут?',
-  'Как монетизировать эту идею?',
-];
+  function loadProjects() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return normalizeProjects(parsed);
+    } catch (error) {
+      return [];
+    }
+  }
 
-function openAI() {
-  const chat = document.getElementById('ai-chat');
-  if (!chat.innerHTML) {
-    chat.innerHTML = `
-      <div class="ai-bubble bot">
-        Привет! Я помогаю с изобретениями. Могу помочь:<br><br>
-        ${AI_PROMPTS.map(p => `• ${p}`).join('<br>')}
-        <br><br>Спрашивай!
+  function saveProjects() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+  }
+
+  function repairProjectsIfNeeded() {
+    const normalized = normalizeProjects(projects);
+    const workspaceProjectMap = new Map([
+      ["creative an invention", "Creative an invention.swiftpm"],
+      ["lit gpt", "LIT gpt"],
+      ["vocabulary race", "Vocabulary Race.swiftpm"],
+      ["звезда луки", "Звезда Луки"],
+      ["механика ниндзя", "Механика Ниндзя"],
+      ["пружинная гравитация луки", "Пружинная гравитация Луки"],
+      ["рыцари и замки", "Рыцари и Замки.swiftpm"]
+    ]);
+
+    normalized.forEach((project) => {
+      const name = String(project.name || "").trim().toLowerCase();
+      if (workspaceProjectMap.has(name)) {
+        project.source = "workspace";
+        if (!project.workspacePath) {
+          project.workspacePath = workspaceProjectMap.get(name);
+        }
+        if (LIVE_FILE_PROJECTS.has(project.name)) {
+          project.liveFromFiles = true;
+        }
+      } else if (!project.source) {
+        project.source = "local";
+      }
+    });
+
+    const changed =
+      JSON.stringify(normalized.map((item) => `${item.id}:${item.source}`)) !==
+      JSON.stringify(projects.map((item) => `${item.id}:${item.source || "local"}`));
+    if (changed) {
+      projects = normalized;
+      if (!getProject(activeProjectId)) {
+        activeProjectId = projects[0]?.id || null;
+      }
+      saveProjects();
+    }
+  }
+
+  async function syncWorkspaceProjects(showAlert = false) {
+    try {
+      const data = await apiJson("/api/bootstrap-projects");
+      const byName = new Map(projects.map((project) => [String(project.name || "").trim().toLowerCase(), project]));
+      let addedCount = 0;
+
+      for (const item of (data.projects || [])) {
+        const key = String(item.name || "").trim().toLowerCase();
+        let project = byName.get(key);
+
+        if (!project) {
+          project = createProjectModel(item.name, item.desc || "", item.status || "idea", item.field || "Проект");
+          projects.push(project);
+          byName.set(key, project);
+          addedCount += 1;
+        }
+
+        project.source = "workspace";
+        project.workspacePath = item.path || project.workspacePath || "";
+        project.liveFromFiles = LIVE_FILE_PROJECTS.has(item.name);
+        project.desc = item.desc || project.desc;
+        project.field = item.field || project.field;
+        project.status = item.status || project.status;
+
+        try {
+          const details = await apiJson(`/api/project-data?path=${encodeURIComponent(project.workspacePath)}`);
+          project.desc = details.desc || project.desc;
+          project.field = details.field || project.field;
+          project.status = details.status || project.status;
+          project.concept = { ...project.concept, ...(details.concept || {}) };
+          project.patent = {
+            ...project.patent,
+            ...(details.patent || {}),
+            steps: Array.isArray(details.patent?.steps) && details.patent.steps.length
+              ? details.patent.steps.map((step) => ({ name: step.name, done: Boolean(step.done) }))
+              : project.patent.steps
+          };
+          project.tasks = Array.isArray(details.tasks)
+            ? details.tasks.map((task) => ({
+                id: task.id || makeId("task"),
+                text: task.text,
+                done: Boolean(task.done)
+              }))
+            : project.tasks;
+          project.notes = Array.isArray(details.notes)
+            ? details.notes.map((note) => ({
+                id: note.id || makeId("note"),
+                text: note.text,
+                at: note.at || new Date().toISOString()
+              }))
+            : project.notes;
+        } catch (error) {
+          console.error("syncWorkspaceProjects project-data failed", error);
+        }
+      }
+
+      projects = normalizeProjects(projects);
+      activeProjectId = activeProjectId || projects[0]?.id || null;
+      saveProjects();
+      rerender();
+
+      if (showAlert) {
+        window.alert(addedCount ? `Добавлено проектов: ${addedCount}` : "Workspace синхронизирован.");
+      }
+    } catch (error) {
+      if (showAlert) {
+        window.alert(`Не удалось синхронизировать workspace: ${error.message}`);
+      } else {
+        console.error("syncWorkspaceProjects failed", error);
+      }
+    }
+  }
+
+  async function bootstrapProjectsIfNeeded() {
+    await syncWorkspaceProjects(false);
+  }
+
+  async function scanWorkspaceProjects() {
+    await syncWorkspaceProjects(true);
+  }
+
+  function loadChatHistory() {
+    try {
+      const raw = localStorage.getItem(CHAT_STORAGE_KEY);
+      const parsed = raw ? JSON.parse(raw) : {};
+      return parsed && typeof parsed === "object" ? parsed : {};
+    } catch (error) {
+      return {};
+    }
+  }
+
+  function saveChatHistory() {
+    localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(chatHistory));
+  }
+
+  function createProjectModel(name, desc, status, field) {
+    return {
+      id: makeId("project"),
+      source: "local",
+      name: name,
+      desc: desc,
+      status: status,
+      field: field,
+      createdAt: new Date().toISOString(),
+      concept: {
+        problem: "",
+        idea: "",
+        howItWorks: "",
+        uniqueness: "",
+        analogs: "",
+        audience: ""
+      },
+      notes: [],
+      tasks: [],
+      patent: {
+        abstract: "",
+        claims: "",
+        description: "",
+        ipcClasses: "",
+        steps: [
+          { name: "Определить новизну и область применения", done: false },
+          { name: "Собрать аналоги и патентные классы", done: false },
+          { name: "Сформулировать независимый пункт", done: false },
+          { name: "Подготовить описание и схемы", done: false },
+          { name: "Подать заявку", done: false }
+        ]
+      }
+    };
+  }
+
+  function getProject(id) {
+    return projects.find((project) => project.id === id) || null;
+  }
+
+  function projectSource(project) {
+    return project?.source === "workspace" ? "workspace" : "local";
+  }
+
+  function esc(value) {
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function attr(value) {
+    return esc(value).replace(/'/g, "&#39;");
+  }
+
+  function formatDate(value) {
+    if (!value) return "—";
+    return new Date(value).toLocaleDateString("ru-RU", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric"
+    });
+  }
+
+  function statusBadge(status) {
+    const item = STATUS[status] || STATUS.idea;
+    return `<span class="status-chip ${item.cls}">${item.emoji} ${item.label}</span>`;
+  }
+
+  function filteredProjects() {
+    const query = document.getElementById("project-search")?.value?.trim().toLowerCase() || "";
+    if (!query) return projects;
+    return projects.filter((project) => {
+      const haystack = [project.name, project.desc, project.field, STATUS[project.status]?.label || ""]
+        .join(" ")
+        .toLowerCase();
+      return haystack.includes(query);
+    });
+  }
+
+  function isDocPath(filePath) {
+    return /\.(md|txt|rtf|json|yaml|yml)$/i.test(filePath || "");
+  }
+
+  function isCodePath(filePath) {
+    return /\.(js|ts|tsx|jsx|html|css|swift|py|sh|json)$/i.test(filePath || "");
+  }
+
+  function workspaceFileName(filePath) {
+    const clean = String(filePath || "").replace(/\\/g, "/");
+    return clean.split("/").pop() || clean;
+  }
+
+  function detectRunCommand(filePath) {
+    const clean = String(filePath || "").toLowerCase();
+    if (clean.endsWith(".js")) return `node "${filePath}"`;
+    if (clean.endsWith(".py")) return `python3 "${filePath}"`;
+    if (clean.endsWith(".sh")) return `bash "${filePath}"`;
+    return "";
+  }
+
+  function canPreviewHtml(filePath) {
+    return /\.html?$/i.test(filePath || "");
+  }
+
+  async function apiJson(url, options) {
+    const response = await fetch(url, {
+      cache: "no-store",
+      ...options
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(data.error || "request failed");
+    }
+    return data;
+  }
+
+  async function loadWorkspaceList(nextPath) {
+    workspaceBusy = true;
+    try {
+      const data = await apiJson(`/api/workspace/list?path=${encodeURIComponent(nextPath || workspacePath || ".")}`);
+      workspacePath = data.path || ".";
+      workspaceEntries = Array.isArray(data.entries) ? data.entries : [];
+    } finally {
+      workspaceBusy = false;
+    }
+  }
+
+  async function openWorkspaceDir(nextPath) {
+    await loadWorkspaceList(nextPath);
+    rerender();
+  }
+
+  async function openWorkspaceFile(nextPath, preferredTab) {
+    workspaceBusy = true;
+    try {
+      const data = await apiJson(`/api/workspace/file?path=${encodeURIComponent(nextPath)}`);
+      workspaceSelectedPath = data.path || nextPath;
+      workspaceFileContent = data.content || "";
+      workspaceFileDirty = false;
+      if (preferredTab) activeTab = preferredTab;
+    } finally {
+      workspaceBusy = false;
+    }
+    rerender();
+  }
+
+  async function ensureWorkspaceLoaded() {
+    if (!workspaceEntries.length) {
+      await loadWorkspaceList(workspacePath);
+    }
+  }
+
+  async function saveWorkspaceFile() {
+    if (!workspaceSelectedPath) return;
+    workspaceBusy = true;
+    try {
+      await apiJson("/api/workspace/file", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          path: workspaceSelectedPath,
+          content: workspaceFileContent
+        })
+      });
+      workspaceFileDirty = false;
+      await loadWorkspaceList(pathForParent(workspaceSelectedPath));
+    } catch (error) {
+      window.alert(`Не удалось сохранить файл: ${error.message}`);
+    } finally {
+      workspaceBusy = false;
+    }
+    rerender();
+  }
+
+  function pathForParent(filePath) {
+    const clean = String(filePath || ".").replace(/\\/g, "/");
+    const parts = clean.split("/");
+    parts.pop();
+    return parts.join("/") || ".";
+  }
+
+  async function runWorkspaceCommand() {
+    if (terminalBusy) return;
+    const input = document.getElementById("terminal-command");
+    const command = (input ? input.value : terminalCommand).trim();
+    if (!command) return;
+    terminalCommand = command;
+    terminalBusy = true;
+    terminalOutput = "Запускаю...";
+    rerender();
+    try {
+      const data = await apiJson("/api/workspace/run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          command,
+          cwd: workspacePath || "."
+        })
+      });
+      terminalOutput = [
+        `$ ${data.command}`,
+        data.stdout || "",
+        data.stderr ? `\n[stderr]\n${data.stderr}` : "",
+        `\n[exit code ${data.code}]`
+      ].join("").trim();
+    } catch (error) {
+      terminalOutput = `Ошибка запуска:\n${error.message}`;
+    } finally {
+      terminalBusy = false;
+      rerender();
+    }
+  }
+
+  async function runSelectedWorkspaceFile() {
+    if (!workspaceSelectedPath) return;
+    if (canPreviewHtml(workspaceSelectedPath)) {
+      const url = `/api/workspace/raw?path=${encodeURIComponent(workspaceSelectedPath)}`;
+      window.open(url, "_blank", "noopener");
+      return;
+    }
+    const command = detectRunCommand(workspaceSelectedPath);
+    if (!command) {
+      window.alert("Для этого типа файла быстрый запуск пока не настроен.");
+      return;
+    }
+    terminalCommand = command;
+    activeTab = "terminal";
+    rerender();
+    await runWorkspaceCommand();
+  }
+
+  async function handleSelectedFiles(event) {
+    const selected = Array.from(event.target.files || []);
+    if (!selected.length) return;
+
+    const loaded = await Promise.all(selected.map(async (file, index) => {
+      let content = "";
+      try {
+        content = await file.text();
+      } catch (error) {
+        content = "";
+      }
+      return {
+        id: `${Date.now()}-${index}-${file.name}`,
+        name: file.name,
+        size: file.size,
+        type: file.type || "text/plain",
+        relativePath: file.webkitRelativePath || file.name,
+        content: content
+      };
+    }));
+
+    const imported = loaded.map(importFileAsProject);
+    projects = normalizeProjects([...projects, ...imported]);
+    saveProjects();
+    activeProjectId = imported[0] ? imported[0].id : activeProjectId;
+    activeTab = "concept";
+    rerender();
+    event.target.value = "";
+  }
+
+  function openFilePicker() {
+    document.getElementById("browser-file-input").click();
+  }
+
+  function openFolderPicker() {
+    document.getElementById("browser-folder-input").click();
+  }
+
+  function importFileAsProject(file) {
+    const baseName = workspaceFileName(file.relativePath || file.name).replace(/\.[^.]+$/, "") || file.name;
+    const lines = String(file.content || "").split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+    const firstLine = lines[0] || "";
+    const description = shortText(firstLine.replace(/^#\s*/, ""), 180) || `Импортировано из файла ${file.name}`;
+    const bodyPreview = shortText(String(file.content || "").trim(), 1800);
+    const project = createProjectModel(baseName, description, "idea", "Imported file");
+    project.notes.push({
+      id: String(Date.now()) + Math.random().toString(16).slice(2, 8),
+      text: `Импортировано из файла: ${file.relativePath || file.name}`,
+      at: new Date().toISOString()
+    });
+    if (bodyPreview) {
+      project.notes.push({
+        id: String(Date.now()) + Math.random().toString(16).slice(2, 8),
+        text: bodyPreview,
+        at: new Date().toISOString()
+      });
+    }
+    if (firstLine) {
+      project.concept.idea = description;
+    }
+    if (lines[1]) {
+      project.concept.problem = shortText(lines[1], 220);
+    }
+    if (lines[2]) {
+      project.concept.howItWorks = shortText(lines.slice(2, 5).join(" "), 260);
+    }
+    project.source = "local";
+    return project;
+  }
+
+  function renderSidebar() {
+    const list = document.getElementById("project-list");
+    const visibleProjects = filteredProjects();
+    const activeProject = getProject(activeProjectId);
+    document.getElementById("status-project-count").textContent = String(projects.length);
+
+    const localProjects = visibleProjects.filter((project) => projectSource(project) === "local");
+    const workspaceProjects = visibleProjects.filter((project) => projectSource(project) === "workspace");
+
+    const projectItemHtml = (project) => `
+          <button class="project-item ${project.id === activeProjectId ? "active" : ""}" type="button" onclick="openProject('${project.id}')">
+            <span>⌘</span>
+            <span class="project-name">
+              <strong>${esc(project.name)}</strong>
+              <small>${esc(projectSource(project) === "workspace" ? (project.workspacePath || project.field || project.desc || "На диске") : (project.field || project.desc || "Локальный проект"))}</small>
+            </span>
+            ${statusBadge(project.status)}
+          </button>
+        `;
+
+    const localProjectsHtml = localProjects.length
+      ? localProjects.map(projectItemHtml).join("")
+      : `<div class="empty">Локальных проектов нет.</div>`;
+
+    const workspaceProjectsHtml = workspaceProjects.length
+      ? workspaceProjects.map(projectItemHtml).join("")
+      : `<div class="empty">На диске проекты не найдены.</div>`;
+
+    const sectionNavHtml = activeProject
+      ? `
+        <div class="explorer-group">
+          <div class="group-label">Текущий проект</div>
+          <button class="nav-item ${activeTab === "concept" ? "active" : ""}" type="button" onclick="switchTab('concept')">
+            <span>◫</span>
+            <span>Концепт</span>
+            <small>основа</small>
+          </button>
+          <button class="nav-item ${activeTab === "notes" ? "active" : ""}" type="button" onclick="switchTab('notes')">
+            <span>📝</span>
+            <span>Заметки</span>
+            <small>${activeProject.notes.length}</small>
+          </button>
+          <button class="nav-item ${activeTab === "roadmap" ? "active" : ""}" type="button" onclick="switchTab('roadmap')">
+            <span>✓</span>
+            <span>Роадмап</span>
+            <small>${activeProject.tasks.filter((task) => !task.done).length} open</small>
+          </button>
+          <button class="nav-item ${activeTab === "patent" ? "active" : ""}" type="button" onclick="switchTab('patent')">
+            <span>⌬</span>
+            <span>Патент</span>
+            <small>${activeProject.patent.steps.filter((step) => step.done).length}/${activeProject.patent.steps.length}</small>
+          </button>
+          <button class="nav-item ${activeTab === "docs" ? "active" : ""}" type="button" onclick="switchTab('docs')">
+            <span>📄</span>
+            <span>Документы</span>
+            <small>workspace</small>
+          </button>
+          <button class="nav-item ${activeTab === "code" ? "active" : ""}" type="button" onclick="switchTab('code')">
+            <span>⌘</span>
+            <span>Код</span>
+            <small>workspace</small>
+          </button>
+          <button class="nav-item ${activeTab === "terminal" ? "active" : ""}" type="button" onclick="switchTab('terminal')">
+            <span>▸</span>
+            <span>Терминал</span>
+            <small>run</small>
+          </button>
+        </div>
+        <div class="explorer-group">
+          <div class="group-label">Быстро</div>
+          <div class="quick-stats">
+            <div class="quick-stat">
+              <strong>${esc(activeProject.field || "Без категории")}</strong>
+              <span>Категория проекта</span>
+            </div>
+            <div class="quick-stat">
+              <strong>${STATUS[activeProject.status]?.label || "Идея"}</strong>
+              <span>Текущий статус</span>
+            </div>
+          </div>
+        </div>
+        <div class="explorer-group">
+          <div class="group-label">Workspace</div>
+          <div class="workspace-mini-path">${esc(workspacePath || ".")}</div>
+          <div class="workspace-mini-tree">
+            <button class="nav-item ${activeTab === "docs" ? "active" : ""}" type="button" onclick="switchTab('docs')">
+              <span>📄</span>
+              <span>Документы</span>
+              <small>${workspaceEntries.filter((entry) => entry.type === "file" && isDocPath(entry.path)).length}</small>
+            </button>
+            <button class="nav-item ${activeTab === "code" ? "active" : ""}" type="button" onclick="switchTab('code')">
+              <span>⌘</span>
+              <span>Код</span>
+              <small>${workspaceEntries.filter((entry) => entry.type === "file" && isCodePath(entry.path)).length}</small>
+            </button>
+            <button class="nav-item ${activeTab === "terminal" ? "active" : ""}" type="button" onclick="switchTab('terminal')">
+              <span>▸</span>
+              <span>Терминал</span>
+              <small>run</small>
+            </button>
+            ${workspaceEntries.slice(0, 8).map((entry) => `
+              <button class="file-item ${entry.path === workspaceSelectedPath ? "active" : ""}" type="button" onclick="${entry.type === "dir" ? `openWorkspaceDir('${attr(entry.path)}')` : `openWorkspaceFile('${attr(entry.path)}', '${isDocPath(entry.path) ? "docs" : "code"}')`}">
+                <span>${entry.type === "dir" ? "▸" : (isDocPath(entry.path) ? "📄" : "⌘")}</span>
+                <span class="file-item-name">${esc(entry.name)}</span>
+                <span class="file-meta">${entry.type}</span>
+              </button>
+            `).join("")}
+          </div>
+        </div>
+      `
+      : `
+        <div class="explorer-group">
+          <div class="group-label">Навигация</div>
+          <button class="nav-item active" type="button" onclick="showWelcome()">
+            <span>⌂</span>
+            <span>Главный экран</span>
+            <small>welcome</small>
+          </button>
+          <button class="nav-item" type="button" onclick="openNewProject()">
+            <span>＋</span>
+            <span>Новый проект</span>
+            <small>create</small>
+          </button>
+        </div>
+      `;
+
+    list.innerHTML = `
+      <div class="explorer-group">
+        <div class="group-label">Локальные</div>
+        ${localProjectsHtml}
+      </div>
+      <div class="explorer-group">
+        <div class="group-label">На диске</div>
+        ${workspaceProjectsHtml}
+      </div>
+      ${sectionNavHtml}
+    `;
+  }
+
+  function renderTabs() {
+    const tabs = document.getElementById("tabs");
+    const activeProject = getProject(activeProjectId);
+    let html = `
+      <div class="tab ${!activeProject ? "active" : ""}" onclick="showWelcome()">
+        <span>⌂</span>
+        <span>Добро пожаловать</span>
+      </div>
+    `;
+
+    projects.forEach((project) => {
+      html += `
+        <div class="tab ${project.id === activeProjectId ? "active" : ""}" onclick="openProject('${project.id}')">
+          <span>⌘</span>
+          <span>${esc(project.name)}</span>
+          <span class="tab-close" onclick="event.stopPropagation(); deleteProject('${project.id}')">×</span>
+        </div>
+      `;
+    });
+
+    tabs.innerHTML = html;
+  }
+
+  function renderBreadcrumb() {
+    const activeProject = getProject(activeProjectId);
+    const breadcrumb = document.getElementById("breadcrumb");
+
+    if (!activeProject) {
+      breadcrumb.innerHTML = `<span>Creative an Invention</span><span>›</span><span>overview.md</span>`;
+      return;
+    }
+
+    breadcrumb.innerHTML = `
+      <span>Creative an Invention</span>
+      <span>›</span>
+      <span>${esc(activeProject.name)}</span>
+      <span>›</span>
+      <span>${esc(TABS[activeTab])}</span>
+    `;
+  }
+
+  function renderStatusbar() {
+    const activeProject = getProject(activeProjectId);
+    const wrap = document.getElementById("status-active-wrap");
+    const name = document.getElementById("status-active-name");
+    if (activeProject) {
+      wrap.style.display = "";
+      name.textContent = activeProject.name;
+    } else {
+      wrap.style.display = "none";
+      name.textContent = "";
+    }
+  }
+
+  function renderEditor() {
+    const editor = document.getElementById("editor");
+    const activeProject = getProject(activeProjectId);
+
+    if (!activeProject) {
+      editor.innerHTML = buildWelcome();
+      return;
+    }
+
+    editor.innerHTML = buildProjectView(activeProject);
+  }
+
+  function buildWelcome() {
+    const totalNotes = projects.reduce((sum, project) => sum + project.notes.length, 0);
+    const totalTasks = projects.reduce((sum, project) => sum + project.tasks.length, 0);
+
+    return `
+      <section class="welcome">
+        <div class="welcome-card">
+          <div class="hero">
+            <div>
+              <div class="hero-badge">✦ Голубой shell для работы с изобретениями</div>
+              <h1>Управляй проектами как будто это твой личный VS Code для идей.</h1>
+              <p>Открывай проекты в табах, веди заметки, собирай роадмап, заполняй патентный блок и держи Лука AI под рукой.</p>
+              <div class="actions">
+                <button class="btn" type="button" onclick="openNewProject()">Создать проект</button>
+                <button class="btn-ghost" type="button" onclick="openPalette()">Открыть палитру команд</button>
+                <button class="btn-ghost" type="button" onclick="toggleChat(true)">Открыть Лука AI</button>
+              </div>
+            </div>
+            <div class="hero-panel">
+              <strong>Что внутри</strong>
+              <ul>
+                <li><span>Explorer-панель</span><span>список проектов</span></li>
+                <li><span>Editor-view</span><span>концепт, заметки, патент</span></li>
+                <li><span>Лука AI</span><span>локальный ассистент в приложении</span></li>
+                <li><span>Локальное хранение</span><span>через localStorage</span></li>
+              </ul>
+            </div>
+          </div>
+          <div class="welcome-grid">
+            <div class="metric-card">
+              <div class="metric-label">Проекты</div>
+              <div class="metric-value">${projects.length}</div>
+              <p>Все идеи и изобретения лежат в одном workspace.</p>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Заметки</div>
+              <div class="metric-value">${totalNotes}</div>
+              <p>Быстрые мысли и фиксирование гипотез по каждому проекту.</p>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Задачи</div>
+              <div class="metric-value">${totalTasks}</div>
+              <p>Роадмап для проверки, сборки, тестов и патентования.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  function buildProjectView(project) {
+    const totalTasks = project.tasks.length;
+    const doneTasks = project.tasks.filter((task) => task.done).length;
+    const patentDone = project.patent.steps.filter((step) => step.done).length;
+
+    return `
+      <section class="project-shell">
+        <div class="project-header">
+          <div class="section-card">
+            <div class="project-name-row">
+              <h2>${esc(project.name)}</h2>
+              ${statusBadge(project.status)}
+              <button class="btn-ghost" type="button" onclick="renameProject('${project.id}')">Переименовать</button>
+            </div>
+            <div class="subline">${esc(project.desc || "Добавь краткое описание, чтобы быстрее помнить, что именно ты строишь.")}</div>
+            <div class="status-row">
+              ${Object.keys(STATUS).map((key) => `
+                <button class="status-toggle ${project.status === key ? "active" : ""}" type="button" onclick="setStatus('${project.id}', '${key}')">${STATUS[key].label}</button>
+              `).join("")}
+            </div>
+          </div>
+
+          <div class="section-card">
+            <div class="meta-stack">
+              <div class="meta-item">
+                <small>Категория</small>
+                <strong>${esc(project.field || "Не задана")}</strong>
+              </div>
+              <div class="meta-item">
+                <small>Прогресс задач</small>
+                <strong>${doneTasks} / ${totalTasks || 0}</strong>
+              </div>
+              <div class="meta-item">
+                <small>Патентные шаги</small>
+                <strong>${patentDone} / ${project.patent.steps.length}</strong>
+              </div>
+              <div class="meta-item">
+                <small>Создан</small>
+                <strong>${formatDate(project.createdAt)}</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-strip">
+          ${Object.entries(TABS).map(([key, label]) => `
+            <button class="mini-tab ${activeTab === key ? "active" : ""}" type="button" onclick="switchTab('${key}')">${label}</button>
+          `).join("")}
+        </div>
+
+        ${buildActiveTab(project)}
+      </section>
+    `;
+  }
+
+  function buildActiveTab(project) {
+    if (activeTab === "concept") return buildConcept(project);
+    if (activeTab === "notes") return buildNotes(project);
+    if (activeTab === "roadmap") return buildRoadmap(project);
+    if (activeTab === "docs") return buildWorkspaceView("docs");
+    if (activeTab === "code") return buildWorkspaceView("code");
+    if (activeTab === "terminal") return buildTerminalView();
+    return buildPatent(project);
+  }
+
+  function workspaceEntriesFor(kind) {
+    return workspaceEntries.filter((entry) => {
+      if (entry.type === "dir") return true;
+      return kind === "docs" ? isDocPath(entry.path) : isCodePath(entry.path);
+    });
+  }
+
+  function buildWorkspaceView(kind) {
+    const title = kind === "docs" ? "Документы workspace" : "Код workspace";
+    const subtitle = kind === "docs"
+      ? "Markdown, текстовые и проектные документы из рабочей директории."
+      : "Исходники и конфиги из рабочей директории. Файл можно править и сохранять.";
+    const entries = workspaceEntriesFor(kind);
+    const selected = workspaceSelectedPath;
+    const fileLoaded = selected && ((kind === "docs" && isDocPath(selected)) || (kind === "code" && isCodePath(selected)));
+
+    return `
+      <section class="workspace-grid">
+        <div class="section-card">
+          <div class="section-head">
+            <div>
+              <h3>${title}</h3>
+              <p>${subtitle}</p>
+            </div>
+          </div>
+          <div class="workspace-toolbar">
+            <button class="btn-ghost" type="button" onclick="openWorkspaceDir(pathForParent(workspacePath))">Вверх</button>
+            <button class="btn-ghost" type="button" onclick="openWorkspaceDir(workspacePath)">Обновить</button>
+            ${fileLoaded ? `<button class="btn-ghost" type="button" onclick="runSelectedWorkspaceFile()">${kind === "docs" ? "Открыть" : "Запустить"}</button>` : ""}
+          </div>
+          <div class="workspace-path">${esc(workspacePath || ".")}</div>
+          <div class="workspace-list" style="margin-top:12px;">
+            ${workspaceBusy && !entries.length ? `<div class="empty">Загружаю...</div>` : ""}
+            ${!entries.length && !workspaceBusy ? `<div class="empty">Подходящих файлов здесь нет.</div>` : ""}
+            ${entries.map((entry) => `
+              <button class="file-item ${entry.path === selected ? "active" : ""}" type="button" onclick="${entry.type === "dir" ? `openWorkspaceDir('${attr(entry.path)}')` : `openWorkspaceFile('${attr(entry.path)}', '${kind}')`}">
+                <span>${entry.type === "dir" ? "▸" : (kind === "docs" ? "📄" : "⌘")}</span>
+                <span class="file-item-name">${esc(entry.name)}</span>
+                <span class="file-meta">${entry.type === "dir" ? "dir" : `${Math.max(1, Math.round((entry.size || 0) / 1024))} KB`}</span>
+              </button>
+            `).join("")}
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-head">
+            <div>
+              <h3>${fileLoaded ? esc(workspaceSelectedPath) : "Выбери файл"}</h3>
+              <p>${kind === "docs" ? "Чтение документа из workspace." : "Редактор кода с сохранением в workspace."}</p>
+            </div>
+            <div class="file-toolbar">
+              ${kind === "code" && fileLoaded ? `<button class="btn" type="button" onclick="saveWorkspaceFile()" ${workspaceFileDirty ? "" : "disabled"}>Сохранить</button>` : ""}
+              ${fileLoaded && canPreviewHtml(workspaceSelectedPath) ? `<button class="btn-ghost" type="button" onclick="runSelectedWorkspaceFile()">Preview</button>` : ""}
+              ${fileLoaded && detectRunCommand(workspaceSelectedPath) ? `<button class="btn-ghost" type="button" onclick="runSelectedWorkspaceFile()">Run ${esc(workspaceFileName(workspaceSelectedPath))}</button>` : ""}
+            </div>
+          </div>
+          ${fileLoaded ? (
+            kind === "docs"
+              ? `<div class="file-preview"><pre>${esc(workspaceFileContent || "Файл пуст.")}</pre></div>`
+              : `<textarea class="workspace-editor" spellcheck="false" oninput="workspaceFileContent=this.value; workspaceFileDirty=true;">${esc(workspaceFileContent)}</textarea>`
+          ) : `<div class="empty">Открой файл слева. Здесь появится документ или код из workspace.</div>`}
+        </div>
+      </section>
+    `;
+  }
+
+  function buildTerminalView() {
+    return `
+      <section class="section-card">
+        <div class="section-head">
+          <div>
+            <h3>Терминал workspace</h3>
+            <p>Запуск команд в рабочей директории. Текущая папка: ${esc(workspacePath || ".")}</p>
+          </div>
+        </div>
+        <div class="terminal-form">
+          <input id="terminal-command" type="text" value="${esc(terminalCommand)}" placeholder="Например: ls -la" onkeydown="if(event.key==='Enter') runWorkspaceCommand()">
+          <button class="btn" type="button" onclick="runWorkspaceCommand()" ${terminalBusy ? "disabled" : ""}>${terminalBusy ? "Запуск..." : "Запустить"}</button>
+        </div>
+        <div class="terminal-output">
+          <pre>${esc(terminalOutput || "Пока пусто. Запусти команду вроде `pwd`, `ls` или `node --version`.")}</pre>
+        </div>
+      </section>
+    `;
+  }
+
+  function buildConcept(project) {
+    const concept = project.concept;
+    return `
+      <div class="grid-2">
+        <section class="section-card">
+          <div class="section-head">
+            <div>
+              <h3>Концепт</h3>
+              <p>Основная идея и устройство</p>
+            </div>
+          </div>
+          ${textAreaField(project.id, "concept", "problem", "Проблема", concept.problem, "Какую задачу решает изобретение?")}
+          ${textAreaField(project.id, "concept", "idea", "Идея решения", concept.idea, "В чём суть решения?")}
+          ${textAreaField(project.id, "concept", "howItWorks", "Как это работает", concept.howItWorks, "Опиши механику, схему или алгоритм")}
+        </section>
+
+        <section class="section-card">
+          <div class="section-head">
+            <div>
+              <h3>Аналитика</h3>
+              <p>Отличия, аналоги и аудитория</p>
+            </div>
+          </div>
+          ${textAreaField(project.id, "concept", "uniqueness", "Уникальность", concept.uniqueness, "Почему решение новое или необычное?")}
+          ${textAreaField(project.id, "concept", "analogs", "Аналоги", concept.analogs, "Какие аналоги уже существуют?")}
+          ${textAreaField(project.id, "concept", "audience", "Пользователь", concept.audience, "Кому это пригодится?")}
+        </section>
       </div>
     `;
   }
-  showScreen('screen-ai');
-}
 
-function sendAI() {
-  const input = document.getElementById('ai-input');
-  const text = input.value.trim();
-  if (!text) return;
-  const chat = document.getElementById('ai-chat');
-  chat.innerHTML += `<div class="ai-bubble user">${esc(text)}</div>`;
-  input.value = '';
-  setTimeout(() => {
-    chat.innerHTML += `<div class="ai-bubble bot">
-      Функция AI помощника будет подключена позже через API.<br><br>
-      Сейчас ты можешь вручную заполнить концепт, заметки и патентные поля — это даст Claude контекст для работы.
-    </div>`;
-    chat.scrollTop = chat.scrollHeight;
-  }, 600);
-  chat.scrollTop = chat.scrollHeight;
-}
+  function buildNotes(project) {
+    return `
+      <section class="section-card">
+        <div class="section-head">
+          <div>
+            <h3>Заметки и идеи</h3>
+            <p>Фиксируй быстрые мысли, гипотезы и наблюдения</p>
+          </div>
+        </div>
+        <div class="notes-add">
+          <input id="note-input" type="text" placeholder="Новая заметка..." onkeydown="if(event.key==='Enter') addNote('${project.id}')">
+          <button class="btn" type="button" onclick="addNote('${project.id}')">Добавить заметку</button>
+        </div>
+        <div class="note-list" style="margin-top:14px;">
+          ${project.notes.length ? project.notes.slice().reverse().map((note) => `
+            <div class="note">
+              <div>${esc(note.text)}</div>
+              <time>${formatDate(note.at)}</time>
+              <button class="ghost-x" type="button" onclick="deleteNote('${project.id}', '${note.id}')">×</button>
+            </div>
+          `).join("") : `<div class="empty">Пока нет заметок. Можно начать с ключевой проблемы или идеи прототипа.</div>`}
+        </div>
+      </section>
+    `;
+  }
 
-// ===== UTILS =====
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
+  function buildRoadmap(project) {
+    const openTasks = project.tasks.filter((task) => !task.done);
+    const doneTasks = project.tasks.filter((task) => task.done);
 
-function openModal(id) {
-  document.getElementById(id).classList.add('open');
-}
+    return `
+      <section class="section-card">
+        <div class="section-head">
+          <div>
+            <h3>Роадмап</h3>
+            <p>Планируй шаги от идеи к прототипу и патенту</p>
+          </div>
+        </div>
+        <div class="task-add">
+          <input id="task-input" type="text" placeholder="Новая задача..." onkeydown="if(event.key==='Enter') addTask('${project.id}')">
+          <button class="btn" type="button" onclick="addTask('${project.id}')">Добавить задачу</button>
+        </div>
 
-function closeModal() {
-  document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
-}
+        ${!project.tasks.length ? `<div class="empty" style="margin-top:14px;">Роадмап пустой. Добавь первый шаг: исследование, прототип, тест или патентный поиск.</div>` : `
+          <div class="split-label">В работе</div>
+          <div class="task-list">
+            ${openTasks.map((task) => taskTemplate(project.id, task)).join("")}
+          </div>
+          <div class="split-label">Готово</div>
+          <div class="task-list">
+            ${doneTasks.length ? doneTasks.map((task) => taskTemplate(project.id, task)).join("") : `<div class="empty">Завершённые задачи появятся здесь.</div>`}
+          </div>
+        `}
+      </section>
+    `;
+  }
 
-function esc(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+  function taskTemplate(projectId, task) {
+    return `
+      <div class="task ${task.done ? "done" : ""}">
+        <input type="checkbox" ${task.done ? "checked" : ""} onchange="toggleTask('${projectId}', '${task.id}')">
+        <div>
+          <div class="task-text">${esc(task.text)}</div>
+          <small>${task.done ? "Завершено" : "В процессе"}</small>
+        </div>
+        <button class="ghost-x" type="button" onclick="deleteTask('${projectId}', '${task.id}')">×</button>
+      </div>
+    `;
+  }
 
-function formatDate(ts) {
-  if (!ts) return '';
-  return new Date(ts).toLocaleDateString('ru',{day:'numeric',month:'short'});
-}
+  function buildPatent(project) {
+    const patent = project.patent;
+    return `
+      <div class="grid-2">
+        <section class="section-card">
+          <div class="section-head">
+            <div>
+              <h3>Патентный блок</h3>
+              <p>Черновики для заявки и поиска</p>
+            </div>
+          </div>
+          ${textAreaField(project.id, "patent", "abstract", "Реферат", patent.abstract, "Кратко опиши изобретение и его пользу")}
+          ${textAreaField(project.id, "patent", "claims", "Формула", patent.claims, "Черновик независимого пункта")}
+          ${textAreaField(project.id, "patent", "description", "Описание", patent.description, "Подробное техническое описание")}
+          ${textInputField(project.id, "patent", "ipcClasses", "Классы МПК", patent.ipcClasses, "Например: G06F 3/048")}
+        </section>
 
-function formatDateTime(ts) {
-  if (!ts) return '';
-  return new Date(ts).toLocaleString('ru',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
-}
+        <section class="section-card">
+          <div class="section-head">
+            <div>
+              <h3>Шаги патентования</h3>
+              <p>Чеклист подготовки</p>
+            </div>
+          </div>
+          <div class="steps">
+            ${patent.steps.map((step, index) => `
+              <div class="step ${step.done ? "done" : ""}">
+                <div class="step-index">${index + 1}</div>
+                <div>
+                  <div>${esc(step.name)}</div>
+                  <small>${step.done ? "Готово" : "Ожидает выполнения"}</small>
+                </div>
+                <button class="step-btn" type="button" onclick="togglePatentStep('${project.id}', ${index})">${step.done ? "Отменить" : "Отметить"}</button>
+              </div>
+            `).join("")}
+          </div>
+        </section>
+      </div>
+    `;
+  }
 
-function pluralize(n, one, few, many) {
-  if (n % 10 === 1 && n % 100 !== 11) return n + ' ' + one;
-  if ([2,3,4].includes(n%10) && ![12,13,14].includes(n%100)) return n + ' ' + few;
-  return n + ' ' + many;
-}
+  function textAreaField(projectId, section, field, label, value, placeholder) {
+    return `
+      <div class="field">
+        <label>${label}</label>
+        <textarea placeholder="${esc(placeholder)}" oninput="updateField('${projectId}', '${section}', '${field}', this.value)">${esc(value)}</textarea>
+      </div>
+    `;
+  }
 
-// Close modal on backdrop click
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-  overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
-});
+  function textInputField(projectId, section, field, label, value, placeholder) {
+    return `
+      <div class="field">
+        <label>${label}</label>
+        <input type="text" value="${esc(value)}" placeholder="${esc(placeholder)}" oninput="updateField('${projectId}', '${section}', '${field}', this.value)">
+      </div>
+    `;
+  }
 
-// ===== INIT =====
-renderHome();
+  function rerender() {
+    renderSidebar();
+    renderTabs();
+    renderBreadcrumb();
+    renderEditor();
+    renderStatusbar();
+  }
+
+  async function openProject(id) {
+    activeProjectId = id;
+    const project = getProject(id);
+    if (!project) return;
+    if ((projectSource(project) === "workspace" || project.liveFromFiles) && project.workspacePath) {
+      workspacePath = project.workspacePath;
+      await hydrateWorkspaceProject(project);
+    }
+    rerender();
+    seedChat();
+    refreshAgentStatus();
+  }
+
+  function showWelcome() {
+    activeProjectId = null;
+    rerender();
+    seedChat();
+    refreshAgentStatus();
+  }
+
+  async function switchTab(tab) {
+    activeTab = tab;
+    if (activeProjectId) {
+      setActivity(tab === "patent" ? "patent" : "explorer");
+    }
+    if (tab === "docs" || tab === "code" || tab === "terminal") {
+      try {
+        await ensureWorkspaceLoaded();
+      } catch (error) {
+        terminalOutput = `Не удалось загрузить workspace:\n${error.message}`;
+      }
+    }
+    renderBreadcrumb();
+    renderEditor();
+    renderSidebar();
+    const editor = document.getElementById("editor");
+    if (editor) editor.scrollTop = 0;
+  }
+
+  function setStatus(projectId, status) {
+    const project = getProject(projectId);
+    if (!project) return;
+    project.status = status;
+    saveProjects();
+    rerender();
+  }
+
+  function updateField(projectId, section, field, value) {
+    const project = getProject(projectId);
+    if (!project || !project[section]) return;
+    project[section][field] = value;
+    saveProjects();
+  }
+
+  function addNote(projectId) {
+    const input = document.getElementById("note-input");
+    const text = input ? input.value.trim() : "";
+    if (!text) return;
+    const project = getProject(projectId);
+    if (!project) return;
+    project.notes.push({
+      id: String(Date.now()),
+      text: text,
+      at: new Date().toISOString()
+    });
+    saveProjects();
+    renderEditor();
+  }
+
+  function deleteNote(projectId, noteId) {
+    const project = getProject(projectId);
+    if (!project) return;
+    project.notes = project.notes.filter((note) => note.id !== noteId);
+    saveProjects();
+    renderEditor();
+  }
+
+  function addTask(projectId) {
+    const input = document.getElementById("task-input");
+    const text = input ? input.value.trim() : "";
+    if (!text) return;
+    const project = getProject(projectId);
+    if (!project) return;
+    project.tasks.push({
+      id: String(Date.now()),
+      text: text,
+      done: false
+    });
+    saveProjects();
+    renderEditor();
+  }
+
+  function toggleTask(projectId, taskId) {
+    const project = getProject(projectId);
+    if (!project) return;
+    const task = project.tasks.find((item) => item.id === taskId);
+    if (!task) return;
+    task.done = !task.done;
+    saveProjects();
+    renderEditor();
+  }
+
+  function deleteTask(projectId, taskId) {
+    const project = getProject(projectId);
+    if (!project) return;
+    project.tasks = project.tasks.filter((task) => task.id !== taskId);
+    saveProjects();
+    renderEditor();
+  }
+
+  function togglePatentStep(projectId, stepIndex) {
+    const project = getProject(projectId);
+    if (!project || !project.patent.steps[stepIndex]) return;
+    project.patent.steps[stepIndex].done = !project.patent.steps[stepIndex].done;
+    saveProjects();
+    renderEditor();
+  }
+
+  function renameProject(projectId) {
+    const project = getProject(projectId);
+    if (!project) return;
+    const nextName = window.prompt("Новое название проекта:", project.name);
+    if (!nextName || !nextName.trim()) return;
+    project.name = nextName.trim();
+    saveProjects();
+    rerender();
+  }
+
+  function deleteProject(projectId) {
+    const project = getProject(projectId);
+    if (!project) return;
+    if (!window.confirm(`Удалить проект "${project.name}"?`)) return;
+    projects = projects.filter((item) => item.id !== projectId);
+    if (activeProjectId === projectId) {
+      activeProjectId = projects[0] ? projects[0].id : null;
+    }
+    saveProjects();
+    rerender();
+  }
+
+  function openNewProject() {
+    document.getElementById("modal-overlay").classList.add("show");
+    setTimeout(() => {
+      document.getElementById("np-name").focus();
+    }, 30);
+  }
+
+  function closeModal(event) {
+    if (event && event.target && event.target.id !== "modal-overlay") return;
+    document.getElementById("modal-overlay").classList.remove("show");
+  }
+
+  function createProject() {
+    const name = document.getElementById("np-name").value.trim();
+    const desc = document.getElementById("np-desc").value.trim();
+    const status = document.getElementById("np-status").value;
+    const field = document.getElementById("np-field").value.trim();
+
+    if (!name) {
+      document.getElementById("np-name").focus();
+      return;
+    }
+
+    const project = createProjectModel(name, desc, status, field);
+    projects.push(project);
+    saveProjects();
+
+    document.getElementById("np-name").value = "";
+    document.getElementById("np-desc").value = "";
+    document.getElementById("np-field").value = "";
+    document.getElementById("np-status").value = "idea";
+    document.getElementById("modal-overlay").classList.remove("show");
+
+    activeProjectId = project.id;
+    activeTab = "concept";
+    rerender();
+  }
+
+  function setActivity(name) {
+    ["explorer", "search", "patent", "chat"].forEach((item) => {
+      const el = document.getElementById(`activity-${item}`);
+      if (!el) return;
+      el.classList.toggle("active", item === name);
+    });
+
+    if (name === "search") {
+      const input = document.getElementById("project-search");
+      if (input) input.focus();
+      return;
+    }
+
+    if (name === "patent" && activeProjectId) {
+      activeTab = "patent";
+      renderBreadcrumb();
+      renderEditor();
+      renderSidebar();
+      return;
+    }
+
+    if (name === "explorer" && activeProjectId) {
+      renderSidebar();
+      return;
+    }
+
+  }
+
+  function toggleChat(forceOpen) {
+    if (typeof forceOpen === "boolean") {
+      chatOpen = forceOpen;
+    } else {
+      chatOpen = !chatOpen;
+    }
+    const shell = document.getElementById("chat-shell");
+    const arrow = document.getElementById("chat-arrow");
+    shell.classList.toggle("expanded", chatOpen);
+    shell.classList.toggle("collapsed", !chatOpen);
+    arrow.textContent = chatOpen ? "▼" : "▲";
+    if (chatOpen) {
+      setActivity("chat");
+      setTimeout(() => document.getElementById("chat-input").focus(), 40);
+    }
+  }
+
+  function setChatLoading(isLoading, label, percent) {
+    const progress = document.getElementById("chat-progress");
+    const progressBar = document.getElementById("chat-progress-bar");
+    const subtitle = document.getElementById("chat-subtitle");
+    if (!progress || !subtitle || !progressBar) return;
+    progress.classList.toggle("active", Boolean(isLoading));
+    if (isLoading) {
+      subtitle.dataset.baseText = subtitle.dataset.baseText || subtitle.textContent;
+      const safePercent = Math.max(4, Math.min(100, Number(percent) || 8));
+      subtitle.textContent = `${label || "Лука AI думает…"} · ${safePercent}%`;
+      progressBar.style.width = `${safePercent}%`;
+    } else if (subtitle.dataset.baseText) {
+      subtitle.textContent = subtitle.dataset.baseText;
+      progressBar.style.width = "0%";
+    }
+  }
+
+  async function refreshAgentStatus() {
+    const subtitle = document.getElementById("chat-subtitle");
+    const titleNote = document.getElementById("title-note");
+    try {
+      const response = await fetch(`/api/health?t=${Date.now()}`, { cache: "no-store" });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "health failed");
+      if (!data.ollama) {
+        subtitle.textContent = "Ollama недоступен";
+      } else if (!data.modelReady) {
+        subtitle.textContent = `Лука AI загружается · ${data.model} · ${data.version || "unknown"}`;
+      } else {
+        subtitle.textContent = `Лука AI online · ${data.model} · ${data.version || "unknown"}`;
+      }
+      if (titleNote) titleNote.textContent = `VS Code Shell · ${data.version || "unknown"}`;
+      subtitle.dataset.baseText = subtitle.textContent;
+    } catch (error) {
+      subtitle.textContent = "Лука AI backend недоступен";
+      if (titleNote) titleNote.textContent = "VS Code Shell";
+      subtitle.dataset.baseText = subtitle.textContent;
+    }
+  }
+
+  function seedChat() {
+    const messages = document.getElementById("chat-messages");
+    const key = activeProjectId || "global";
+    const items = chatHistory[key] || [];
+    if (!items.length) {
+      messages.innerHTML = `
+        <div class="msg assistant">
+          <strong>Лука AI</strong>
+          <p>Я локальный агент на модели Ollama. Могу работать с проектом, читать и менять файлы в workspace, запускать команды и искать в интернете.</p>
+        </div>
+      `;
+      return;
+    }
+    messages.innerHTML = items.map((item) => `
+      <div class="msg ${item.role}">
+        <strong>${item.role === "assistant" ? "Лука AI" : "Вы"}</strong>
+        <p>${esc(item.text)}</p>
+      </div>
+    `).join("");
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  function appendChatMessage(role, text) {
+    const messages = document.getElementById("chat-messages");
+    const div = document.createElement("div");
+    div.className = `msg ${role}`;
+    div.innerHTML = `<strong>${role === "assistant" ? "Лука AI" : "Вы"}</strong><p>${esc(text)}</p>`;
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+    const key = activeProjectId || "global";
+    if (!Array.isArray(chatHistory[key])) {
+      chatHistory[key] = [];
+    }
+    chatHistory[key].push({ role, text });
+    chatHistory[key] = chatHistory[key].slice(-20);
+    saveChatHistory();
+  }
+
+  function shortText(value, maxLength) {
+    if (!value) return "";
+    const clean = value.replace(/\s+/g, " ").trim();
+    if (clean.length <= maxLength) return clean;
+    return `${clean.slice(0, maxLength - 1).trim()}…`;
+  }
+
+  function stripMarkdown(value) {
+    return String(value || "")
+      .replace(/^#+\s+/gm, "")
+      .replace(/\*\*(.*?)\*\*/g, "$1")
+      .replace(/`([^`]+)`/g, "$1")
+      .replace(/^\s*-\s+/gm, "")
+      .trim();
+  }
+
+  function extractMarkdownSection(text, headings) {
+    const lines = String(text || "").split(/\r?\n/);
+    const normalizedHeadings = headings.map((item) => normalizePrompt(item));
+    let collecting = false;
+    const buffer = [];
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (/^##+\s+/.test(trimmed)) {
+        const heading = normalizePrompt(trimmed.replace(/^##+\s+/, ""));
+        if (collecting) break;
+        if (normalizedHeadings.some((item) => heading.includes(item))) {
+          collecting = true;
+          continue;
+        }
+      }
+      if (collecting) buffer.push(line);
+    }
+
+    return stripMarkdown(buffer.join("\n")).trim();
+  }
+
+  function parseCheckboxSteps(text) {
+    return String(text || "")
+      .split(/\r?\n/)
+      .map((line) => line.match(/^\s*-\s*\[( |x)\]\s*(.+)$/i))
+      .filter(Boolean)
+      .map((match) => ({
+        name: match[2].trim(),
+        done: match[1].toLowerCase() === "x"
+      }));
+  }
+
+  async function hydrateWorkspaceProject(project) {
+    if (!project || projectSource(project) !== "workspace" || !project.workspacePath) return;
+    try {
+      const listing = await apiJson(`/api/workspace/list?path=${encodeURIComponent(project.workspacePath)}`);
+      const details = await apiJson(`/api/project-data?path=${encodeURIComponent(project.workspacePath)}`);
+      workspacePath = project.workspacePath;
+      workspaceEntries = Array.isArray(listing.entries) ? listing.entries : [];
+      project.desc = details.desc || project.desc;
+      project.field = details.field || project.field;
+      project.status = details.status || project.status;
+      project.concept = { ...project.concept, ...(details.concept || {}) };
+      project.patent = {
+        ...project.patent,
+        ...(details.patent || {}),
+        steps: Array.isArray(details.patent?.steps) && details.patent.steps.length ? details.patent.steps : project.patent.steps
+      };
+      if (Array.isArray(details.tasks) && details.tasks.length) {
+        project.tasks = details.tasks.map((task) => ({
+          id: task.id || makeId("task"),
+          text: task.text,
+          done: Boolean(task.done)
+        }));
+      }
+      if (Array.isArray(details.notes) && details.notes.length) {
+        project.notes = details.notes.map((note) => ({
+          id: note.id || makeId("note"),
+          text: note.text,
+          at: note.at || new Date().toISOString()
+        }));
+      }
+      saveProjects();
+    } catch (error) {
+      console.error("hydrateWorkspaceProject failed", error);
+    }
+  }
+
+  function normalizePrompt(value) {
+    return String(value || "").toLowerCase().replace(/ё/g, "е").replace(/\s+/g, " ").trim();
+  }
+
+  function solveSimpleMath(value) {
+    const normalized = normalizePrompt(value);
+    const sqrtMatch = normalized.match(/корень\s+из\s+(-?\d+(?:\.\d+)?)/);
+    if (sqrtMatch) {
+      const number = Number(sqrtMatch[1]);
+      if (number < 0) return "Для отрицательного числа нужен комплексный корень.";
+      return `Корень из ${number} = ${Math.sqrt(number)}`;
+    }
+    const powerMatch = normalized.match(/(-?\d+(?:\.\d+)?)\s*(?:в степени|\^)\s*(-?\d+(?:\.\d+)?)/);
+    if (powerMatch) {
+      const base = Number(powerMatch[1]);
+      const exponent = Number(powerMatch[2]);
+      return `${base} ^ ${exponent} = ${base ** exponent}`;
+    }
+    const squareMatch = normalized.match(/квадрат\s+(-?\d+(?:\.\d+)?)/);
+    if (squareMatch) {
+      const number = Number(squareMatch[1]);
+      return `${number} ^ 2 = ${number ** 2}`;
+    }
+    const clean = normalized
+      .replace(/[=?]/g, "")
+      .replace(/умножить на/g, "*")
+      .replace(/разделить на/g, "/")
+      .replace(/плюс/g, "+")
+      .replace(/минус/g, "-")
+      .trim();
+    const match = clean.match(/^(-?\d+(?:\.\d+)?)\s*([+\-*/])\s*(-?\d+(?:\.\d+)?)$/);
+    if (!match) return "";
+    const left = Number(match[1]);
+    const operator = match[2];
+    const right = Number(match[3]);
+    if (!Number.isFinite(left) || !Number.isFinite(right)) return "";
+    if (operator === "/" && right === 0) return "На ноль делить нельзя.";
+    const result = operator === "+"
+      ? left + right
+      : operator === "-"
+        ? left - right
+        : operator === "*"
+          ? left * right
+          : left / right;
+    return `${left} ${operator} ${right} = ${result}`;
+  }
+
+  function extractQuotedLiteral(value) {
+    const match = String(value || "").match(/["«](.+?)["»]/);
+    return match ? match[1] : "";
+  }
+
+  function analyzeRepeatedLiteral(value) {
+    const compact = String(value || "").replace(/\s+/g, "").trim();
+    if (!compact || compact.length < 2) return null;
+    const first = compact[0];
+    if (![...compact].every((char) => char === first)) return null;
+    return { literal: first, count: compact.length };
+  }
+
+  function formatNumberLocal(value) {
+    const rounded = Math.round(Number(value) * 1000000) / 1000000;
+    return Number.isInteger(rounded) ? String(rounded) : String(rounded);
+  }
+
+  function timesWordLocal(count) {
+    const mod10 = count % 10;
+    const mod100 = count % 100;
+    if (mod10 === 1 && mod100 !== 11) return "раз";
+    if (mod10 >= 2 && mod10 <= 4 && !(mod100 >= 12 && mod100 <= 14)) return "раза";
+    return "раз";
+  }
+
+  function tryUtilityCommandLocal(value, previousUserText) {
+    const normalized = normalizePrompt(value);
+    const previous = normalizePrompt(previousUserText || "");
+
+    if (normalized.includes("5 абсолютно разных слов") || normalized.includes("пять абсолютно разных слов") || normalized.includes("5 разных слов") || normalized.includes("пять разных слов")) {
+      return "камень, орбита, чайник, молния, библиотека";
+    }
+
+    if (normalized.includes("свое имя наоборот") || normalized.includes("свое им наоборот") || normalized.includes("имя наоборот") || normalized.includes("им наоборот")) {
+      return "IA акуЛ";
+    }
+
+    if (normalized.includes("только свое имя дважды") || normalized.includes("свое имя дважды") || normalized.includes("имя дважды")) {
+      return "Лука AI\nЛука AI";
+    }
+
+    if ((normalized === "исправь" || normalized.includes("это один раз, исправь") || normalized.includes("исправь ответ")) && previous.includes("имя дважды")) {
+      return "Лука AI\nЛука AI";
+    }
+
+    const repeatMatch = normalized.match(/(?:напиши|выведи|повтори)\s+(.+?)\s+(\d+)\s+раз$/);
+    if (repeatMatch) {
+      const count = Number(repeatMatch[2]);
+      const quoted = extractQuotedLiteral(value);
+      const literal = (quoted || repeatMatch[1].trim()).replace(/^(только\s+)/i, "").trim();
+      if (literal && count > 0 && count <= 100) {
+        return Array(count).fill(literal).join("");
+      }
+    }
+
+    const sqrtMatch = normalized.match(/корень\s+из\s+(-?\d+(?:\.\d+)?)/);
+    if (sqrtMatch) {
+      const number = Number(sqrtMatch[1]);
+      if (number < 0) return "Для отрицательного числа нужен комплексный корень.";
+      return `Корень из ${number} = ${formatNumberLocal(Math.sqrt(number))}`;
+    }
+
+    if (normalized.includes("сколько будет") || normalized === "сколько" || normalized === "сколько это") {
+      return tryUtilityCommandLocal(previousUserText || "", "");
+    }
+
+    const repeated = analyzeRepeatedLiteral(normalized.replace(/\s+а это\?$/, ""));
+    if (repeated) {
+      return `${repeated.literal.repeat(repeated.count)} = это ${repeated.count} ${timesWordLocal(repeated.count)} "${repeated.literal}".`;
+    }
+
+    return "";
+  }
+
+  function previousUserMessage() {
+    const key = activeProjectId || "global";
+    const items = chatHistory[key] || [];
+    for (let index = items.length - 1; index >= 0; index -= 1) {
+      if (items[index]?.role === "user") return items[index].text || "";
+    }
+    return "";
+  }
+
+  function describeProjectLocal(project) {
+    if (!project) return "Сейчас активный проект не выбран.";
+    const desc = shortText(project.desc || "", 180);
+    const idea = shortText(project.concept.idea || "", 180);
+    const problem = shortText(project.concept.problem || "", 180);
+    if (desc) return desc;
+    if (idea) return `${project.name} — ${idea.charAt(0).toLowerCase() + idea.slice(1)}.`;
+    if (problem) return `${project.name} — проект, который решает такую задачу: ${problem}`;
+    return `${project.name} — проект, по которому пока мало заполненных данных.`;
+  }
+
+  function looksLikeGreeting(text) {
+    return /^(привет|здравствуй|здравствуйте|хай|hello|hi|добрый день)[!. ]*$/i.test(text.trim());
+  }
+
+  function looksIncomplete(text) {
+    const clean = text.trim().toLowerCase();
+    if (clean.length < 4) return true;
+    return ["созда", "сдела", "описа", "покаж", "дава", "помо"].some((part) => clean === part);
+  }
+
+  function looksLikeExplanation(text) {
+    const clean = text.trim().toLowerCase();
+    if (clean.length < 18) return false;
+    if (/^(исправь|не так|ошибка|неверно|неправильно|переделай)/i.test(clean)) return false;
+    return (
+      clean.includes("это ") ||
+      clean.includes("котор") ||
+      clean.includes("чтобы ") ||
+      clean.includes("для ") ||
+      clean.includes("помога") ||
+      clean.includes("приложение") ||
+      clean.includes("сервис") ||
+      clean.includes("проект")
+    );
+  }
+
+  function inferProblemFromExplanation(text, project) {
+    const clean = text.trim();
+    if (clean.toLowerCase().includes("для ")) {
+      const tail = clean.split(/для /i)[1];
+      if (tail) return `Упростить работу для ${shortText(tail, 90)}.`;
+    }
+    if (project.field) {
+      return `Упростить задачу пользователя в области "${project.field}".`;
+    }
+    return "Проблему стоит уточнить: кому именно тяжело, долго или неудобно делать это сейчас.";
+  }
+
+  function buildProjectDescription(text, project) {
+    const clean = shortText(text, 180);
+    return `${project.name} — ${clean.charAt(0).toLowerCase() === clean.charAt(0) ? clean : clean.charAt(0).toLowerCase() + clean.slice(1)}`;
+  }
+
+  function extractStructuredDetails(text) {
+    const clean = text.trim();
+    const details = {
+      howItWorks: "",
+      uniqueness: "",
+      analogs: "",
+      audience: ""
+    };
+
+    const workMatch = clean.match(/(работает|работать|механика|принцип|сначала|потом|автоматически)\s+([^.!]+)/i);
+    if (workMatch) {
+      details.howItWorks = shortText(workMatch[0], 260);
+    }
+
+    const uniqueMatch = clean.match(/(отличие|уникальн|в отличие|главное отличие|особенность)\s+([^.!]+)/i);
+    if (uniqueMatch) {
+      details.uniqueness = shortText(uniqueMatch[0], 220);
+    }
+
+    const analogMatch = clean.match(/(аналог|похоже на|похож на|конкурент)\s+([^.!]+)/i);
+    if (analogMatch) {
+      details.analogs = shortText(analogMatch[0], 220);
+    }
+
+    const audience = extractAudience(clean);
+    if (audience) {
+      details.audience = audience;
+    }
+
+    return details;
+  }
+
+  function applyExplanationToProject(project, text) {
+    const clean = text.trim();
+    if (!clean) return;
+    const details = extractStructuredDetails(clean);
+
+    if (!project.desc) {
+      project.desc = shortText(clean, 160);
+    }
+    if (!project.concept.idea) {
+      project.concept.idea = shortText(clean, 280);
+    }
+    if (!project.concept.problem) {
+      project.concept.problem = inferProblemFromExplanation(clean, project);
+    }
+    if (!project.concept.audience && /для /i.test(clean)) {
+      const audience = clean.split(/для /i)[1];
+      if (audience) {
+        project.concept.audience = shortText(audience, 120);
+      }
+    }
+    if (!project.concept.howItWorks && details.howItWorks) {
+      project.concept.howItWorks = details.howItWorks;
+    }
+    if (!project.concept.uniqueness && details.uniqueness) {
+      project.concept.uniqueness = details.uniqueness;
+    }
+    if (!project.concept.analogs && details.analogs) {
+      project.concept.analogs = details.analogs;
+    }
+    if (!project.concept.audience && details.audience) {
+      project.concept.audience = details.audience;
+    }
+    saveProjects();
+  }
+
+  function addNoteToProject(project, text) {
+    const clean = text.trim();
+    if (!clean) return;
+    project.notes.push({
+      id: String(Date.now()),
+      text: clean,
+      at: new Date().toISOString()
+    });
+    saveProjects();
+  }
+
+  function addTaskToProject(project, text) {
+    const clean = text.trim();
+    if (!clean) return;
+    project.tasks.push({
+      id: String(Date.now()),
+      text: clean,
+      done: false
+    });
+    saveProjects();
+  }
+
+  function applyProjectUpdatesFromServer(projectId, updates) {
+    if (!projectId || !updates) return;
+    const project = getProject(projectId);
+    if (!project) return;
+    project.desc = updates.desc ?? project.desc;
+    project.status = updates.status ?? project.status;
+    project.field = updates.field ?? project.field;
+    if (updates.concept) {
+      project.concept = {
+        ...project.concept,
+        ...updates.concept
+      };
+    }
+    if (updates.patent) {
+      project.patent = {
+        ...project.patent,
+        ...updates.patent
+      };
+    }
+    saveProjects();
+    rerender();
+  }
+
+  function inferIntent(text) {
+    const clean = text.trim().toLowerCase();
+    if (!clean) return "empty";
+    if (looksLikeGreeting(clean)) return "greeting";
+    if (looksIncomplete(clean)) return "incomplete";
+    if (clean === "исправь" || clean.includes("исправь ответ") || clean.includes("это один раз, исправь")) return "freeform";
+    if (clean.includes("патент") || clean.includes("аналог") || clean.includes("новизн")) return "patent";
+    if (clean.includes("роад") || clean.includes("план") || clean.includes("что дальше") || clean.includes("следующ")) return "roadmap";
+    if (clean.includes("сводк") || clean.includes("summary") || clean.includes("резюме")) return "summary";
+    if (clean.includes("идея") || clean.includes("концепт") || clean.includes("улучш")) return "concept";
+    if (looksLikeExplanation(clean)) return "explanation";
+    return "freeform";
+  }
+
+  function inferTaskListFromProject(project) {
+    const result = [];
+    if (!project.concept.analogs) result.push("Изучить аналоги и похожие решения");
+    if (!project.concept.howItWorks) result.push("Описать принцип работы решения");
+    if (!project.concept.uniqueness) result.push("Сформулировать ключевое отличие от аналогов");
+    if (!project.patent.abstract) result.push("Подготовить короткий патентный реферат");
+    return result.slice(0, 3);
+  }
+
+  function extractAudience(text) {
+    const match = text.match(/для\s+([^,.!]+)/i);
+    return match ? shortText(match[1], 120) : "";
+  }
+
+  function extractPurpose(text) {
+    const match = text.match(/(помогает|позволяет|нужен[ао]?|чтобы)\s+([^.!]+)/i);
+    return match ? shortText(match[0], 180) : "";
+  }
+
+  function maybeStoreFreeform(project, text) {
+    const clean = text.trim();
+    if (clean.length < 12) return false;
+    const details = extractStructuredDetails(clean);
+
+    if (lukaContext.lastIntent === "patent") {
+      if (!project.concept.uniqueness) {
+        project.concept.uniqueness = shortText(clean, 220);
+      } else if (!project.patent.claims) {
+        project.patent.claims = shortText(clean, 280);
+      } else {
+        addNoteToProject(project, clean);
+      }
+      saveProjects();
+      return true;
+    }
+
+    if (lukaContext.lastIntent === "roadmap") {
+      addTaskToProject(project, clean);
+      return true;
+    }
+
+    if (lukaContext.lastIntent === "concept") {
+      applyExplanationToProject(project, clean);
+      if (!project.concept.howItWorks && details.howItWorks) {
+        project.concept.howItWorks = details.howItWorks;
+      } else if (!project.concept.howItWorks && clean.length > 30) {
+        project.concept.howItWorks = shortText(clean, 280);
+      }
+      if (!project.concept.uniqueness && details.uniqueness) {
+        project.concept.uniqueness = details.uniqueness;
+      }
+      if (!project.concept.analogs && details.analogs) {
+        project.concept.analogs = details.analogs;
+      }
+      saveProjects();
+      return true;
+    }
+
+    if (clean.length > 24) {
+      addNoteToProject(project, clean);
+      return true;
+    }
+
+    return false;
+  }
+
+  function buildLocalAssistantReply(prompt, project) {
+    const trimmed = prompt.trim();
+    const text = normalizePrompt(trimmed);
+    const previousUser = previousUserMessage();
+    const utility = tryUtilityCommandLocal(trimmed, previousUser);
+    if (utility) return utility;
+    const intent = inferIntent(trimmed);
+    const math = solveSimpleMath(trimmed);
+    if (math) return math;
+    if (text.includes("сколько будет") || text === "сколько" || text === "сколько это") {
+      const previousMath = solveSimpleMath(previousUserMessage());
+      if (previousMath) return previousMath;
+    }
+    if (!project) {
+      return "Сначала открой или создай проект. Тогда я смогу подсказать концепт, заметки, роадмап и патентные шаги именно по нему.";
+    }
+    if (text.includes("какой проект")) return project.name;
+    if (text.includes("о чем он") || text.includes("о чем проект") || text.includes("своими словами") || text.includes("объясни проект") || text.includes("кратко о проекте")) {
+      return describeProjectLocal(project);
+    }
+
+    const openTasks = project.tasks.filter((task) => !task.done);
+    const doneTasks = project.tasks.filter((task) => task.done);
+    const latestNote = project.notes.length ? project.notes[project.notes.length - 1].text : "";
+    const fileContext = browserFileContext(3);
+
+    function nextBestQuestion() {
+      if (!project.concept.problem) return "Кому именно сейчас неудобно или долго решать эту задачу?";
+      if (!project.concept.idea) return "В чём главный механизм решения одной фразой?";
+      if (!project.concept.howItWorks) return "Как это работает по шагам для пользователя?";
+      if (!project.concept.uniqueness) return "Что здесь самое новое по сравнению с аналогами?";
+      if (!project.concept.analogs) return "Какие продукты или решения сейчас ближе всего к этой идее?";
+      return "Что ты хочешь проработать дальше: роадмап, патент или сценарий использования?";
+    }
+
+    if (intent === "greeting") {
+      lukaContext.lastIntent = "concept";
+      return `Привет. Можешь просто описать проект своими словами, а я сам соберу из этого описание, идею и набросок концепта для "${project.name}".`;
+    }
+
+    if (intent === "incomplete") {
+      return "Мысль оборвалась. Допиши 1-2 фразы о проекте обычным языком, и я сам сформулирую описание, проблему и суть идеи.";
+    }
+
+    if (intent === "explanation") {
+      applyExplanationToProject(project, trimmed);
+      if (!project.concept.howItWorks) {
+        const purpose = extractPurpose(trimmed);
+        if (purpose) {
+          project.concept.howItWorks = purpose;
+          saveProjects();
+        }
+      }
+      lukaContext.lastIntent = "concept";
+      return [
+        `Вот как я понял проект "${project.name}":`,
+        buildProjectDescription(trimmed, project),
+        "",
+        `Что я уже записал в основу проекта:`,
+        `Проблема: ${project.concept.problem}`,
+        `Идея: ${project.concept.idea}`,
+        `Как работает: ${project.concept.howItWorks || "пока не записано"}`,
+        `Уникальность: ${project.concept.uniqueness || "пока не записана"}`,
+        `Аудитория: ${project.concept.audience || extractAudience(trimmed) || "пока не выделена"}`,
+        "",
+        `Следующий лучший вопрос: ${nextBestQuestion()}`
+      ].join("\n");
+    }
+
+    if (intent === "roadmap") {
+      if (openTasks.length === 0) {
+        inferTaskListFromProject(project).forEach((taskText) => addTaskToProject(project, taskText));
+      }
+      lukaContext.lastIntent = "roadmap";
+      return [
+        `По проекту "${project.name}" я бы пошёл так:`,
+        `1. Зафиксировать проблему: ${project.concept.problem || "ещё не заполнена"}.`,
+        `2. Уточнить решение: ${project.concept.idea || "нужно кратко описать идею"}.`,
+        `3. Сначала закрыть самые туманные места: аналоги, принцип работы и отличие от существующих решений.`,
+        `4. Проверить патентный блок и выписать ключевые отличия от аналогов.`,
+        `Я уже записал стартовые задачи в роадмап. Сейчас открытых задач: ${project.tasks.filter((task) => !task.done).length}, завершённых: ${doneTasks.length}.`
+      ].join("\n");
+    }
+
+    if (intent === "patent") {
+      lukaContext.lastIntent = "patent";
+      return [
+        `Для патентной проработки проекта "${project.name}" сосредоточься на трёх вещах:`,
+        `1. Что именно новое в механике или алгоритме.`,
+        `2. Чем решение отличается от ближайших аналогов.`,
+        `3. Какие признаки можно включить в формулу изобретения.`,
+        `Из текущих данных полезно развить: ${project.concept.uniqueness || "блок уникальности пока пустой"}.`,
+        `Можешь просто продолжить мысль обычным текстом, и я сохраню это как основу уникальности или формулы.`
+      ].join("\n");
+    }
+
+    if (intent === "concept") {
+      lukaContext.lastIntent = "concept";
+      return [
+        `Вот как я вижу усиление концепта проекта "${project.name}":`,
+        `Проблема: ${project.concept.problem || "не описана"}.`,
+        `Идея: ${project.concept.idea || "не описана"}.`,
+        `Описание: ${project.desc || "пока нет короткого описания"}.`,
+        `Следующий полезный апдейт: ${nextBestQuestion()}`
+      ].join("\n");
+    }
+
+    if (intent === "summary") {
+      return [
+        `Краткая сводка по "${project.name}":`,
+        `Статус: ${STATUS[project.status]?.label || project.status}.`,
+        `Категория: ${project.field || "не задана"}.`,
+        `Последняя заметка: ${latestNote || "пока нет заметок"}.`,
+        `Задачи: ${project.tasks.length}, из них открытых ${openTasks.length}.`,
+        "Загруженные файлы теперь сразу превращаются в проекты."
+      ].join("\n");
+    }
+
+    if (maybeStoreFreeform(project, trimmed)) {
+      rerender();
+      return [
+        `Я понял это как новое уточнение по проекту "${project.name}" и уже сохранил его.`,
+        `Если это была мысль о функции или механике, я использую её дальше при построении концепта и роадмапа.`
+      ].join("\n");
+    }
+
+    return [
+      `Я вижу проект "${project.name}", но здесь мало контекста.`,
+      `Опиши проект одной-двумя фразами, и я сам решу, что это: описание, уточнение концепта, заметка или новая задача.`,
+      fileContext ? `Я также вижу выбранные файлы в браузере и могу учитывать их содержимое.` : `Если откроешь файлы или папку в браузере, я смогу учитывать и их содержимое.`,
+      `Самый полезный следующий вопрос сейчас: ${nextBestQuestion()}`
+    ].join("\n");
+  }
+
+  async function sendChat() {
+    const input = document.getElementById("chat-input");
+    const text = input.value.trim();
+    if (!text || chatBusy) return;
+    appendChatMessage("user", text);
+    input.value = "";
+    chatBusy = true;
+    input.disabled = true;
+    setChatLoading(true, "Отправляю запрос…", 6);
+
+    const project = getProject(activeProjectId);
+
+    try {
+      const key = activeProjectId || "global";
+      const history = (chatHistory[key] || []).slice(-12);
+      const response = await fetch("/api/chat-stream", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        cache: "no-store",
+        body: JSON.stringify({
+          message: text,
+          history,
+          project: project ? {
+            id: project.id,
+            name: project.name,
+            desc: project.desc,
+            status: STATUS[project.status]?.label || project.status,
+            field: project.field,
+            activeTab: TABS[activeTab],
+            concept: project.concept,
+            notes: project.notes,
+            tasks: project.tasks,
+            patent: project.patent
+          } : null,
+          browserFiles: []
+        })
+      });
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || "agent request failed");
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let finalMessage = "";
+      let projectUpdates = null;
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || "";
+
+        for (const line of lines) {
+          if (!line.trim()) continue;
+          const event = JSON.parse(line);
+          if (event.type === "progress") {
+            setChatLoading(true, event.label || "Лука AI думает…", event.progress || 8);
+          }
+          if (event.type === "final") {
+            finalMessage = event.message || "Нет ответа от модели.";
+            projectUpdates = event.projectUpdates || null;
+          }
+          if (event.type === "error") {
+            throw new Error(event.error || "stream failed");
+          }
+        }
+      }
+
+      await new Promise((resolve) => window.setTimeout(resolve, 120));
+      if (projectUpdates && activeProjectId) {
+        applyProjectUpdatesFromServer(activeProjectId, projectUpdates);
+      }
+      appendChatMessage("assistant", finalMessage || "Нет ответа от модели.");
+      await refreshAgentStatus();
+    } catch (error) {
+      const fallback = project
+        ? buildLocalAssistantReply(text, project)
+        : `Не удалось получить ответ модели: ${error.message}`;
+      rerender();
+      appendChatMessage("assistant", fallback);
+      await refreshAgentStatus();
+    } finally {
+      setChatLoading(false);
+      chatBusy = false;
+      input.disabled = false;
+      input.focus();
+    }
+  }
+
+  function handleChatKey(event) {
+    if (event.key === "Enter") {
+      sendChat();
+    }
+  }
+
+  function commandItems() {
+    const items = [
+      { icon: "＋", name: "Новый проект", hint: "Создать изобретение", action: openNewProject },
+      { icon: "↻", name: "Сканировать workspace", hint: "Подтянуть проекты с диска", action: scanWorkspaceProjects },
+      { icon: "⌂", name: "Показать welcome", hint: "Главный экран", action: showWelcome },
+      { icon: "⤴", name: "Импортировать файлы", hint: "Сразу как проекты", action: openFilePicker },
+      { icon: "▣", name: "Импортировать папку", hint: "Сразу как проекты", action: openFolderPicker },
+      { icon: "✦", name: "Открыть Лука AI", hint: "Локальный ассистент снизу", action: () => toggleChat(true) }
+    ];
+
+    if (activeProjectId) {
+      items.push(
+        { icon: "◫", name: "Открыть Концепт", hint: "Текущий проект", action: () => switchTab("concept") },
+        { icon: "📝", name: "Открыть Заметки", hint: "Текущий проект", action: () => switchTab("notes") },
+        { icon: "✓", name: "Открыть Роадмап", hint: "Текущий проект", action: () => switchTab("roadmap") },
+        { icon: "⌬", name: "Открыть Патент", hint: "Текущий проект", action: () => switchTab("patent") },
+        { icon: "📄", name: "Открыть Документы", hint: "Workspace", action: () => switchTab("docs") },
+        { icon: "⌘", name: "Открыть Код", hint: "Workspace", action: () => switchTab("code") },
+        { icon: "▸", name: "Открыть Терминал", hint: "Workspace", action: () => switchTab("terminal") }
+      );
+    }
+
+    projects.forEach((project) => {
+      items.push({
+        icon: "⌘",
+        name: `Открыть: ${project.name}`,
+        hint: STATUS[project.status]?.label || "Проект",
+        action: () => openProject(project.id)
+      });
+    });
+
+    return items;
+  }
+
+  function openPalette() {
+    document.getElementById("palette-overlay").classList.add("show");
+    document.getElementById("palette-input").value = "";
+    paletteIndex = 0;
+    renderPalette();
+    setTimeout(() => document.getElementById("palette-input").focus(), 30);
+  }
+
+  function closePalette(event) {
+    if (event && event.target && event.target.id !== "palette-overlay") return;
+    document.getElementById("palette-overlay").classList.remove("show");
+  }
+
+  function renderPalette() {
+    const query = document.getElementById("palette-input").value.trim().toLowerCase();
+    const items = commandItems().filter((item) => {
+      if (!query) return true;
+      return `${item.name} ${item.hint}`.toLowerCase().includes(query);
+    });
+
+    paletteIndex = Math.min(paletteIndex, Math.max(items.length - 1, 0));
+
+    const results = document.getElementById("palette-results");
+    results._items = items;
+    results.innerHTML = items.length ? items.map((item, index) => `
+      <div class="palette-item ${index === paletteIndex ? "selected" : ""}" onclick="runPalette(${index})">
+        <span>${item.icon}</span>
+        <span>${esc(item.name)}</span>
+        <small>${esc(item.hint)}</small>
+      </div>
+    `).join("") : `<div class="empty" style="margin:6px;">Ничего не найдено.</div>`;
+  }
+
+  function runPalette(index) {
+    const items = document.getElementById("palette-results")._items || [];
+    const item = items[index];
+    if (!item) return;
+    closePalette();
+    item.action();
+  }
+
+  function handlePaletteKey(event) {
+    const items = document.getElementById("palette-results")._items || [];
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      paletteIndex = Math.min(paletteIndex + 1, items.length - 1);
+      renderPalette();
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      paletteIndex = Math.max(paletteIndex - 1, 0);
+      renderPalette();
+    } else if (event.key === "Enter") {
+      event.preventDefault();
+      runPalette(paletteIndex);
+    } else if (event.key === "Escape") {
+      closePalette();
+    }
+  }
+
+  function updateClock() {
+    document.getElementById("status-time").textContent = new Date().toLocaleTimeString("ru-RU", {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+  }
+
+  document.addEventListener("keydown", (event) => {
+    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+      event.preventDefault();
+      openPalette();
+    }
+    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "n") {
+      event.preventDefault();
+      openNewProject();
+    }
+    if (event.key === "Escape") {
+      closePalette();
+      closeModal();
+    }
+  });
+
+  seedChat();
+  repairProjectsIfNeeded();
+  refreshAgentStatus();
+  updateClock();
+  window.setInterval(updateClock, 1000);
+  rerender();
+  bootstrapProjectsIfNeeded();
 </script>
 </body>
 </html>
