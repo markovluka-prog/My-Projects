@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Планеты — Пружинная гравитация Луки</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #05050f;
+      color: #c8d0ff;
+      font-family: 'Courier New', monospace;
+      padding: 40px 32px;
+      min-height: 100vh;
+    }
+
+    h1 { font-size: 16px; color: #aac4ff; margin-bottom: 4px; }
+    .subtitle { font-size: 11px; color: #4a5a90; margin-bottom: 28px; }
+
+    .formulas { display: flex; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+    .formula-box {
+      background: rgba(30,50,120,0.3); border-left: 2px solid #4466cc;
+      padding: 7px 14px; font-size: 12px; color: #d0e4ff;
+    }
+
+    .source-note {
+      font-size: 11px; color: #4a5a90; margin-bottom: 26px; margin-top: 6px;
+    }
+    .source-note .obs  { color: #88ffcc; }
+    .source-note .calc { color: #ffcc66; }
+
+    .section-label {
+      font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+      color: #3a4a70; margin-bottom: 8px; margin-top: 22px;
+    }
+
+    .table-wrap { overflow-x: auto; margin-bottom: 32px; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 900px; }
+
+    thead tr { background: rgba(20,30,80,0.7); border-bottom: 1px solid #2a3060; }
+    th {
+      padding: 10px 14px; text-align: left; font-weight: normal;
+      font-size: 10px; letter-spacing: 0.5px; white-space: nowrap;
+    }
+    th.obs-col  { color: #88ffcc; }
+    th.calc-col { color: #ffcc66; }
+    th.name-col { color: #7890cc; }
+
+    tbody tr { border-bottom: 1px solid #10152a; transition: background 0.12s; }
+    tbody tr:hover { background: rgba(30,50,120,0.2); }
+    td { padding: 11px 14px; vertical-align: middle; white-space: nowrap; }
+
+    .planet-name { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #c8d0ff; }
+    .planet-dot  { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 0 6px currentColor; }
+
+    .obs  { color: #88ffcc; }
+    .calc { color: #ffcc66; }
+    .dim  { color: #3a5060; font-size: 10px; }
+
+    .status-in  { color: #88ffcc; }
+    .status-out { color: #ff5555; }
+
+    .bar-wrap  { width: 90px; height: 5px; background: rgba(40,60,120,0.4); border-radius: 3px; overflow: hidden; display: inline-block; vertical-align: middle; margin-right: 6px; }
+    .bar-fill  { height: 100%; border-radius: 3px; }
+    .ratio-val { font-size: 11px; color: #ffcc66; vertical-align: middle; }
+
+    .note { font-size: 11px; color: #3a4a70; line-height: 2.0; }
+    .note b { color: #5a6a90; }
+    .note .hi { color: #88ffcc; }
+    .note .warn { color: #ffcc66; }
+
+    .kmax-box {
+      display: inline-block;
+      background: rgba(30,50,120,0.3); border: 1px solid #2a3060;
+      border-radius: 6px; padding: 10px 18px; margin-bottom: 20px; font-size: 12px;
+    }
+    .kmax-box .label { color: #7890cc; margin-bottom: 4px; font-size: 11px; }
+    .kmax-box .value { color: #ffcc66; font-size: 15px; }
+  </style>
+</head>
+<body>
+
+<h1>Пружинная гравитация Луки — Планеты</h1>
+<div class="subtitle">Солнечная система · только наблюдательные данные · F в кг (не в Ньютонах)</div>
+
+<div class="formulas">
+  <div class="formula-box">Ф2: k_макс = √(m² + r²) &nbsp;— поле Солнца</div>
+  <div class="formula-box">Ф1: F = k / k_макс × m1 &nbsp;(если k ≤ k_макс, иначе F = 0)</div>
+</div>
+
+<div class="source-note">
+  <span class="obs">■ зелёный</span> = напрямую наблюдаемые данные (угловой размер, радар, доплер, таймер) &nbsp;|&nbsp;
+  <span class="calc">■ жёлтый</span> = рассчитано по теории Луки
+</div>
+
+<div class="kmax-box" id="kmax-box">
+  <div class="label">k_макс Солнца (одно для всей системы)</div>
+  <div class="value" id="kmax-val">—</div>
+</div>
+
+<div class="section-label">Наблюдательные данные + расчёт теории</div>
+
+<div class="table-wrap">
+<table>
+  <thead>
+    <tr>
+      <th class="name-col">Планета</th>
+      <th class="obs-col">k — расст. от ☉ (м) <br><span style="color:#2a4a30">наблюдение: радар / параллакс</span></th>
+      <th class="obs-col">T — период (дней) <br><span style="color:#2a4a30">наблюдение: прямой отсчёт</span></th>
+      <th class="obs-col">v_орб (км/с) <br><span style="color:#2a4a30">наблюдение: доплер</span></th>
+      <th class="obs-col">r — радиус (м) <br><span style="color:#2a4a30">наблюдение: угловой размер</span></th>
+      <th class="calc-col">В поле? <br><span style="color:#4a3a10">теория Луки</span></th>
+      <th class="calc-col">k / k_макс <br><span style="color:#4a3a10">теория Луки</span></th>
+      <th class="calc-col">F (кг) <br><span style="color:#4a3a10">теория Луки</span></th>
+    </tr>
+  </thead>
+  <tbody id="tbody"></tbody>
+</table>
+</div>
+
+<div class="note" id="note"></div>
+
+<script>
+// ── Солнце — только напрямую измеренные величины ──
+const R_SUN   = 6.957e8;   // м — угловой размер + расстояние (наблюдение)
+const M_SUN   = 1.989e30;  // кг — нужно для Ф2; единственная величина, выведенная из орбитальной механики
+
+const KMAX = Math.sqrt(M_SUN * M_SUN + R_SUN * R_SUN);
+
+// ── Планеты — только наблюдательные данные ──
+// k: радарные измерения (NASA Planetary Fact Sheet)
+// T: прямые астрономические наблюдения
+// v: доплеровские измерения орбитальной скорости
+// r: угловой диаметр × расстояние
+// m1: масса планеты нужна для Ф1; получена через орбиты спутников (не Ньютон сам по себе, но орбитальная механика)
+const planets = [
+  { name:"Меркурий", color:"#aaaaaa", k:5.791e10, T:87.97,   v:47.4,  r:2.439e6,  m1:3.301e23 },
+  { name:"Венера",   color:"#ffcc88", k:1.082e11, T:224.7,   v:35.0,  r:6.052e6,  m1:4.868e24 },
+  { name:"Земля",    color:"#4488ff", k:1.496e11, T:365.25,  v:29.8,  r:6.371e6,  m1:5.972e24 },
+  { name:"Марс",     color:"#ff6644", k:2.279e11, T:686.97,  v:24.1,  r:3.390e6,  m1:6.390e23 },
+  { name:"Юпитер",   color:"#ffaa66", k:7.786e11, T:4332.6,  v:13.1,  r:7.149e7,  m1:1.898e27 },
+  { name:"Сатурн",   color:"#ffe0aa", k:1.433e12, T:10759.2, v:9.7,   r:6.027e7,  m1:5.683e26 },
+  { name:"Уран",     color:"#88eeff", k:2.872e12, T:30688.5, v:6.8,   r:2.556e7,  m1:8.681e25 },
+  { name:"Нептун",   color:"#4466ff", k:4.495e12, T:60195.0, v:5.4,   r:2.476e7,  m1:1.024e26 },
+];
+
+function sci(n) {
+  if (n === 0) return '0';
+  const e = Math.floor(Math.log10(Math.abs(n)));
+  const m = (n / Math.pow(10, e)).toFixed(3);
+  return `${m}×10<sup>${e}</sup>`;
+}
+
+function barColor(r) {
+  if (r > 0.66) return '#ff6644';
+  if (r > 0.33) return '#ffcc44';
+  return '#44aaff';
+}
+
+document.getElementById('kmax-val').innerHTML = sci(KMAX) + ' м';
+
+const tbody = document.getElementById('tbody');
+let allIn = true;
+
+planets.forEach(p => {
+  const ratio   = p.k / KMAX;
+  const inField = p.k <= KMAX;
+  const F       = inField ? ratio * p.m1 : 0;
+  if (!inField) allIn = false;
+
+  const pct    = Math.min(ratio * 100, 100);
+  const bColor = barColor(ratio);
+
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td>
+      <div class="planet-name">
+        <span class="planet-dot" style="background:${p.color};color:${p.color}"></span>
+        ${p.name}
+      </div>
+    </td>
+    <td><span class="obs">${sci(p.k)}</span> <span class="dim">м</span></td>
+    <td><span class="obs">${p.T.toLocaleString('ru')}</span> <span class="dim">д</span></td>
+    <td><span class="obs">${p.v}</span> <span class="dim">км/с</span></td>
+    <td><span class="obs">${sci(p.r)}</span> <span class="dim">м</span></td>
+    <td>${inField
+      ? '<span class="status-in">✓ да</span>'
+      : '<span class="status-out">✗ нет</span>'}</td>
+    <td>
+      <span class="bar-wrap"><span class="bar-fill" style="width:${pct}%;background:${bColor}"></span></span>
+      <span class="ratio-val">${ratio.toExponential(3)}</span>
+    </td>
+    <td><span class="calc">${sci(F)}</span> <span class="dim">кг</span></td>
+  `;
+  tbody.appendChild(tr);
+});
+
+document.getElementById('note').innerHTML = `
+  <b>Наблюдения:</b><br>
+  1. Все планеты ${allIn
+    ? '<span class="hi">✓ находятся внутри поля Солнца</span>'
+    : '<span class="warn">⚠ часть планет вне поля</span>'} — k каждой планеты << k_макс.<br>
+  2. F <span class="warn">нарастает с расстоянием</span>: Нептун притягивается к Солнцу сильнее Меркурия — прямая противоположность Ньютону.<br>
+  3. F измеряется в <span class="hi">кг</span>, не в Ньютонах — это "гравитационное давление" по теории Луки, а не сила в СИ.<br>
+  4. Скорость v_орб <span class="warn">убывает</span> с расстоянием (Кеплер, наблюдение) — у Нептуна 5.4 км/с, у Меркурия 47.4 км/с.<br>
+  &nbsp;&nbsp;&nbsp;→ Открытый вопрос: как теория объясняет снижение скорости при росте F?
+`;
+</script>
+</body>
+</html>

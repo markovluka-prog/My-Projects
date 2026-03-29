@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Калькулятор — Пружинная гравитация Луки</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #05050f; color: #c8d0ff; font-family: 'Courier New', monospace; overflow: hidden; }
+    canvas { display: block; }
+
+    #panel {
+      position: absolute; top: 16px; right: 16px;
+      background: rgba(5, 8, 25, 0.92);
+      border: 1px solid #2a3060; border-radius: 8px;
+      padding: 18px; width: 270px; font-size: 12px; line-height: 1.7;
+    }
+    #panel h2 { font-size: 13px; color: #aac4ff; margin-bottom: 14px; }
+
+    .formula { background: rgba(30,50,120,0.4); border-left: 2px solid #4466cc; padding: 4px 8px; margin: 4px 0 10px; color: #d0e4ff; font-size: 11px; }
+
+    .slider-row { margin-bottom: 12px; }
+    .slider-label { display: flex; justify-content: space-between; font-size: 11px; color: #7890cc; margin-bottom: 3px; }
+    .slider-label .val { color: #88ffcc; }
+    input[type=range] { width: 100%; accent-color: #5577cc; cursor: pointer; }
+
+    #results {
+      margin-top: 14px; border-top: 1px solid #2a3060; padding-top: 12px;
+    }
+    .res-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px; }
+    .res-label { color: #7890cc; }
+    .res-val   { color: #88ffcc; }
+    .res-val.zero { color: #ff4444; }
+    .res-val.warn { color: #ffcc66; }
+
+    #status-bar {
+      margin-top: 8px; padding: 6px 10px; border-radius: 4px; font-size: 12px; text-align: center;
+      background: rgba(20, 80, 40, 0.3); border: 1px solid #22aa44; color: #88ffcc;
+    }
+    #status-bar.out { background: rgba(80, 20, 20, 0.3); border-color: #aa2222; color: #ff6666; }
+
+    #info {
+      position: absolute; top: 16px; left: 16px;
+      background: rgba(5, 8, 25, 0.92);
+      border: 1px solid #2a3060; border-radius: 8px;
+      padding: 14px 16px; font-size: 11px; line-height: 1.8; max-width: 210px;
+    }
+    #info h3 { font-size: 12px; color: #88ffaa; margin-bottom: 6px; }
+    #info .hi { color: #ffcc66; }
+    #info .lo { color: #88ffcc; }
+  </style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div id="info">
+  <h3>Пружинная гравитация Луки</h3>
+  <span class="hi">Ф2: k_макс = √(m² + r²)</span><br>
+  <span class="lo">Ф1: F = k / k_макс × m1</span><br><br>
+  Поле нарастает к краю.<br>
+  За k_макс — F = 0.<br><br>
+  <span style="color:#4a5a90">● жёлтое — ядро (m, r)<br>
+  ● синее — объект (m1)<br>
+  ── граница k_макс</span>
+</div>
+
+<div id="panel">
+  <h2>Параметры</h2>
+
+  <div class="formula">Ф2: k_макс = √(m² + r²)</div>
+
+  <div class="slider-row">
+    <div class="slider-label"><span>m — масса ядра (кг)</span><span class="val" id="lm">100</span></div>
+    <input type="range" id="sm" min="1" max="500" value="100" step="1">
+  </div>
+  <div class="slider-row">
+    <div class="slider-label"><span>r — радиус ядра (м)</span><span class="val" id="lr">5</span></div>
+    <input type="range" id="sr" min="1" max="200" value="5" step="1">
+  </div>
+
+  <div class="formula" style="margin-top:6px">Ф1: F = k / k_макс × m1</div>
+
+  <div class="slider-row">
+    <div class="slider-label"><span>m1 — масса объекта (кг)</span><span class="val" id="lm1">200</span></div>
+    <input type="range" id="sm1" min="1" max="500" value="200" step="1">
+  </div>
+  <div class="slider-row">
+    <div class="slider-label"><span>k — расстояние (м)</span><span class="val" id="lk">80</span></div>
+    <input type="range" id="sk" min="0" max="300" value="80" step="1">
+  </div>
+
+  <div id="results">
+    <div class="res-row"><span class="res-label">k_макс:</span><span class="res-val" id="rv-kmax">—</span></div>
+    <div class="res-row"><span class="res-label">k / k_макс:</span><span class="res-val" id="rv-ratio">—</span></div>
+    <div class="res-row"><span class="res-label">F:</span><span class="res-val" id="rv-f">—</span></div>
+    <div id="status-bar">✓ Внутри поля</div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+
+function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+resize();
+window.addEventListener('resize', () => { resize(); draw(); });
+
+const CX = () => canvas.width  / 2;
+const CY = () => canvas.height / 2;
+
+// ── Stars ──
+let starCanvas = null;
+function makeStars() {
+  starCanvas = document.createElement('canvas');
+  starCanvas.width = canvas.width; starCanvas.height = canvas.height;
+  const sc = starCanvas.getContext('2d');
+  sc.fillStyle = '#05050f'; sc.fillRect(0,0,canvas.width,canvas.height);
+  for (let i = 0; i < 200; i++) {
+    sc.beginPath();
+    sc.arc(Math.random()*canvas.width, Math.random()*canvas.height, Math.random()*1.2, 0, Math.PI*2);
+    sc.fillStyle = `rgba(200,210,255,${0.2+Math.random()*0.6})`; sc.fill();
+  }
+}
+makeStars();
+
+// ── State ──
+let params = { m: 100, r: 5, m1: 200, k: 80 };
+
+function compute() {
+  const { m, r, m1, k } = params;
+  const kmax  = Math.sqrt(m*m + r*r);
+  const ratio = k / kmax;
+  const inField = k <= kmax;
+  const F = inField ? ratio * m1 : 0;
+  return { kmax, ratio, inField, F };
+}
+
+function fmt(n) {
+  if (Math.abs(n) >= 1e5 || (Math.abs(n) < 0.01 && n !== 0)) return n.toExponential(3);
+  return parseFloat(n.toPrecision(5)).toString();
+}
+
+// ── Scale: map metres → pixels ──
+// k_макс always fits in ~40% of smaller canvas dimension
+function getScale() {
+  const { kmax } = compute();
+  const maxPx = Math.min(canvas.width, canvas.height) * 0.40;
+  return maxPx / Math.max(kmax, 1);
+}
+
+function draw() {
+  const res = compute();
+  const { kmax, ratio, inField, F } = res;
+  const scale  = getScale();
+  const kmaxPx = kmax  * scale;
+  const kPx    = params.k * scale;
+  const rPx    = Math.max(params.r * scale, 6);
+  const cx = CX(), cy = CY();
+
+  // Background
+  ctx.drawImage(starCanvas, 0, 0);
+
+  // ── Field gradient ──
+  const grad = ctx.createRadialGradient(cx, cy, rPx, cx, cy, kmaxPx);
+  grad.addColorStop(0,    'rgba(10,20,80,0)');
+  grad.addColorStop(0.5,  'rgba(10,30,110,0.04)');
+  grad.addColorStop(0.8,  'rgba(20,50,180,0.10)');
+  grad.addColorStop(0.95, 'rgba(40,80,220,0.17)');
+  grad.addColorStop(1,    'rgba(80,130,255,0.26)');
+  ctx.beginPath(); ctx.arc(cx, cy, kmaxPx, 0, Math.PI*2);
+  ctx.fillStyle = grad; ctx.fill();
+
+  // ── Force heatmap rings (show intensity growing toward edge) ──
+  const rings = 12;
+  for (let i = 1; i <= rings; i++) {
+    const t    = i / rings;
+    const rin  = kmaxPx * (i-1)/rings;
+    const rout = kmaxPx * i/rings;
+    const alpha = t * t * 0.12;
+    const rg = ctx.createRadialGradient(cx,cy,rin, cx,cy,rout);
+    rg.addColorStop(0, `rgba(80,160,255,0)`);
+    rg.addColorStop(1, `rgba(80,160,255,${alpha})`);
+    ctx.beginPath(); ctx.arc(cx,cy,rout,0,Math.PI*2);
+    ctx.fillStyle = rg; ctx.fill();
+  }
+
+  // ── Field border ──
+  ctx.beginPath(); ctx.arc(cx, cy, kmaxPx, 0, Math.PI*2);
+  ctx.strokeStyle = 'rgba(80,140,255,0.55)'; ctx.lineWidth = 1.5;
+  ctx.setLineDash([10,5]); ctx.stroke(); ctx.setLineDash([]);
+
+  // k_макс label
+  ctx.fillStyle = 'rgba(100,160,255,0.7)'; ctx.font = '11px Courier New';
+  ctx.fillText('k_макс', cx + kmaxPx + 6, cy - 4);
+
+  // ── Force arrow (from object toward core) ──
+  if (inField && kPx > rPx + 4) {
+    const ox = cx + kPx, oy = cy;
+    const dx = cx - ox, dy = 0;
+    const len = Math.abs(dx);
+    const arrowLen = len * ratio * 0.7;
+    const ex = ox + (dx/len)*arrowLen;
+    const t = ratio;
+    const fr = Math.floor(t*220), fg = Math.floor((1-t)*180+60);
+    ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(ex, ey=oy);
+    ctx.strokeStyle = `rgba(${fr},${fg},60,0.85)`; ctx.lineWidth = 2; ctx.stroke();
+    const ang = dx < 0 ? Math.PI : 0;
+    ctx.beginPath();
+    ctx.moveTo(ex, oy);
+    ctx.lineTo(ex - 10*Math.cos(ang-0.4), oy - 10*Math.sin(ang-0.4));
+    ctx.lineTo(ex - 10*Math.cos(ang+0.4), oy - 10*Math.sin(ang+0.4));
+    ctx.closePath();
+    ctx.fillStyle = `rgba(${fr},${fg},60,0.85)`; ctx.fill();
+
+    // Force label near arrow
+    ctx.fillStyle = `rgba(${fr},${fg},60,0.9)`;
+    ctx.font = '11px Courier New';
+    ctx.fillText(`F = ${fmt(F)} кг`, ex + 8, oy - 8);
+  }
+
+  // ── k distance line ──
+  ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + kPx, cy);
+  ctx.strokeStyle = inField ? 'rgba(136,255,204,0.35)' : 'rgba(255,68,68,0.45)';
+  ctx.lineWidth = 1; ctx.setLineDash([4,4]); ctx.stroke(); ctx.setLineDash([]);
+
+  // k label
+  ctx.fillStyle = inField ? 'rgba(136,255,204,0.7)' : 'rgba(255,100,100,0.8)';
+  ctx.font = '11px Courier New';
+  ctx.fillText(`k = ${params.k} м`, cx + kPx/2 - 20, cy - 8);
+
+  // ── Core (nucleus) ──
+  const coreR = Math.max(rPx, 10);
+  const glow = ctx.createRadialGradient(cx,cy,0,cx,cy,coreR*4);
+  glow.addColorStop(0,'rgba(255,220,100,0.5)');
+  glow.addColorStop(0.4,'rgba(255,150,30,0.15)');
+  glow.addColorStop(1,'rgba(255,80,0,0)');
+  ctx.beginPath(); ctx.arc(cx,cy,coreR*4,0,Math.PI*2); ctx.fillStyle=glow; ctx.fill();
+
+  const coreGrad = ctx.createRadialGradient(cx,cy,0,cx,cy,coreR);
+  coreGrad.addColorStop(0,'#ffffff'); coreGrad.addColorStop(0.4,'#fff8cc');
+  coreGrad.addColorStop(0.8,'#ffaa40'); coreGrad.addColorStop(1,'#ff6600');
+  ctx.beginPath(); ctx.arc(cx,cy,coreR,0,Math.PI*2); ctx.fillStyle=coreGrad; ctx.fill();
+
+  ctx.fillStyle='rgba(255,220,130,0.8)'; ctx.font='bold 11px Courier New';
+  ctx.fillText(`m=${params.m} r=${params.r}`, cx+coreR+5, cy+4);
+
+  // ── Orbital object ──
+  const objX = cx + kPx;
+  const objR = 8;
+  const objColor = inField ? '#88aaff' : '#ff4444';
+  const [or,og,ob] = hexRgb(objColor);
+  const og2 = ctx.createRadialGradient(objX,cy,0,objX,cy,objR*3);
+  og2.addColorStop(0,`rgba(${or},${og},${ob},0.6)`);
+  og2.addColorStop(1,`rgba(${or},${og},${ob},0)`);
+  ctx.beginPath(); ctx.arc(objX,cy,objR*3,0,Math.PI*2); ctx.fillStyle=og2; ctx.fill();
+  ctx.beginPath(); ctx.arc(objX,cy,objR,0,Math.PI*2); ctx.fillStyle=objColor; ctx.fill();
+
+  ctx.fillStyle = inField ? 'rgba(136,170,255,0.8)' : 'rgba(255,80,80,0.8)';
+  ctx.font = '11px Courier New';
+  ctx.fillText(`m1=${params.m1}`, objX + objR + 5, cy + 4);
+
+  // ── Update UI ──
+  document.getElementById('rv-kmax').textContent  = fmt(kmax) + ' м';
+  const ratioEl = document.getElementById('rv-ratio');
+  ratioEl.textContent = fmt(ratio);
+  ratioEl.className = 'res-val' + (ratio > 0.66 ? ' warn' : '');
+  const fEl = document.getElementById('rv-f');
+  fEl.textContent = fmt(F) + ' кг';
+  fEl.className   = 'res-val' + (inField ? '' : ' zero');
+
+  const sb = document.getElementById('status-bar');
+  if (inField) {
+    sb.textContent = `✓ Внутри поля (${(ratio*100).toFixed(1)}% до края)`;
+    sb.className = '';
+  } else {
+    sb.textContent = `✗ За пределами поля — F = 0`;
+    sb.className = 'out';
+  }
+}
+
+let ey = 0; // used in arrow draw
+
+function hexRgb(hex) {
+  if (hex.startsWith('#')) hex = hex.slice(1);
+  return [parseInt(hex.slice(0,2),16), parseInt(hex.slice(2,4),16), parseInt(hex.slice(4,6),16)];
+}
+
+// ── Sliders ──
+function bindSlider(id, labelId, key) {
+  const el = document.getElementById(id);
+  el.addEventListener('input', () => {
+    params[key] = parseFloat(el.value);
+    document.getElementById(labelId).textContent = el.value;
+    draw();
+  });
+}
+
+bindSlider('sm',  'lm',  'm');
+bindSlider('sr',  'lr',  'r');
+bindSlider('sm1', 'lm1', 'm1');
+bindSlider('sk',  'lk',  'k');
+
+draw();
+</script>
+</body>
+</html>
