@@ -3,7 +3,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build:pdf": "node generate_pdf.mjs"
+    "build:site": "node build_site.mjs",
+    "build:pdf": "node generate_pdf.mjs",
+    "build": "node build_site.mjs && node generate_pdf.mjs",
+    "agent": "node update_agent.mjs",
+    "agent:once": "node update_agent.mjs --once"
   },
   "dependencies": {
     "playwright": "^1.54.2"
