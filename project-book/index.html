@@ -6,18 +6,18 @@
   <title>Книга проектов Луки</title>
   <style>
     :root {
-      --paper: #f7f1e7;
-      --paper-2: #fffdf9;
-      --ink: #18181b;
-      --muted: #5f5d67;
-      --line: rgba(24, 24, 27, 0.12);
-      --gold: #b67f26;
-      --blue: #1f5f86;
-      --pine: #235949;
-      --rose: #7d4156;
-      --violet: #414c7a;
-      --clay: #8d573d;
-      --shadow: 0 20px 60px rgba(24, 24, 27, 0.14);
+      --paper: #ffffff;
+      --paper-2: #f6fbff;
+      --ink: #101214;
+      --muted: #33424d;
+      --line: rgba(16, 18, 20, 0.12);
+      --gold: #1976bc;
+      --blue: #0f73b8;
+      --pine: #1d87c9;
+      --rose: #2e8bc6;
+      --violet: #4a93c9;
+      --clay: #6aa8d7;
+      --shadow: 0 20px 60px rgba(15, 115, 184, 0.12);
       --radius: 18px;
     }
 
@@ -29,7 +29,10 @@
     body {
       margin: 0;
       padding: 0;
-      background: #ddd4c6;
+      background:
+        radial-gradient(circle at top right, rgba(15, 115, 184, 0.10), transparent 24%),
+        radial-gradient(circle at bottom left, rgba(106, 168, 215, 0.14), transparent 28%),
+        linear-gradient(180deg, #f8fdff, #dff2ff);
       color: var(--ink);
       font-family: "Georgia", "Times New Roman", serif;
       -webkit-print-color-adjust: exact;
@@ -38,6 +41,10 @@
 
     body {
       padding: 12px 0 40px;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     @page {
@@ -51,9 +58,9 @@
       margin: 0 auto 12px;
       padding: 18mm 17mm 18mm;
       background:
-        radial-gradient(circle at top right, rgba(182, 127, 38, 0.09), transparent 24%),
-        radial-gradient(circle at bottom left, rgba(31, 95, 134, 0.08), transparent 28%),
-        linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(247, 241, 231, 0.98)),
+        radial-gradient(circle at top right, rgba(15, 115, 184, 0.09), transparent 24%),
+        radial-gradient(circle at bottom left, rgba(106, 168, 215, 0.12), transparent 28%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(246, 251, 255, 0.98)),
         var(--paper);
       box-shadow: var(--shadow);
       position: relative;
@@ -64,7 +71,7 @@
       content: "";
       position: absolute;
       inset: 7mm;
-      border: 1px solid rgba(24, 24, 27, 0.08);
+      border: 1px solid rgba(15, 115, 184, 0.14);
       pointer-events: none;
     }
 
@@ -72,10 +79,10 @@
       display: grid;
       align-content: space-between;
       background:
-        radial-gradient(circle at 20% 20%, rgba(182, 127, 38, 0.16), transparent 20%),
-        radial-gradient(circle at 85% 26%, rgba(35, 89, 73, 0.13), transparent 24%),
-        radial-gradient(circle at 82% 82%, rgba(65, 76, 122, 0.12), transparent 20%),
-        linear-gradient(135deg, #fbf7ef 0%, #efe4d3 48%, #f9f4eb 100%);
+        radial-gradient(circle at 20% 20%, rgba(15, 115, 184, 0.14), transparent 20%),
+        radial-gradient(circle at 85% 26%, rgba(29, 135, 201, 0.14), transparent 24%),
+        radial-gradient(circle at 82% 82%, rgba(106, 168, 215, 0.16), transparent 20%),
+        linear-gradient(135deg, #ffffff 0%, #eaf7ff 52%, #f7fcff 100%);
     }
 
     .cover-grid {
@@ -92,7 +99,7 @@
       gap: 8px;
       padding: 6px 12px;
       border-radius: 999px;
-      background: rgba(24, 24, 27, 0.06);
+      background: rgba(15, 115, 184, 0.08);
       color: var(--muted);
       font-size: 9pt;
       letter-spacing: 0.16em;
@@ -160,14 +167,14 @@
     .metric {
       padding: 14px 16px;
       border-radius: 16px;
-      background: rgba(255, 255, 255, 0.62);
-      border: 1px solid rgba(24, 24, 27, 0.08);
+      background: rgba(233, 246, 255, 0.82);
+      border: 1px solid rgba(15, 115, 184, 0.10);
     }
 
     .metric strong {
       display: block;
       font-size: 18pt;
-      color: var(--blue);
+      color: var(--ink);
       margin-bottom: 6px;
     }
 
@@ -180,7 +187,7 @@
     .pill {
       padding: 7px 11px;
       border-radius: 999px;
-      background: rgba(24, 24, 27, 0.06);
+      background: rgba(15, 115, 184, 0.08);
       font-size: 9pt;
     }
 
@@ -196,8 +203,8 @@
       overflow: hidden;
       min-height: 74mm;
       border-radius: 18px;
-      border: 1px solid rgba(24, 24, 27, 0.08);
-      background: rgba(255, 255, 255, 0.5);
+      border: 1px solid rgba(15, 115, 184, 0.10);
+      background: rgba(255, 255, 255, 0.78);
     }
 
     .tile.tall {
@@ -219,8 +226,8 @@
       bottom: 12px;
       padding: 6px 10px;
       border-radius: 999px;
-      background: rgba(24, 24, 27, 0.72);
-      color: #f8f4ec;
+      background: rgba(255, 255, 255, 0.86);
+      color: var(--ink);
       font-size: 8.5pt;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -247,8 +254,8 @@
     .fact-card,
     .figure-card,
     .table-card {
-      background: rgba(255, 255, 255, 0.55);
-      border: 1px solid rgba(24, 24, 27, 0.08);
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(15, 115, 184, 0.12);
       border-radius: var(--radius);
       padding: 16px 18px;
       break-inside: avoid-page;
@@ -264,8 +271,8 @@
 
     .quote-card {
       padding: 18px 20px;
-      border-left: 4px solid var(--gold);
-      background: rgba(255, 253, 249, 0.88);
+      border-left: 4px solid var(--blue);
+      background: rgba(240, 249, 255, 0.96);
     }
 
     .quote-card p {
@@ -284,8 +291,9 @@
       margin: 0;
       padding: 14px 16px;
       border-radius: 14px;
-      background: #171a22;
-      color: #e8edf5;
+      background: #ecf7ff;
+      color: #101214;
+      border: 1px solid rgba(15, 115, 184, 0.14);
       overflow: auto;
       font-size: 9.3pt;
       line-height: 1.55;
@@ -309,7 +317,7 @@
     .chapter-meta span {
       padding: 7px 10px;
       border-radius: 999px;
-      background: rgba(24, 24, 27, 0.06);
+      background: rgba(15, 115, 184, 0.08);
       color: var(--muted);
       font-size: 8.7pt;
       letter-spacing: 0.05em;
@@ -343,7 +351,7 @@
       height: auto;
       display: block;
       border-radius: 14px;
-      border: 1px solid rgba(24, 24, 27, 0.08);
+      border: 1px solid rgba(15, 115, 184, 0.14);
     }
 
     .caption {
@@ -361,8 +369,8 @@
     .fact {
       padding: 12px 14px;
       border-radius: 14px;
-      background: rgba(255, 255, 255, 0.56);
-      border: 1px solid rgba(24, 24, 27, 0.06);
+      background: rgba(241, 250, 255, 0.96);
+      border: 1px solid rgba(15, 115, 184, 0.10);
     }
 
     .fact strong {
@@ -401,14 +409,15 @@
       letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--muted);
-      background: rgba(24, 24, 27, 0.04);
+      background: rgba(15, 115, 184, 0.06);
     }
 
     .formula {
       padding: 16px 18px;
       border-radius: 16px;
-      background: rgba(24, 24, 27, 0.92);
-      color: #f8f3e8;
+      background: rgba(235, 247, 255, 0.96);
+      color: #0f1b27;
+      border: 1px solid rgba(15, 115, 184, 0.14);
       font-family: "SFMono-Regular", "Consolas", "Menlo", monospace;
       font-size: 11pt;
       line-height: 1.7;
@@ -420,7 +429,7 @@
     .divider {
       margin: 10mm 0 0;
       height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(24, 24, 27, 0.18), transparent);
+      background: linear-gradient(90deg, transparent, rgba(15, 115, 184, 0.22), transparent);
     }
 
     .note {
@@ -429,35 +438,78 @@
       color: var(--muted);
     }
 
+    .sitebar {
+      width: 210mm;
+      margin: 0 auto 12px;
+      padding: 12px 16px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(15, 115, 184, 0.12);
+      box-shadow: 0 16px 40px rgba(15, 115, 184, 0.10);
+      position: sticky;
+      top: 12px;
+      z-index: 30;
+      backdrop-filter: blur(10px);
+    }
+
+    .sitebar-inner {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .site-title {
+      font-family: "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      font-size: 17pt;
+      font-weight: 700;
+      color: var(--ink);
+      white-space: nowrap;
+    }
+
+    .site-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .site-nav a,
+    .contents-item a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .site-nav a {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(15, 115, 184, 0.08);
+      border: 1px solid rgba(15, 115, 184, 0.08);
+      font-size: 9.2pt;
+      color: var(--ink);
+    }
+
+    .site-nav a:hover {
+      background: rgba(15, 115, 184, 0.14);
+    }
+
     .chapter--blue h2,
     .chapter--blue h3 strong,
     .chapter--blue .fact strong {
-      color: var(--blue);
+      color: var(--ink);
     }
 
     .chapter--pine h2,
-    .chapter--pine .fact strong {
-      color: var(--pine);
-    }
-
+    .chapter--pine .fact strong,
     .chapter--clay h2,
-    .chapter--clay .fact strong {
-      color: var(--clay);
-    }
-
+    .chapter--clay .fact strong,
     .chapter--gold h2,
-    .chapter--gold .fact strong {
-      color: var(--gold);
-    }
-
+    .chapter--gold .fact strong,
     .chapter--violet h2,
-    .chapter--violet .fact strong {
-      color: var(--violet);
-    }
-
+    .chapter--violet .fact strong,
     .chapter--rose h2,
     .chapter--rose .fact strong {
-      color: var(--rose);
+      color: var(--ink);
     }
 
     .contents-list {
@@ -479,7 +531,7 @@
     }
 
     .contents-item strong {
-      color: var(--gold);
+      color: var(--ink);
       font-size: 11pt;
     }
 
@@ -494,15 +546,73 @@
         padding: 0;
       }
 
+      .sitebar {
+        display: none;
+      }
+
       .chapter {
         margin: 0;
         box-shadow: none;
       }
     }
+
+    @media (max-width: 920px) {
+      body {
+        padding: 0 0 24px;
+      }
+
+      .sitebar,
+      .chapter {
+        width: 100%;
+        max-width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+        border-radius: 0;
+      }
+
+      .chapter {
+        min-height: auto;
+        padding: 22px 18px 24px;
+      }
+
+      .chapter::before {
+        inset: 8px;
+      }
+
+      .cover-grid,
+      .front-grid,
+      .hero-grid,
+      .two-col,
+      .sitebar-inner {
+        grid-template-columns: 1fr;
+      }
+
+      .site-nav {
+        justify-content: flex-start;
+      }
+    }
   </style>
 </head>
 <body>
-  <section class="chapter cover">
+  <div class="sitebar">
+    <div class="sitebar-inner">
+      <div class="site-title">Книга проектов Луки</div>
+      <nav class="site-nav">
+        <a href="#top">Вверх</a>
+        <a href="#about">О книге</a>
+        <a href="#creative">Creative</a>
+        <a href="#lit">LIT GPT</a>
+        <a href="#vocabulary">Vocabulary Race</a>
+        <a href="#knights">Рыцари</a>
+        <a href="#star">Звезда</a>
+        <a href="#ninja">Ниндзя</a>
+        <a href="#nindzi">Ниндзи</a>
+        <a href="#gravity">Гравитация</a>
+      </nav>
+    </div>
+  </div>
+
+  <section class="chapter cover" id="top">
     <div class="cover-grid">
       <div class="cover-copy">
         <span class="eyebrow">Книга проектов · 2026</span>
@@ -549,7 +659,7 @@
     </div>
   </section>
 
-  <section class="chapter frontmatter">
+  <section class="chapter frontmatter" id="about">
     <span class="eyebrow">Вместо предисловия</span>
     <div class="front-grid">
       <div class="card">
@@ -583,14 +693,14 @@
       <div class="table-card">
         <h3>Содержание</h3>
         <div class="contents-list">
-          <div class="contents-item"><strong>01</strong><span><b>Creative an Invention</b><br>Локальная среда, которая пытается стать рабочим мозгом по проектам.</span></div>
-          <div class="contents-item"><strong>02</strong><span><b>LIT GPT</b><br>Честный маленький чат-бот, построенный на словаре, весах и схожести слов.</span></div>
-          <div class="contents-item"><strong>03</strong><span><b>Vocabulary Race</b><br>Настольная словесная гонка, перенесённая в один экран и обросшая ботами, экранами и ритмом партии.</span></div>
-          <div class="contents-item"><strong>04</strong><span><b>Рыцари и Замки</b><br>Тёмная тактическая стратегия с ИИ, кампанией и собственной лестницей сложности.</span></div>
-          <div class="contents-item"><strong>05</strong><span><b>Звезда Луки</b><br>Трансформируемый объект без правил, где ребёнок не повторяет форму, а изобретает её.</span></div>
-          <div class="contents-item"><strong>06</strong><span><b>Механика Ниндзя</b><br>Личная теория пустой головы, потока, удачи и управления через рефлексы.</span></div>
-          <div class="contents-item"><strong>07</strong><span><b>Ниндзи</b><br>Приключенческая вселенная с кораблями, учениками, капитанами и прямой дорогой к сцене.</span></div>
-          <div class="contents-item"><strong>08</strong><span><b>Пружинная гравитация Луки</b><br>Альтернативная физическая гипотеза с формулами, экспериментами и честным списком противоречий.</span></div>
+          <div class="contents-item"><strong>01</strong><span><a href="#creative"><b>Creative an Invention</b><br>Локальная среда, которая пытается стать рабочим мозгом по проектам.</a></span></div>
+          <div class="contents-item"><strong>02</strong><span><a href="#lit"><b>LIT GPT</b><br>Честный маленький чат-бот, построенный на словаре, весах и схожести слов.</a></span></div>
+          <div class="contents-item"><strong>03</strong><span><a href="#vocabulary"><b>Vocabulary Race</b><br>Настольная словесная гонка, перенесённая в один экран и обросшая ботами, экранами и ритмом партии.</a></span></div>
+          <div class="contents-item"><strong>04</strong><span><a href="#knights"><b>Рыцари и Замки</b><br>Тёмная тактическая стратегия с ИИ, кампанией и собственной лестницей сложности.</a></span></div>
+          <div class="contents-item"><strong>05</strong><span><a href="#star"><b>Звезда Луки</b><br>Трансформируемый объект без правил, где ребёнок не повторяет форму, а изобретает её.</a></span></div>
+          <div class="contents-item"><strong>06</strong><span><a href="#ninja"><b>Механика Ниндзя</b><br>Личная теория пустой головы, потока, удачи и управления через рефлексы.</a></span></div>
+          <div class="contents-item"><strong>07</strong><span><a href="#nindzi"><b>Ниндзи</b><br>Приключенческая вселенная с кораблями, учениками, капитанами и прямой дорогой к сцене.</a></span></div>
+          <div class="contents-item"><strong>08</strong><span><a href="#gravity"><b>Пружинная гравитация Луки</b><br>Альтернативная физическая гипотеза с формулами, экспериментами и честным списком противоречий.</a></span></div>
         </div>
       </div>
       <div class="quote-card">
@@ -602,7 +712,7 @@
     </div>
   </section>
 
-  <section class="chapter chapter-break chapter--blue">
+  <section class="chapter chapter-break chapter--blue" id="creative">
     <span class="eyebrow">Глава 1</span>
     <div class="chapter-header">
       <h2>Creative an Invention</h2>
@@ -725,7 +835,7 @@
     </div>
   </section>
 
-  <section class="chapter chapter-break chapter--violet">
+  <section class="chapter chapter-break chapter--violet" id="lit">
     <span class="eyebrow">Глава 2</span>
     <div class="chapter-header">
       <h2>LIT GPT</h2>
@@ -839,7 +949,7 @@
     </div>
   </section>
 
-  <section class="chapter chapter-break chapter--pine">
+  <section class="chapter chapter-break chapter--pine" id="vocabulary">
     <span class="eyebrow">Глава 3</span>
     <div class="chapter-header">
       <h2>Vocabulary Race</h2>
@@ -998,7 +1108,7 @@
     </div>
   </section>
 
-  <section class="chapter chapter-break chapter--clay">
+  <section class="chapter chapter-break chapter--clay" id="knights">
     <span class="eyebrow">Глава 4</span>
     <div class="chapter-header">
       <h2>Рыцари и Замки</h2>
@@ -1105,7 +1215,7 @@
     </div>
   </section>
 
-  <section class="chapter chapter-break chapter--gold">
+  <section class="chapter chapter-break chapter--gold" id="star">
     <span class="eyebrow">Глава 5</span>
     <div class="chapter-header">
       <h2>Звезда Луки</h2>
@@ -1248,7 +1358,7 @@
     </div>
   </section>
 
-  <section class="chapter chapter-break chapter--rose">
+  <section class="chapter chapter-break chapter--rose" id="ninja">
     <span class="eyebrow">Глава 6</span>
     <div class="chapter-header">
       <h2>Механика Ниндзя</h2>
@@ -1349,7 +1459,7 @@
     </div>
   </section>
 
-  <section class="chapter chapter-break chapter--violet">
+  <section class="chapter chapter-break chapter--violet" id="nindzi">
     <span class="eyebrow">Глава 7</span>
     <div class="chapter-header">
       <h2>Ниндзи</h2>
@@ -1464,7 +1574,7 @@
     </div>
   </section>
 
-  <section class="chapter chapter-break chapter--blue">
+  <section class="chapter chapter-break chapter--blue" id="gravity">
     <span class="eyebrow">Глава 8</span>
     <div class="chapter-header">
       <h2>Пружинная гравитация Луки</h2>

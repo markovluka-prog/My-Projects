@@ -1,0 +1,11 @@
+{
+  "name": "project-book",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:pdf": "node generate_pdf.mjs"
+  },
+  "dependencies": {
+    "playwright": "^1.54.2"
+  }
+}
