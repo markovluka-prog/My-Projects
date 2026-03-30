@@ -35,16 +35,12 @@
       print-color-adjust: exact;
     }
 
-    body {
-      counter-reset: pageIndex;
-    }
-
     .page {
       position: relative;
       width: 210mm;
       min-height: 297mm;
       margin: 0 auto;
-      padding: 18mm 18mm 16mm;
+      padding: 16mm 17mm 14mm;
       overflow: hidden;
       background:
         radial-gradient(circle at top right, rgba(199, 141, 58, 0.14), transparent 23%),
@@ -55,19 +51,33 @@
       box-shadow: 0 0 0 1px rgba(29, 30, 36, 0.05);
     }
 
-    .page::after {
-      counter-increment: pageIndex;
-      content: counter(pageIndex, decimal-leading-zero);
-      position: absolute;
-      right: 18mm;
-      bottom: 10mm;
-      font-size: 9pt;
-      letter-spacing: 0.22em;
-      color: rgba(29, 30, 36, 0.38);
+    .compact-page {
+      padding-top: 12mm;
+      padding-bottom: 10mm;
     }
 
-    .cover::after {
-      content: "";
+    .compact-page .overview-grid,
+    .compact-page .chapter-grid {
+      margin-top: 7mm;
+    }
+
+    .compact-page .project-list {
+      gap: 6px;
+      margin-top: 3mm;
+    }
+
+    .compact-page .project-row {
+      padding: 7px 0;
+    }
+
+    .compact-page p,
+    .compact-page .project-row span {
+      font-size: 10.2pt;
+      line-height: 1.45;
+    }
+
+    .page::after {
+      content: none;
     }
 
     .page::before {
@@ -229,7 +239,7 @@
     .chapter-grid {
       display: grid;
       grid-template-columns: 1.08fr 0.92fr;
-      gap: 12mm;
+      gap: 10mm;
       margin-top: 10mm;
     }
 
@@ -243,7 +253,7 @@
     }
 
     .card {
-      padding: 16px 18px;
+      padding: 14px 16px;
       border-radius: 18px;
       background: rgba(255, 255, 255, 0.62);
       border: 1px solid rgba(29, 30, 36, 0.08);
@@ -328,7 +338,7 @@
 
     .chapter-copy {
       display: grid;
-      gap: 14px;
+      gap: 12px;
     }
 
     .bullet-list {
@@ -428,9 +438,9 @@
   <section class="page cover theme-blue">
     <div class="cover-grid">
       <div class="cover-title">
-        <span class="eyebrow">Портфолио 2026 · кроме Claude</span>
-        <h1>Книга проектов Луки</h1>
-        <p>В этой книге собраны восемь разных направлений: игры, локальные AI-инструменты, физическое изобретение, художественный мир и две авторские теории. Это не каталог готовых релизов, а снимок живой мастерской, где идеи уже обрели форму.</p>
+        <span class="eyebrow">Каталог проектов · 2026</span>
+        <h1>Каталог проектов Луки</h1>
+        <p>В этом каталоге собраны восемь разных направлений: игры, локальные AI-инструменты, физическое изобретение, художественный мир и две авторские теории. Это обзор творческой мастерской, где цифровые продукты, конструкции и исследовательские идеи уже получили собственную форму.</p>
         <div class="cover-metrics">
           <div class="metric">
             <strong>8</strong>
@@ -450,7 +460,7 @@
           </div>
         </div>
         <div class="keyline">
-          <span class="pill">Собрано: 30 марта 2026</span>
+          <span class="pill">Издание: 30 марта 2026</span>
           <span class="pill">Автор проектов: Лука Марков</span>
         </div>
       </div>
@@ -471,7 +481,7 @@
     </div>
   </section>
 
-  <section class="page theme-pine">
+  <section class="page theme-pine compact-page">
     <span class="eyebrow">Обзор портфеля</span>
     <div class="chapter-head">
       <h2>О чём эти проекты вместе</h2>
@@ -487,37 +497,24 @@
       <div class="stack">
         <div class="card">
           <h3>Карта направлений</h3>
-          <p>Если смотреть сверху, мастерская Луки устроена как радиальная система. В центре стоит интерес к механике: как работают слова, ход, трансформация, удача, притяжение и сюжетное действие. Вокруг этого центра расходятся разные носители одной и той же страсти к устройству мира. Для этой расширенной версии книги были просмотрены все файлы по всем проектам, кроме Claude: текстовые материалы прочитаны целиком, бинарные ассеты и данные учтены через полный байтовый проход.</p>
+          <p>Если смотреть сверху, портфель Луки устроен как система вокруг одной идеи: понять механику явления и превратить её в форму. Поэтому рядом естественно стоят игра, локальный AI, физическая конструкция, художественный мир и исследовательские гипотезы. У каждого направления уже есть собственная материальная среда: иллюстрации, рендеры, документы, прототипы и интерактивные модели.</p>
           <div class="project-list">
             <div class="project-row">
               <strong>Цифровые вещи</strong>
-              <span>Creative an Invention, LIT GPT, Vocabulary Race и Рыцари и Замки исследуют интерфейс, игровой цикл, локальный AI и браузерную логику внутри приложений.</span>
+              <span>Creative an Invention, LIT GPT, Vocabulary Race и Рыцари и Замки показывают интерес к интерфейсу, игровому циклу и локальному AI.</span>
             </div>
             <div class="project-row">
               <strong>Физический объект</strong>
-              <span>Звезда Луки переносит тему трансформации из кода в реальную конструкцию: один каркас, много форм, ноль жёстких сценариев.</span>
+              <span>Звезда Луки переносит тему трансформации в реальную конструкцию: один каркас и много возможных форм.</span>
             </div>
             <div class="project-row">
               <strong>Идеи и гипотезы</strong>
-              <span>Механика Ниндзя и Пружинная гравитация Луки оформлены как авторские теории: у обеих есть внутренний язык, наблюдения и список слабых мест.</span>
+              <span>Механика Ниндзя и Пружинная гравитация Луки оформлены как авторские теории со своим языком, наблюдениями и вопросами.</span>
             </div>
             <div class="project-row">
               <strong>Мир и повествование</strong>
-              <span>Ниндзи собирает героев, королевства и сцены так, будто рядом с играми уже растёт собственная вселенная.</span>
+              <span>Ниндзи собирает героев, королевства и сцены в самостоятельную художественную вселенную.</span>
             </div>
-          </div>
-        </div>
-        <div class="card">
-          <h3>Оглавление книги</h3>
-          <div class="project-list">
-            <div class="project-row"><strong>01</strong><span>Creative an Invention</span></div>
-            <div class="project-row"><strong>02</strong><span>LIT GPT</span></div>
-            <div class="project-row"><strong>03</strong><span>Vocabulary Race</span></div>
-            <div class="project-row"><strong>04</strong><span>Рыцари и Замки</span></div>
-            <div class="project-row"><strong>05</strong><span>Звезда Луки</span></div>
-            <div class="project-row"><strong>06</strong><span>Механика Ниндзя</span></div>
-            <div class="project-row"><strong>07</strong><span>Ниндзи</span></div>
-            <div class="project-row"><strong>08</strong><span>Пружинная гравитация Луки</span></div>
           </div>
         </div>
       </div>
@@ -562,9 +559,101 @@
             <text x="63" y="130" text-anchor="middle" font-size="11">через игру и образ</text>
           </svg>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page theme-pine">
+    <span class="eyebrow">Навигация</span>
+    <div class="chapter-head">
+      <h2>Структура каталога</h2>
+      <div class="meta">
+        <span>8 проектов</span>
+        <span>игры</span>
+        <span>идеи</span>
+        <span>инструменты</span>
+      </div>
+    </div>
+    <div class="overview-grid">
+      <div class="stack">
         <div class="card">
-          <h3>Что особенно чувствуется</h3>
-          <p>У этих проектов есть общий авторский почерк: желание не просто пользоваться готовыми моделями, а придумывать собственные. Даже там, где материалы сырые, уже виден хороший навык формулировки правил, архитектурных ролей и состояний системы.</p>
+          <h3>Разделы каталога</h3>
+          <div class="project-list">
+            <div class="project-row"><strong>01</strong><span>Creative an Invention</span></div>
+            <div class="project-row"><strong>02</strong><span>LIT GPT</span></div>
+            <div class="project-row"><strong>03</strong><span>Vocabulary Race</span></div>
+            <div class="project-row"><strong>04</strong><span>Рыцари и Замки</span></div>
+            <div class="project-row"><strong>05</strong><span>Звезда Луки</span></div>
+            <div class="project-row"><strong>06</strong><span>Механика Ниндзя</span></div>
+            <div class="project-row"><strong>07</strong><span>Ниндзи</span></div>
+            <div class="project-row"><strong>08</strong><span>Пружинная гравитация Луки</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="stack">
+        <div class="card">
+          <h3>Авторский почерк</h3>
+          <p>Во всех проектах чувствуется одно и то же качество: желание не просто пользоваться готовыми решениями, а придумывать собственные механики, правила и образы. Именно поэтому рядом в одном каталоге органично смотрятся игра, локальный AI, физическая конструкция, художественный мир и исследовательские гипотезы.</p>
+        </div>
+        <div class="card">
+          <h3>Как читать каталог</h3>
+          <p>Первые разделы показывают цифровые продукты и игровые системы. Дальше каталог переходит к физическому изобретению, авторским теориям и художественной вселенной. Завершающие страницы раскрывают масштаб технической базы и путь от идеи к продуктовой форме.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page theme-gold">
+    <span class="eyebrow">Публичная подача</span>
+    <div class="chapter-head">
+      <h2>Для кого этот каталог</h2>
+      <div class="meta">
+        <span>семья</span>
+        <span>игроки</span>
+        <span>коллекционеры</span>
+        <span>любители идей</span>
+      </div>
+    </div>
+    <div class="overview-grid">
+      <div class="stack">
+        <div class="card">
+          <h3>Кому он близок</h3>
+          <p>Каталог легко считывается сразу несколькими аудиториями. Игрок увидит здесь правила и соревновательную энергию, читатель — мир и персонажей, любитель изобретений — объект и трансформацию, а зритель — выразительные формы и атмосферу.</p>
+        </div>
+        <div class="card">
+          <h3>Почему он держит внимание</h3>
+          <p>Каждый проект можно понять по образу: рабочая панель, словесная гонка, средневековая тактика, звезда-трансформер, мир Ниндзи. Это редкое качество для публичной презентации: названия не требуют длинного объяснения, а сразу вызывают сцену.</p>
+        </div>
+      </div>
+      <div class="stack">
+        <div class="card diagram-wrap">
+          <div class="diagram-title">Аудитории каталога</div>
+          <svg class="diagram" viewBox="0 0 420 310" xmlns="http://www.w3.org/2000/svg" aria-label="Аудитории каталога">
+            <rect x="0" y="0" width="420" height="310" fill="#fffdf8"/>
+            <circle cx="210" cy="156" r="56" fill="#f6eddc" stroke="#c78d3a"/>
+            <text x="210" y="148" text-anchor="middle" font-size="18" font-weight="700">Каталог</text>
+            <text x="210" y="170" text-anchor="middle" font-size="11">одна мастерская, много входов</text>
+            <circle cx="88" cy="86" r="40" fill="#dce9ef" stroke="#21536b"/>
+            <text x="88" y="83" text-anchor="middle" font-size="14" font-weight="700">Игроки</text>
+            <text x="88" y="101" text-anchor="middle" font-size="10">ритм и правила</text>
+            <circle cx="332" cy="86" r="40" fill="#e7f0e5" stroke="#2f5d50"/>
+            <text x="332" y="83" text-anchor="middle" font-size="14" font-weight="700">Семья</text>
+            <text x="332" y="101" text-anchor="middle" font-size="10">игра и воображение</text>
+            <circle cx="102" cy="242" r="40" fill="#ecebfd" stroke="#4a4f78"/>
+            <text x="102" y="239" text-anchor="middle" font-size="13" font-weight="700">Читатели</text>
+            <text x="102" y="257" text-anchor="middle" font-size="10">мир и герои</text>
+            <circle cx="320" cy="242" r="40" fill="#f4e5ec" stroke="#7d4156"/>
+            <text x="320" y="239" text-anchor="middle" font-size="13" font-weight="700">Коллекция</text>
+            <text x="320" y="257" text-anchor="middle" font-size="10">образы и объекты</text>
+            <line x1="127" y1="106" x2="166" y2="126" stroke="#8a8c95" stroke-width="1.5"/>
+            <line x1="293" y1="106" x2="254" y2="126" stroke="#8a8c95" stroke-width="1.5"/>
+            <line x1="133" y1="222" x2="170" y2="186" stroke="#8a8c95" stroke-width="1.5"/>
+            <line x1="287" y1="222" x2="250" y2="186" stroke="#8a8c95" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <div class="card">
+          <h3>Что получает читатель</h3>
+          <p>Не просто список идей, а полную карту авторской мастерской. Каталог показывает диапазон: от вещей, в которые можно играть, до вещей, которые можно обсуждать, развивать, дарить, коллекционировать и однажды переносить на экран.</p>
         </div>
       </div>
     </div>
@@ -575,25 +664,25 @@
     <div class="chapter-head">
       <h2>Creative an Invention</h2>
       <div class="meta">
-        <span>Node</span>
-        <span>локальный AI</span>
-        <span>интерфейс-панель</span>
+        <span>AI-инструмент</span>
+        <span>локальная среда</span>
+        <span>рабочая панель</span>
       </div>
     </div>
     <div class="chapter-grid">
       <div class="chapter-copy">
-        <p>По текущему коду это не просто экспериментальный интерфейс, а локальная рабочая станция для проектов: визуальная оболочка в стиле IDE, Node-сервер, маршрутизация сообщений по режимам и связка с локальной моделью через Ollama. Проект выглядит как попытка собрать собственный «центр управления» для кода, файлов и исследований.</p>
+        <p>Creative an Invention выглядит не как обычный чат, а как личная рабочая среда для идей, задач и исследований. Проект собирает в одном пространстве диалог, режимы работы, поиск, заметки и ощущение авторского центра управления, созданного не для разговоров ради разговоров, а для настоящей созидательной работы.</p>
         <div class="card">
           <h3>Что уже есть</h3>
           <ul class="bullet-list">
-            <li>Десктопный интерфейс с панелями, activity bar и рабочими областями.</li>
-            <li>Сервер с отдельными подсказками для быстрого и агентного режимов.</li>
-            <li>Автозапуск через watchdog: приложение поднимает сервер и локальную модель.</li>
-            <li>Фокус на русском языке и на работе с проектами из общей директории.</li>
+            <li>Широкое рабочее окно с панелями, боковой навигацией и зонами для нескольких типов задач.</li>
+            <li>Отдельные режимы для быстрых ответов и для более глубокого сопровождения работы.</li>
+            <li>Ощущение автономности: инструмент задуман как личная среда, которая всегда готова к запуску.</li>
+            <li>Фокус на русском языке и на работе с реальными авторскими проектами, а не с абстрактными примерами.</li>
           </ul>
         </div>
-        <div class="quote">Это уже выглядит не как «чат», а как авторский рабочий инструмент. Важная идея проекта: собственная среда, которая думает о файлах, задачах и поиске как единая система.</div>
-        <div class="chapter-foot">Основание для описания: текущий интерфейс `index.html` и серверная логика `server.js`.</div>
+        <div class="quote">Это уже выглядит не как «чат», а как авторский рабочий инструмент. Важная идея проекта: собственная среда, которая держит в фокусе задачи, контекст и поиск как единую систему.</div>
+        <div class="chapter-foot">Проект читается как персональная студия для мышления, задач и исследований.</div>
       </div>
       <div class="visuals">
         <div class="card diagram-wrap">
@@ -603,14 +692,14 @@
             <text x="83" y="58" text-anchor="middle" font-size="16" font-weight="700">UI-панель</text>
             <text x="83" y="77" text-anchor="middle" font-size="11">окна, меню, рабочая зона</text>
             <rect x="154" y="122" width="112" height="72" rx="18" fill="#f5efdf" stroke="#c78d3a"/>
-            <text x="210" y="152" text-anchor="middle" font-size="16" font-weight="700">server.js</text>
-            <text x="210" y="171" text-anchor="middle" font-size="11">роутинг, режимы, инструменты</text>
+            <text x="210" y="152" text-anchor="middle" font-size="16" font-weight="700">Оркестратор</text>
+            <text x="210" y="171" text-anchor="middle" font-size="11">режимы, память, инструменты</text>
             <rect x="288" y="28" width="108" height="66" rx="18" fill="#ecebfd" stroke="#4a4f78"/>
-            <text x="342" y="58" text-anchor="middle" font-size="16" font-weight="700">Ollama</text>
-            <text x="342" y="77" text-anchor="middle" font-size="11">локальная модель</text>
+            <text x="342" y="58" text-anchor="middle" font-size="16" font-weight="700">Локальная модель</text>
+            <text x="342" y="77" text-anchor="middle" font-size="11">ответы и помощь</text>
             <rect x="36" y="230" width="124" height="56" rx="18" fill="#e7f0e5" stroke="#2f5d50"/>
-            <text x="98" y="255" text-anchor="middle" font-size="15" font-weight="700">Файлы проектов</text>
-            <text x="98" y="272" text-anchor="middle" font-size="11">чтение, команды, сводки</text>
+            <text x="98" y="255" text-anchor="middle" font-size="15" font-weight="700">Контекст проекта</text>
+            <text x="98" y="272" text-anchor="middle" font-size="11">задачи, заметки, материалы</text>
             <rect x="260" y="230" width="124" height="56" rx="18" fill="#f3e6dc" stroke="#9b5f3f"/>
             <text x="322" y="255" text-anchor="middle" font-size="15" font-weight="700">Веб-поиск</text>
             <text x="322" y="272" text-anchor="middle" font-size="11">источники и ссылки</text>
@@ -622,8 +711,8 @@
           </svg>
         </div>
         <div class="card">
-          <h3>Сильный следующий шаг</h3>
-          <p>Добавить в книгу проекта явную пользовательскую историю: какой сценарий он должен выигрывать у обычного чата. Например: «пойми проект, исправь файл, собери итог, сохрани память». Это мгновенно усилит продуктовую ясность.</p>
+          <h3>Потенциал развития</h3>
+          <p>Чётко сформулировать три главных сценария, ради которых этот инструмент выбирают вместо обычного чата: понять задачу, удержать контекст и провести человека от идеи к результату. Это мгновенно усилит продуктовую ясность.</p>
         </div>
       </div>
     </div>
@@ -634,22 +723,22 @@
     <div class="chapter-head">
       <h2>LIT GPT</h2>
       <div class="meta">
-        <span>Pythonista</span>
-        <span>Python</span>
-        <span>v0.1</span>
+        <span>чат-бот</span>
+        <span>обучение</span>
+        <span>языковая механика</span>
       </div>
     </div>
     <div class="chapter-grid">
       <div class="chapter-copy">
-        <p>LIT GPT интересен тем, что не маскируется под большую модель: это честно сделанный с нуля маленький чат-бот, основанный на словаре, весах слов и посимвольной схожести. В этом проекте особенно заметна инженерная любознательность: разобраться в механике ответа самому, не пряча устройство за чужую библиотеку. После полного чтения файлов проект оказался шире, чем выглядел по краткой сводке: внутри уже есть тренировочные скрипты, крупные словари и сохранённые данные модели.</p>
+        <p>LIT GPT интересен тем, что не маскируется под большую модель: это честно сделанный с нуля маленький чат-бот, основанный на словаре, весах слов и посимвольной схожести. В этом проекте особенно заметна инженерная любознательность: разобраться в механике ответа самому, не пряча устройство за чужую библиотеку. При этом у идеи уже есть заметная глубина: внутренние правила мышления, обучающие корпуса и запас для роста.</p>
         <div class="card">
           <h3>Что уже работает</h3>
           <ul class="bullet-list">
-            <li><strong>learn(text)</strong> добавляет слова в словарь и сохраняет их в данных проекта.</li>
-            <li><strong>answer(text)</strong> перебирает слова вопроса, считает веса и схожесть, затем выбирает лучший вариант.</li>
-            <li>Исправлены важные баги: суммирование весов и обработка повторяющихся букв.</li>
-            <li>Есть явное разделение ролей файлов: UI, ядро, словарь, ранжирование и модель схожести.</li>
-            <li>В проекте лежат обучающие корпуса: `50k_words.txt` на 50,000 строк и `war_and_peace.txt` на 66,032 строки.</li>
+            <li>Система умеет пополнять словарь по новым текстам и накапливать языковой опыт.</li>
+            <li>При ответе бот сопоставляет слова вопроса, их вес и буквенное сходство.</li>
+            <li>Внутренняя логика уже пережила первые важные исправления и стала устойчивее.</li>
+            <li>Проект разделяет интерфейс, языковую базу, ранжирование и поиск сходства.</li>
+            <li>Основа поддержана крупными корпусами на десятки тысяч слов, поэтому у идеи есть хороший запас для развития.</li>
           </ul>
         </div>
         <div class="quote">Проект ценен не только результатом, но и маршрутом мышления: сначала понять, как рождается ответ, а уже потом думать о «большом AI».</div>
@@ -659,20 +748,20 @@
           <div class="diagram-title">Архитектура ответа</div>
           <svg class="diagram" viewBox="0 0 420 320" xmlns="http://www.w3.org/2000/svg" aria-label="Схема LIT GPT">
             <rect x="34" y="40" width="108" height="56" rx="18" fill="#ecebfd" stroke="#4a4f78"/>
-            <text x="88" y="64" text-anchor="middle" font-size="16" font-weight="700">learn(text)</text>
-            <text x="88" y="82" text-anchor="middle" font-size="11">пополнение словаря</text>
+            <text x="88" y="64" text-anchor="middle" font-size="16" font-weight="700">Обучение</text>
+            <text x="88" y="82" text-anchor="middle" font-size="11">пополнение языковой базы</text>
             <rect x="156" y="124" width="108" height="66" rx="18" fill="#f5efdf" stroke="#c78d3a"/>
-            <text x="210" y="152" text-anchor="middle" font-size="16" font-weight="700">Dictionary</text>
-            <text x="210" y="171" text-anchor="middle" font-size="11">слова и сохранённые данные</text>
+            <text x="210" y="152" text-anchor="middle" font-size="16" font-weight="700">Словарь</text>
+            <text x="210" y="171" text-anchor="middle" font-size="11">слова и связи между ними</text>
             <rect x="278" y="40" width="108" height="56" rx="18" fill="#dce9ef" stroke="#21536b"/>
-            <text x="332" y="64" text-anchor="middle" font-size="16" font-weight="700">answer(text)</text>
-            <text x="332" y="82" text-anchor="middle" font-size="11">подбор ответа</text>
+            <text x="332" y="64" text-anchor="middle" font-size="16" font-weight="700">Ответ</text>
+            <text x="332" y="82" text-anchor="middle" font-size="11">подбор лучшего варианта</text>
             <rect x="36" y="234" width="114" height="50" rx="16" fill="#e7f0e5" stroke="#2f5d50"/>
-            <text x="93" y="255" text-anchor="middle" font-size="14" font-weight="700">Base_weight</text>
+            <text x="93" y="255" text-anchor="middle" font-size="14" font-weight="700">Вес слов</text>
             <text x="93" y="272" text-anchor="middle" font-size="11">частота и ранг</text>
             <rect x="270" y="234" width="114" height="50" rx="16" fill="#f3e6dc" stroke="#9b5f3f"/>
-            <text x="327" y="255" text-anchor="middle" font-size="14" font-weight="700">Root_model</text>
-            <text x="327" y="272" text-anchor="middle" font-size="11">сходство по буквам</text>
+            <text x="327" y="255" text-anchor="middle" font-size="14" font-weight="700">Сходство</text>
+            <text x="327" y="272" text-anchor="middle" font-size="11">родство по буквам</text>
             <path d="M142 68 L210 124" stroke="#6c707c" stroke-width="2"/>
             <path d="M278 68 L210 124" stroke="#6c707c" stroke-width="2"/>
             <path d="M210 190 L93 234" stroke="#6c707c" stroke-width="2"/>
@@ -681,7 +770,7 @@
           </svg>
         </div>
         <div class="card">
-          <h3>Сильный следующий шаг</h3>
+          <h3>Потенциал развития</h3>
           <p>Расширить ответ с одного слова до короткой фразы и добавить память диалога хотя бы на 2–3 последних реплики. Это даст резкий рост ощущения «собеседника», не ломая исходную простую архитектуру.</p>
         </div>
       </div>
@@ -693,14 +782,14 @@
     <div class="chapter-head">
       <h2>Vocabulary Race</h2>
       <div class="meta">
-        <span>Swift Playgrounds</span>
-        <span>HTML/JS</span>
+        <span>словесная гонка</span>
         <span>семейная игра</span>
+        <span>соревнование</span>
       </div>
     </div>
     <div class="chapter-grid">
       <div class="chapter-copy">
-        <p>Vocabulary Race уже воспринимается как полноценная настольная игра, перенесённая на один экран. У проекта ясный цикл: карточка, сбор слов, риск провала, движение по маршруту, спецкарты и победа на дистанции. Важное качество здесь в том, что игра не держится только на словаре: у неё есть темп, ожидание и сценография хода. Полный просмотр файлов показал, что за этим стоит не только идея партии, но и уже заметная история релизов, балансировки и роста словарной базы.</p>
+        <p>Vocabulary Race уже воспринимается как полноценная настольная игра, перенесённая на один экран. У проекта ясный цикл: карточка, сбор слов, риск провала, движение по маршруту, спецкарты и победа на дистанции. Важное качество здесь в том, что игра не держится только на словаре: у неё есть темп, ожидание и сценография хода. За этой лёгкостью чувствуется уже продуманная система развития и большая языковая база.</p>
         <div class="card">
           <h3>Что выделяет проект</h3>
           <ul class="bullet-list">
@@ -708,7 +797,7 @@
             <li>Поддержаны 2–4 игрока и боты с разной сложностью.</li>
             <li>Есть экраны слепого старта, задачи, результата и победы с собственным настроением.</li>
             <li>Спецкарты «Гонщик» и «Судья» делают партии менее предсказуемыми.</li>
-            <li>Словарь расширен до 26,245 слов, а браузерное ядро игры живёт в файле на 1,761 строку.</li>
+            <li>Языковая база уже очень широкая, поэтому партии можно делать разнообразными и надолго сохранять эффект новизны.</li>
           </ul>
         </div>
         <div class="quote">Это хороший пример проекта, где простая основа становится живой за счёт ритма: ожидание хода, таймер, анимация фишки и внезапные карточки работают вместе.</div>
@@ -752,15 +841,15 @@
     </div>
     <div class="chapter-grid">
       <div class="chapter-copy">
-        <p>Рыцари и Замки стоит особняком как более «тяжёлый» игровой проект: здесь есть карта, типы юнитов, уровни ИИ, сюжетная кампания и своя темная пиксельная эстетика. Особенно сильная находка проекта не только в боевой системе, но и в способе доставки: игра может обновляться через папку Documents без пересборки приложения. После полного прохода по файлам стало ясно, что это и главный производственный центр репозитория: здесь больше всего кода, тестов и особенно ассетов.</p>
+        <p>Рыцари и Замки стоит особняком как более «тяжёлый» игровой проект: здесь есть карта, типы юнитов, уровни ИИ, сюжетная кампания и своя тёмная пиксельная эстетика. Особенно сильная находка проекта не только в боевой системе, но и в ощущении живого роста: игра выглядит как мир, который уже умеет расширяться, дополняться и становиться всё богаче.</p>
         <div class="card">
           <h3>Почему проект кажется зрелым</h3>
           <ul class="bullet-list">
-            <li>Игровая логика сосредоточена в одном большом браузерном файле, что упрощает быстрые итерации.</li>
+            <li>Боевая логика собрана в единую систему, поэтому игра держит целостный характер и ясные правила.</li>
             <li>Есть 3 главы кампании и шкала ИИ от новичка до легенды.</li>
             <li>Используется богатый набор пиксельных ассетов, музыки и тайлов.</li>
-            <li>GitHubUpdater превращает Swift-оболочку в контейнер для живой игры.</li>
-            <li>Внутри лежат 426 PNG, 18 Aseprite-файлов, 2 музыкальных трека и отдельный тестовый файл почти на 700 строк.</li>
+            <li>Проект рассчитан на быстрые обновления и постепенное наращивание мира.</li>
+            <li>У игры уже есть сотни визуальных образов, музыка и крепкая внутренняя дисциплина разработки.</li>
           </ul>
         </div>
         <div class="quote">Это уже не просто «сделать игру», а собрать для неё свой маленький движок, сюжетный каркас и канал обновления. Такой тройной слой редко появляется в ранних проектах случайно.</div>
@@ -785,7 +874,7 @@
             <text x="330" y="154" text-anchor="middle" font-size="15" font-weight="700">Ассеты</text>
             <text x="330" y="173" text-anchor="middle" font-size="11">тайлы, юниты, музыка</text>
             <rect x="128" y="226" width="164" height="46" rx="16" fill="#f5efdf" stroke="#c78d3a"/>
-            <text x="210" y="253" text-anchor="middle" font-size="14" font-weight="700">Swift-обёртка + GitHubUpdater</text>
+            <text x="210" y="253" text-anchor="middle" font-size="14" font-weight="700">живая оболочка игры</text>
             <path d="M210 78 L90 128" stroke="#6c707c" stroke-width="2"/>
             <path d="M210 78 L210 128" stroke="#6c707c" stroke-width="2"/>
             <path d="M210 78 L330 128" stroke="#6c707c" stroke-width="2"/>
@@ -796,14 +885,63 @@
     </div>
   </section>
 
+  <section class="page theme-clay">
+    <span class="eyebrow">Игровая линия</span>
+    <div class="chapter-head">
+      <h2>Игры как отдельная вселенная</h2>
+      <div class="meta">
+        <span>ритм</span>
+        <span>семья</span>
+        <span>стратегия</span>
+        <span>атмосфера</span>
+      </div>
+    </div>
+    <div class="overview-grid">
+      <div class="stack">
+        <div class="card">
+          <h3>Два разных темперамента</h3>
+          <p>Vocabulary Race отвечает за лёгкость, скорость и моментальный азарт. Рыцари и Замки, наоборот, тянут вглубь: к карте, кампании, атмосфере и ощущению большого пути. Вместе они показывают редкий диапазон: от семейной партии до тёмной тактической эпопеи.</p>
+        </div>
+        <div class="card">
+          <h3>Что их объединяет</h3>
+          <p>Обе игры строятся не вокруг случайной визуальной оболочки, а вокруг чёткой внутренней механики. В одной это путь по полю и языковое напряжение, в другой — поле боя, стратегия и давление решений. Благодаря этому игровая линия портфеля выглядит цельной.</p>
+        </div>
+      </div>
+      <div class="stack">
+        <div class="card diagram-wrap">
+          <div class="diagram-title">Диапазон игры</div>
+          <svg class="diagram" viewBox="0 0 420 300" xmlns="http://www.w3.org/2000/svg" aria-label="Диапазон игровых проектов">
+            <rect x="0" y="0" width="420" height="300" fill="#fffdf8"/>
+            <line x1="62" y1="242" x2="360" y2="242" stroke="#6c707c" stroke-width="1.5"/>
+            <text x="60" y="264" font-size="11">быстрый вход</text>
+            <text x="300" y="264" font-size="11">глубокое погружение</text>
+            <rect x="78" y="122" width="104" height="62" rx="18" fill="#e7f0e5" stroke="#2f5d50"/>
+            <text x="130" y="148" text-anchor="middle" font-size="15" font-weight="700">Vocabulary</text>
+            <text x="130" y="167" text-anchor="middle" font-size="11">семейный темп</text>
+            <rect x="238" y="88" width="112" height="96" rx="18" fill="#f3e6dc" stroke="#9b5f3f"/>
+            <text x="294" y="122" text-anchor="middle" font-size="15" font-weight="700">Рыцари</text>
+            <text x="294" y="141" text-anchor="middle" font-size="11">тактика, кампания,</text>
+            <text x="294" y="158" text-anchor="middle" font-size="11">атмосфера</text>
+            <path d="M182 153 L238 137" stroke="#6c707c" stroke-width="2"/>
+            <text x="210" y="208" text-anchor="middle" font-size="12" fill="#5f6270">одна линия: от азартной партии к большому миру</text>
+          </svg>
+        </div>
+        <div class="card">
+          <h3>Почему это важно для каталога</h3>
+          <p>Игровое направление в этом портфеле уже читается как отдельный бренд внутри бренда. Оно может жить серией: одна игра для широкого входа, другая для более глубокой аудитории, а вместе они усиливают друг друга.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="page theme-gold">
     <span class="eyebrow">05 · изобретение</span>
     <div class="chapter-head">
       <h2>Звезда Луки</h2>
       <div class="meta">
-        <span>LEGO Technic</span>
-        <span>prototype ready</span>
-        <span>open-ended play</span>
+        <span>конструктор</span>
+        <span>готовый прототип</span>
+        <span>свободная трансформация</span>
       </div>
     </div>
     <div class="chapter-grid">
@@ -851,6 +989,55 @@
     </div>
   </section>
 
+  <section class="page theme-gold">
+    <span class="eyebrow">Объект и образ</span>
+    <div class="chapter-head">
+      <h2>Когда идея становится предметом</h2>
+      <div class="meta">
+        <span>дизайн</span>
+        <span>подарок</span>
+        <span>трансформация</span>
+        <span>коллекция</span>
+      </div>
+    </div>
+    <div class="overview-grid">
+      <div class="stack">
+        <div class="card image-card">
+          <img src="../Звезда Луки/photo.png" alt="Звезда Луки в реальной сборке">
+          <div class="image-note">Сила проекта в том, что он работает и как игрушка, и как объект с собственным характером. Даже в статике конструкция выглядит как вещь, которую хочется взять в руки.</div>
+        </div>
+        <div class="card">
+          <h3>Почему объект запоминается</h3>
+          <p>У Звезды Луки есть важное достоинство: она не привязана к одному заранее заданному герою. Именно поэтому предмет не закрывается после одного вау-эффекта, а раскрывается через множество новых поз, ролей и превращений.</p>
+        </div>
+      </div>
+      <div class="stack">
+        <div class="card diagram-wrap">
+          <div class="diagram-title">Путь трансформации</div>
+          <svg class="diagram" viewBox="0 0 420 300" xmlns="http://www.w3.org/2000/svg" aria-label="Путь трансформации объекта">
+            <rect x="40" y="114" width="90" height="54" rx="18" fill="#f5efdf" stroke="#c78d3a"/>
+            <text x="85" y="145" text-anchor="middle" font-size="15" font-weight="700">Каркас</text>
+            <rect x="166" y="76" width="90" height="54" rx="18" fill="#dce9ef" stroke="#21536b"/>
+            <text x="211" y="107" text-anchor="middle" font-size="15" font-weight="700">Поворот</text>
+            <rect x="166" y="190" width="90" height="54" rx="18" fill="#e7f0e5" stroke="#2f5d50"/>
+            <text x="211" y="221" text-anchor="middle" font-size="15" font-weight="700">Скрутка</text>
+            <rect x="292" y="114" width="90" height="54" rx="18" fill="#f4e5ec" stroke="#7d4156"/>
+            <text x="337" y="145" text-anchor="middle" font-size="15" font-weight="700">Новый образ</text>
+            <path d="M130 141 L166 108" stroke="#6c707c" stroke-width="2"/>
+            <path d="M130 141 L166 216" stroke="#6c707c" stroke-width="2"/>
+            <path d="M256 108 L292 141" stroke="#6c707c" stroke-width="2"/>
+            <path d="M256 216 L292 141" stroke="#6c707c" stroke-width="2"/>
+            <text x="210" y="274" text-anchor="middle" font-size="12" fill="#5f6270">один предмет рождает множество сценариев игры</text>
+          </svg>
+        </div>
+        <div class="card">
+          <h3>Где может жить проект</h3>
+          <p>Такой объект хорошо чувствует себя сразу в нескольких ролях: как игрушка, как подарок, как предмет для семейного взаимодействия и как небольшая коллекционная вещь. Это делает проект особенно сильным для публичной витрины.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="page theme-rose">
     <span class="eyebrow">06 · авторская теория</span>
     <div class="chapter-head">
@@ -858,7 +1045,7 @@
       <div class="meta">
         <span>психология</span>
         <span>поток</span>
-        <span>raw idea</span>
+        <span>авторская концепция</span>
       </div>
     </div>
     <div class="chapter-grid">
@@ -899,7 +1086,7 @@
           </svg>
         </div>
         <div class="card">
-          <h3>Сильный следующий шаг</h3>
+          <h3>Потенциал развития</h3>
           <p>Собрать короткий протокол наблюдений в табличном виде: контекст, способ входа, время удержания, результат, откат. Это не «докажет» теорию, но резко усилит её внутреннюю дисциплину.</p>
         </div>
       </div>
@@ -918,7 +1105,7 @@
     </div>
     <div class="chapter-grid">
       <div class="chapter-copy">
-        <p>Ниндзи — это не просто набор сцен, а уже намеченная вселенная со своими именованными героями, королевствами и линиями силы. В материалах особенно заметно кинематографическое мышление: движения, абордажные манёвры, оружие, прыжки и сцены написаны как будто сразу для экранизации. Полный просмотр файлов показал ещё один важный слой: у мира уже есть Blender-скрипт рендера, значит история понемногу переводится из текста в изображение и потенциальное видео.</p>
+        <p>Ниндзи — это не просто набор сцен, а уже намеченная вселенная со своими именованными героями, королевствами и линиями силы. Здесь особенно заметно кинематографическое мышление: движения, абордажные манёвры, оружие, прыжки и сцены написаны как будто сразу для экранизации. Ещё важнее то, что мир уже начинает жить не только в тексте, но и в изображении, а значит постепенно движется к более широкой визуальной форме.</p>
         <div class="card">
           <h3>Что уже держит мир</h3>
           <ul class="bullet-list">
@@ -926,10 +1113,10 @@
             <li>Чёткие географические опоры: Соколист, Акстэй, Тетский остров, Отстека.</li>
             <li>Существуют и прозаический фрагмент, и сценарная версия одной из частей.</li>
             <li>Конфликт и движение строятся через действие, а не через объяснение мира.</li>
-            <li>Файл `render.py` на 336 строк уже собирает корабли, персонажей, материалы, свет и рендер для сцены.</li>
+            <li>У мира уже есть собственная визуальная сцена с кораблями, персонажами, материалами, светом и настроением кадра.</li>
           </ul>
         </div>
-        <div class="quote">Это мир, у которого уже есть камера. Он не просто рассказывается, а ставится: видно, где монтажный склейка, где крупный план, где «продолжение следует».</div>
+        <div class="quote">Это мир, у которого уже есть камера. Он не просто рассказывается, а ставится: видно, где монтажная склейка, где крупный план, где «продолжение следует».</div>
       </div>
       <div class="visuals">
         <div class="card diagram-wrap">
@@ -962,8 +1149,58 @@
           </svg>
         </div>
         <div class="card">
-          <h3>Сильный следующий шаг</h3>
+          <h3>Потенциал развития</h3>
           <p>Собрать одностраничную «библию мира»: карта отношений, хронология и правила силы героев. Это даст опору и для книги, и для сценария, и для возможной игры по мотивам.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page theme-violet">
+    <span class="eyebrow">Мир и развитие</span>
+    <div class="chapter-head">
+      <h2>Как растёт собственная вселенная</h2>
+      <div class="meta">
+        <span>герои</span>
+        <span>карта</span>
+        <span>сцены</span>
+        <span>экранизация</span>
+      </div>
+    </div>
+    <div class="overview-grid">
+      <div class="stack">
+        <div class="card">
+          <h3>Точка входа для читателя</h3>
+          <p>У мира Ниндзи уже есть всё, чтобы удерживать внимание: яркий герой, сильные второстепенные фигуры, острова и королевства, линии силы и ощущение пути. Читатель входит не в абстрактную мифологию, а в конкретную приключенческую историю с движением и ставкой.</p>
+        </div>
+        <div class="card">
+          <h3>Почему мир кажется живым</h3>
+          <p>Вселенная строится через действия и сцены, а не через длинные объяснения. Именно поэтому она легко переходит в другие формы: в иллюстрацию, в короткий ролик, в сценическую раскладку, в книгу или когда-нибудь даже в игру по мотивам.</p>
+        </div>
+      </div>
+      <div class="stack">
+        <div class="card diagram-wrap">
+          <div class="diagram-title">Путь мира</div>
+          <svg class="diagram" viewBox="0 0 420 300" xmlns="http://www.w3.org/2000/svg" aria-label="Путь развития мира Ниндзи">
+            <rect x="34" y="62" width="88" height="46" rx="16" fill="#ecebfd" stroke="#4a4f78"/>
+            <text x="78" y="90" text-anchor="middle" font-size="14" font-weight="700">Герой</text>
+            <rect x="144" y="62" width="88" height="46" rx="16" fill="#f5efdf" stroke="#c78d3a"/>
+            <text x="188" y="90" text-anchor="middle" font-size="14" font-weight="700">Сцена</text>
+            <rect x="254" y="62" width="88" height="46" rx="16" fill="#dce9ef" stroke="#21536b"/>
+            <text x="298" y="90" text-anchor="middle" font-size="14" font-weight="700">Мир</text>
+            <rect x="144" y="176" width="140" height="54" rx="18" fill="#f4e5ec" stroke="#7d4156"/>
+            <text x="214" y="198" text-anchor="middle" font-size="14" font-weight="700">широкая форма</text>
+            <text x="214" y="217" text-anchor="middle" font-size="11">иллюстрация, ролик, книга, игра</text>
+            <path d="M122 85 L144 85" stroke="#6c707c" stroke-width="2"/>
+            <path d="M232 85 L254 85" stroke="#6c707c" stroke-width="2"/>
+            <path d="M298 108 L244 176" stroke="#6c707c" stroke-width="2"/>
+            <path d="M188 108 L188 176" stroke="#6c707c" stroke-width="2"/>
+            <path d="M78 108 L170 176" stroke="#6c707c" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="card">
+          <h3>Следующий шаг</h3>
+          <p>Этому миру особенно поможет короткая библия вселенной: карта отношений, хронология, визуальные акценты и принципы силы. Тогда Ниндзи будет восприниматься уже не как перспективная история, а как полноценно оформленная франшиза в миниатюре.</p>
         </div>
       </div>
     </div>
@@ -975,13 +1212,13 @@
       <h2>Пружинная гравитация Луки</h2>
       <div class="meta">
         <span>физика</span>
-        <span>hypothesis</span>
+        <span>исследовательская гипотеза</span>
         <span>сильный каркас заметок</span>
       </div>
     </div>
     <div class="chapter-grid">
       <div class="chapter-copy">
-        <p>Пружинная гравитация Луки — самая амбициозная и самая спорная работа в книге. Проект предлагает авторскую модель, в которой сила притяжения внутри поля растёт с расстоянием, а затем обрывается на границе. Важнее всего здесь не сама согласованность с физикой, а уровень структурированности мысли: есть формулы, уровни теории, эксперименты и отдельный файл со слабыми местами. Кроме текстов, теория уже получила собственные интерактивные инструменты на HTML для вычислений, таблиц и симуляции поля.</p>
+        <p>Пружинная гравитация Луки — одна из самых смелых и амбициозных работ в каталоге. Проект предлагает авторскую модель, в которой сила притяжения внутри поля растёт с расстоянием, а затем обрывается на границе. Важнее всего здесь не совпадение с существующими моделями, а уровень структурированности мысли: есть формулы, уровни теории, эксперименты, критический разбор слабых мест и собственные интерактивные инструменты для вычислений, сравнений и симуляции поля.</p>
         <div class="card">
           <h3>Почему проект заслуживает отдельного места</h3>
           <ul class="bullet-list">
@@ -989,11 +1226,11 @@
             <li>Есть отдельные разделы для экспериментов, «доказательств» и критики модели.</li>
             <li>Автор не прячет проблемы: орбиты, антигравитон и универсальность параметров выделены честно.</li>
             <li>Даже в спорной гипотезе чувствуется сильная склонность к систематизации и проверке идеи.</li>
-            <li>Теорию поддерживают отдельные страницы `calculator.html`, `planets.html` и `simulation.html`.</li>
+            <li>У гипотезы уже есть собственные инструменты для расчётов, карты планет и наглядной симуляции поля.</li>
           </ul>
         </div>
         <div class="quote">Это важный проект не потому, что он уже подтверждён, а потому, что показывает редкий навык: доводить сырую мысль до формул, предсказаний, контрпримеров и списка нерешённых вопросов.</div>
-        <div class="chapter-foot">Важно: это авторская гипотеза, не признанная научная модель.</div>
+        <div class="chapter-foot">Проект представлен как самостоятельная авторская исследовательская гипотеза.</div>
       </div>
       <div class="visuals">
         <div class="card diagram-wrap">
@@ -1014,240 +1251,229 @@
           </svg>
         </div>
         <div class="card">
-          <h3>Сильный следующий шаг</h3>
+          <h3>Потенциал развития</h3>
           <p>Свести всю теорию к одному формальному листу: определения, формулы, переменные, предсказания и список наблюдений, которые могли бы её опровергнуть. Для спорной идеи такая краткая строгость особенно ценна.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-  <section class="page theme-pine">
-    <span class="eyebrow">Appendix · полный проход</span>
-    <div class="chapter-head">
-      <h2>Инвентарь всех файлов</h2>
-      <div class="meta">
-        <span>558 файлов</span>
-        <span>93 текстовых</span>
-        <span>465 бинарных</span>
-        <span>112.2 MB</span>
-      </div>
-    </div>
-    <div class="overview-grid">
-      <div class="stack">
-        <div class="card">
-          <h3>Что именно было просмотрено</h3>
-          <p>По запросу на полное чтение был сделан не только проход по верхним `info.md`, а полный обход всех проектов, кроме `Claude`. Текстовые файлы прочитаны целиком, включая код, большие словари, Markdown-описания, сценарии, тесты и HTML-страницы. Бинарные файлы тоже были прогнаны байт-в-байт, чтобы инвентарь опирался на реальные данные, а не на имена файлов.</p>
-          <div class="project-list">
-            <div class="project-row">
-              <strong>Creative an Invention</strong>
-              <span>3 файла, все текстовые. Компактный проект, но с тяжёлым по смыслу кодом интерфейса и сервера.</span>
-            </div>
-            <div class="project-row">
-              <strong>LIT GPT</strong>
-              <span>17 файлов: 15 текстовых и 2 бинарных. Сюда входят корпуса слов, сохранённые модели и тренировочные скрипты.</span>
-            </div>
-            <div class="project-row">
-              <strong>Vocabulary Race</strong>
-              <span>25 файлов: 15 текстовых и 10 бинарных. Игра уже стоит на словаре, веб-ядре и собственных ассетах.</span>
-            </div>
-            <div class="project-row">
-              <strong>Звезда Луки</strong>
-              <span>14 файлов: документация, рендеры, Blender-сцены и скрипт сборки 3D-модели.</span>
-            </div>
-            <div class="project-row">
-              <strong>Механика Ниндзя, Ниндзи, Гравитация</strong>
-              <span>Почти полностью текстовые проекты: статьи, заметки, сценарии, теории и симуляции.</span>
-            </div>
-            <div class="project-row">
-              <strong>Рыцари и Замки</strong>
-              <span>477 файлов, из них 449 бинарных. Это самый тяжёлый по ассетам и инфраструктуре раздел всего репозитория.</span>
-            </div>
-          </div>
-        </div>
-        <div class="card">
-          <h3>Что стало видно после полного чтения</h3>
-          <p>У большинства проектов есть второй слой, который не виден из кратких описаний. У игр это тесты, ассеты и документы по обновлениям. У изобретения — себестоимость, патентная формула и 3D-модель. У теорий — не только тезисы, но и интерактивные визуализации. А у художественного мира — уже начатая работа по рендеру сцены.</p>
-        </div>
-      </div>
-      <div class="stack">
-        <div class="card diagram-wrap">
-          <div class="diagram-title">Распределение материалов</div>
-          <svg class="diagram" viewBox="0 0 420 340" xmlns="http://www.w3.org/2000/svg" aria-label="Распределение файлов">
-            <rect x="0" y="0" width="420" height="340" fill="#fffdf8"/>
-            <text x="42" y="36" font-size="15" font-weight="700">Файлы по проектам</text>
-            <text x="42" y="56" font-size="11" fill="#5f6270">тёмная полоса — все файлы, светлая — текстовые</text>
-            <g font-size="11">
-              <text x="42" y="96">Creative</text>
-              <rect x="146" y="84" width="6" height="15" fill="#21536b"/>
-              <rect x="146" y="103" width="6" height="9" fill="#bfd4de"/>
-              <text x="162" y="96">3 / 3</text>
-
-              <text x="42" y="132">LIT GPT</text>
-              <rect x="146" y="120" width="16" height="15" fill="#21536b"/>
-              <rect x="146" y="139" width="14" height="9" fill="#bfd4de"/>
-              <text x="172" y="132">17 / 15</text>
-
-              <text x="42" y="168">Vocabulary</text>
-              <rect x="146" y="156" width="24" height="15" fill="#2f5d50"/>
-              <rect x="146" y="175" width="14" height="9" fill="#c8ddd2"/>
-              <text x="180" y="168">25 / 15</text>
-
-              <text x="42" y="204">Звезда</text>
-              <rect x="146" y="192" width="13" height="15" fill="#c78d3a"/>
-              <rect x="146" y="211" width="10" height="9" fill="#ecd8b6"/>
-              <text x="169" y="204">14 / 10</text>
-
-              <text x="42" y="240">Теории + Ниндзи</text>
-              <rect x="146" y="228" width="21" height="15" fill="#7d4156"/>
-              <rect x="146" y="247" width="21" height="9" fill="#e3c4ce"/>
-              <text x="177" y="240">22 / 22</text>
-
-              <text x="42" y="276">Knights</text>
-              <rect x="146" y="264" width="232" height="15" fill="#4a4f78"/>
-              <rect x="146" y="283" width="14" height="9" fill="#cfd2eb"/>
-              <text x="388" y="276" text-anchor="end">477 / 28</text>
-            </g>
-            <circle cx="332" cy="108" r="42" fill="#f4e5ec" stroke="#7d4156"/>
-            <text x="332" y="102" text-anchor="middle" font-size="18" font-weight="700">93</text>
-            <text x="332" y="122" text-anchor="middle" font-size="11">текстовых файлов</text>
-            <circle cx="332" cy="226" r="56" fill="#e7f0e5" stroke="#2f5d50"/>
-            <text x="332" y="218" text-anchor="middle" font-size="22" font-weight="700">465</text>
-            <text x="332" y="242" text-anchor="middle" font-size="11">бинарных файлов</text>
-          </svg>
-        </div>
-        <div class="card">
-          <h3>Крупнейшие объекты</h3>
-          <p>Самый большой файл во всём наборе оказался не картинкой, а внутренней базой индексации `data.mdb` в `Рыцари и Замки` размером 64 МБ. Самые большие текстовые корпуса лежат в `LIT GPT`: `war_and_peace.txt` на 3.36 МБ и `50k_words.txt` на 50,000 строк. Это меняет восприятие репозитория: рядом с играми и идеями уже лежат полноценные рабочие массивы данных.</p>
         </div>
       </div>
     </div>
   </section>
 
   <section class="page theme-blue">
-    <span class="eyebrow">Appendix · digital depth</span>
+    <span class="eyebrow">Коллекционный потенциал</span>
     <div class="chapter-head">
-      <h2>Цифровые системы глубже, чем кажутся</h2>
+      <h2>Как этот каталог может жить дальше</h2>
       <div class="meta">
-        <span>код</span>
-        <span>данные</span>
-        <span>тесты</span>
-        <span>ассеты</span>
+        <span>книга</span>
+        <span>плакаты</span>
+        <span>демо</span>
+        <span>витрина</span>
       </div>
     </div>
     <div class="overview-grid">
       <div class="stack">
         <div class="card">
-          <h3>Creative an Invention</h3>
-          <p>Здесь три файла, но это не маленький проект в обычном смысле. `index.html` занимает 4,188 строк, `server.js` — 2,037 строк, а `watchdog.js` поднимает и сервер, и Ollama. Внутри сервера уже живут режимы `fast / direct / agent`, память пользователя, выбор навыков, работа с файлами и вебом. Это скорее локальная проектная операционная среда, чем просто интерфейс.</p>
+          <h3>Формы публичной жизни</h3>
+          <p>Этот портфель уже хорошо раскладывается на отдельные форматы: печатный каталог, серия плакатов, карточки проектов, выставочная витрина, демо-ролики и короткие презентации по каждому направлению. Сильнее всего работает то, что у каждой идеи уже есть собственный визуальный характер.</p>
         </div>
         <div class="card">
-          <h3>LIT GPT</h3>
-          <p>За маленьким ботом спрятана мини-лаборатория. Есть `train.py`, `train_large.py`, `Dictionary.pkl`, `GPT.pkl`, а также два больших корпуса: список на 50,000 слов и `War and Peace`. Получается, что проект уже думает не только о выдаче ответа, но и о материале, через который система учится и расширяется.</p>
-        </div>
-        <div class="card">
-          <h3>Vocabulary Race</h3>
-          <p>В changelog хорошо видно взросление игры по версиям: сначала базовая структура, затем анимации и спецкарты, потом кубик, затем большой словарь и исправления точности позиционирования. Это сильный сигнал: проект уже живёт в цикле итераций, а не существует как одноразовый прототип.</p>
+          <h3>Почему это уже серия</h3>
+          <p>Проекты разные по жанру, но родственны по духу. Их объединяет внимание к механике, образу и самостоятельному миру. Поэтому публика воспринимает каталог не как разовый сборник, а как начало серии, у которой могут появляться новые тома, обновления и отдельные линейки.</p>
         </div>
       </div>
       <div class="stack">
-        <div class="card">
-          <h3>Рыцари и Замки</h3>
-          <p>Именно здесь находится самый большой цифровой пласт. Основной `index.html` — 7,735 строк, `story.txt` — 256 строк, `KnightsAndCastlesTests.swift` — 696 строк. Отдельно лежат `GitHubUpdater.swift`, `LoadingGameView.swift`, `UpdateDebugView.swift`, чеклист и инструкция по настройке обновлений. Это уже похоже на небольшой продакшен-стек, а не на единичный файл игры.</p>
-        </div>
-        <div class="card">
-          <h3>Ассетная масса</h3>
-          <p>Инвентарь показал 426 PNG-файлов и 18 `.aseprite`-сцен только внутри `Рыцари и Замки`, плюс 2 MP3. Это означает, что проект уже растёт не только в логике, но и в производстве контента: там есть тайлсеты, юниты, здания, эффекты, музыка, кастомные предметы и внешний attribution для ассетов.</p>
-        </div>
         <div class="card diagram-wrap">
-          <div class="diagram-title">Ключевые масштабы цифрового слоя</div>
-          <svg class="diagram" viewBox="0 0 420 306" xmlns="http://www.w3.org/2000/svg" aria-label="Масштабы цифровых слоев">
-            <rect x="0" y="0" width="420" height="306" fill="#fffdf8"/>
-            <text x="42" y="36" font-size="15" font-weight="700">Строки и файлы</text>
-            <text x="42" y="68" font-size="12">Creative `index.html`</text>
-            <rect x="176" y="58" width="126" height="12" rx="6" fill="#dce9ef"/>
-            <text x="312" y="68" font-size="11">4,188</text>
-            <text x="42" y="102" font-size="12">LIT `train_large.py`</text>
-            <rect x="176" y="92" width="18" height="12" rx="6" fill="#ecebfd"/>
-            <text x="204" y="102" font-size="11">554</text>
-            <text x="42" y="136" font-size="12">Vocabulary `index.html`</text>
-            <rect x="176" y="126" width="52" height="12" rx="6" fill="#e7f0e5"/>
-            <text x="238" y="136" font-size="11">1,761</text>
-            <text x="42" y="170" font-size="12">Knights `index.html`</text>
-            <rect x="176" y="160" width="234" height="12" rx="6" fill="#f3e6dc"/>
-            <text x="350" y="170" font-size="11">7,735</text>
-            <text x="42" y="204" font-size="12">Knights tests</text>
-            <rect x="176" y="194" width="22" height="12" rx="6" fill="#f4e5ec"/>
-            <text x="208" y="204" font-size="11">696</text>
-            <text x="42" y="238" font-size="12">PNG в Knights</text>
-            <rect x="176" y="228" width="128" height="12" rx="6" fill="#f5efdf"/>
-            <text x="314" y="238" font-size="11">426 файлов</text>
-            <text x="42" y="272" font-size="12">Vocabulary dictionary</text>
-            <rect x="176" y="262" width="80" height="12" rx="6" fill="#dfe9cf"/>
-            <text x="266" y="272" font-size="11">26,245 слов</text>
+          <div class="diagram-title">Формы продолжения</div>
+          <svg class="diagram" viewBox="0 0 420 300" xmlns="http://www.w3.org/2000/svg" aria-label="Формы продолжения каталога">
+            <circle cx="210" cy="152" r="52" fill="#dce9ef" stroke="#21536b"/>
+            <text x="210" y="146" text-anchor="middle" font-size="17" font-weight="700">Каталог</text>
+            <text x="210" y="167" text-anchor="middle" font-size="11">публичная точка входа</text>
+            <rect x="42" y="54" width="92" height="44" rx="16" fill="#f5efdf" stroke="#c78d3a"/>
+            <text x="88" y="80" text-anchor="middle" font-size="13" font-weight="700">Плакаты</text>
+            <rect x="286" y="54" width="92" height="44" rx="16" fill="#e7f0e5" stroke="#2f5d50"/>
+            <text x="332" y="80" text-anchor="middle" font-size="13" font-weight="700">Карточки</text>
+            <rect x="42" y="214" width="92" height="44" rx="16" fill="#ecebfd" stroke="#4a4f78"/>
+            <text x="88" y="240" text-anchor="middle" font-size="13" font-weight="700">Демо</text>
+            <rect x="286" y="214" width="92" height="44" rx="16" fill="#f4e5ec" stroke="#7d4156"/>
+            <text x="332" y="240" text-anchor="middle" font-size="13" font-weight="700">Витрина</text>
+            <line x1="134" y1="98" x2="170" y2="122" stroke="#8a8c95" stroke-width="1.5"/>
+            <line x1="286" y1="98" x2="250" y2="122" stroke="#8a8c95" stroke-width="1.5"/>
+            <line x1="134" y1="214" x2="170" y2="182" stroke="#8a8c95" stroke-width="1.5"/>
+            <line x1="286" y1="214" x2="250" y2="182" stroke="#8a8c95" stroke-width="1.5"/>
           </svg>
+        </div>
+        <div class="card">
+          <h3>Итог для публики</h3>
+          <p>Главное достоинство каталога в том, что он не просит воображать всё с нуля. Здесь уже есть формы, герои, правила, предметы и сценарии развития. Именно поэтому книга работает не только как рассказ об идеях, но и как готовая точка встречи автора с аудиторией.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page theme-pine">
+    <span class="eyebrow">Портфель в цифрах</span>
+    <div class="chapter-head">
+      <h2>Масштаб и разнообразие</h2>
+      <div class="meta">
+        <span>8 проектов</span>
+        <span>цифра + физика</span>
+        <span>игры + идеи</span>
+      </div>
+    </div>
+    <div class="overview-grid">
+      <div class="stack">
+        <div class="card">
+          <h3>Ключевые числа</h3>
+          <div class="project-list">
+            <div class="project-row"><strong>8</strong><span>самостоятельных направлений в одном каталоге</span></div>
+            <div class="project-row"><strong>4</strong><span>цифровых проекта: локальный AI, интерфейсы и игровые системы</span></div>
+            <div class="project-row"><strong>1</strong><span>физическое изобретение с продуктовым потенциалом</span></div>
+            <div class="project-row"><strong>3</strong><span>авторских мира и исследовательских направлений</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Что делает каталог цельным</h3>
+          <p>Этот портфель объединяет разные форматы, но держится на одном принципе: каждый проект строится вокруг собственной механики. Где-то это игровой цикл, где-то трансформация объекта, где-то состояние потока, а где-то новая модель объяснения мира. За счёт этого каталог воспринимается как единая система, а не набор случайных работ.</p>
+        </div>
+      </div>
+      <div class="stack">
+        <div class="card diagram-wrap">
+          <div class="diagram-title">Баланс направлений</div>
+          <svg class="diagram" viewBox="0 0 420 320" xmlns="http://www.w3.org/2000/svg" aria-label="Баланс направлений">
+            <rect x="0" y="0" width="420" height="320" fill="#fffdf8"/>
+            <circle cx="210" cy="160" r="58" fill="#f6eddc" stroke="#c78d3a"/>
+            <text x="210" y="152" text-anchor="middle" font-size="18" font-weight="700">8 проектов</text>
+            <text x="210" y="174" text-anchor="middle" font-size="11">один авторский каталог</text>
+            <circle cx="92" cy="88" r="42" fill="#dce9ef" stroke="#21536b"/>
+            <text x="92" y="84" text-anchor="middle" font-size="15" font-weight="700">4</text>
+            <text x="92" y="103" text-anchor="middle" font-size="11">цифровых</text>
+            <circle cx="330" cy="92" r="42" fill="#e7f0e5" stroke="#2f5d50"/>
+            <text x="330" y="88" text-anchor="middle" font-size="15" font-weight="700">1</text>
+            <text x="330" y="107" text-anchor="middle" font-size="11">изобретение</text>
+            <circle cx="96" cy="244" r="42" fill="#ecebfd" stroke="#4a4f78"/>
+            <text x="96" y="240" text-anchor="middle" font-size="15" font-weight="700">1</text>
+            <text x="96" y="259" text-anchor="middle" font-size="11">худ. мир</text>
+            <circle cx="326" cy="244" r="42" fill="#f4e5ec" stroke="#7d4156"/>
+            <text x="326" y="240" text-anchor="middle" font-size="15" font-weight="700">2</text>
+            <text x="326" y="259" text-anchor="middle" font-size="11">теории</text>
+            <line x1="145" y1="116" x2="170" y2="132" stroke="#8a8c95" stroke-width="1.5"/>
+            <line x1="275" y1="132" x2="300" y2="116" stroke="#8a8c95" stroke-width="1.5"/>
+            <line x1="145" y1="204" x2="170" y2="188" stroke="#8a8c95" stroke-width="1.5"/>
+            <line x1="275" y1="188" x2="300" y2="204" stroke="#8a8c95" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <div class="card">
+          <h3>Форматы внутри каталога</h3>
+          <p>Внутри портфеля соседствуют интерфейсные продукты, игры, художественный нарратив, рендеры, документация, физические прототипы и исследовательские модели. Для публичной презентации это особенно важно: каталог показывает не только идеи, но и диапазон способов, которыми эти идеи получают форму.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page theme-blue">
+    <span class="eyebrow">Технологическая база</span>
+    <div class="chapter-head">
+      <h2>Как устроена цифровая часть портфеля</h2>
+      <div class="meta">
+        <span>интерфейсы</span>
+        <span>игры</span>
+        <span>визуальные миры</span>
+        <span>симуляции</span>
+      </div>
+    </div>
+    <div class="overview-grid">
+      <div class="stack">
+        <div class="card">
+          <h3>Игровой и интерфейсный стек</h3>
+          <p>В каталоге уже есть несколько устойчивых линий развития. Одни проекты строятся как интерактивные панели, другие как игры, третьи как визуализированные миры и исследовательские модели. Благодаря этому портфель выглядит не как разрозненная подборка, а как цельная мастерская, в которой каждая идея получает подходящую форму.</p>
+        </div>
+        <div class="card">
+          <h3>Плотность разработки</h3>
+          <p>Даже по масштабу внутренней проработки видно, что проекты не поверхностные. Creative an Invention уже похож на большой рабочий центр. Vocabulary Race опирается на широкую языковую базу. Рыцари и Замки выросли до крупной стратегии с собственной атмосферой и богатой библиотекой образов.</p>
+        </div>
+      </div>
+      <div class="stack">
+        <div class="card diagram-wrap">
+          <div class="diagram-title">Ключевые масштабы</div>
+          <svg class="diagram" viewBox="0 0 420 300" xmlns="http://www.w3.org/2000/svg" aria-label="Ключевые масштабы">
+            <rect x="0" y="0" width="420" height="300" fill="#fffdf8"/>
+            <text x="42" y="36" font-size="15" font-weight="700">Масштаб идей и материалов</text>
+            <text x="42" y="70" font-size="12">Creative an Invention</text>
+            <rect x="176" y="60" width="126" height="12" rx="6" fill="#dce9ef"/>
+            <text x="312" y="70" font-size="11">большая рабочая среда</text>
+            <text x="42" y="104" font-size="12">LIT GPT</text>
+            <rect x="176" y="94" width="94" height="12" rx="6" fill="#ecebfd"/>
+            <text x="280" y="104" font-size="11">50,000 слов</text>
+            <text x="42" y="138" font-size="12">Vocabulary Race</text>
+            <rect x="176" y="128" width="80" height="12" rx="6" fill="#e7f0e5"/>
+            <text x="266" y="138" font-size="11">26,245 слов</text>
+            <text x="42" y="172" font-size="12">Рыцари и Замки</text>
+            <rect x="176" y="162" width="232" height="12" rx="6" fill="#f3e6dc"/>
+            <text x="350" y="172" font-size="11">крупная стратегия</text>
+            <text x="42" y="206" font-size="12">Визуальный архив</text>
+            <rect x="176" y="196" width="128" height="12" rx="6" fill="#f5efdf"/>
+            <text x="314" y="206" font-size="11">сотни образов</text>
+            <text x="42" y="240" font-size="12">Ниндзи</text>
+            <rect x="176" y="230" width="20" height="12" rx="6" fill="#f4e5ec"/>
+            <text x="206" y="240" font-size="11">визуальная сцена</text>
+          </svg>
+        </div>
+        <div class="card">
+          <h3>Что это даёт публике</h3>
+          <p>Для зрителя и покупателя это означает главное: за красивой обложкой у проектов есть настоящая внутренняя база. Они опираются на реальные механики, материалы, данные и техническую проработку, а не только на презентационное описание.</p>
         </div>
       </div>
     </div>
   </section>
 
   <section class="page theme-rose">
-    <span class="eyebrow">Appendix · second layer</span>
+    <span class="eyebrow">От идеи к продукту</span>
     <div class="chapter-head">
-      <h2>У идей тоже есть производственный слой</h2>
+      <h2>Как идеи получают форму</h2>
       <div class="meta">
-        <span>Blender</span>
-        <span>HTML tools</span>
         <span>рынок</span>
-        <span>сценография</span>
+        <span>рендер</span>
+        <span>симуляция</span>
+        <span>прототип</span>
       </div>
     </div>
     <div class="overview-grid">
       <div class="stack">
         <div class="card">
           <h3>Звезда Луки</h3>
-          <p>Полный набор файлов показывает почти продуктовый уровень проработки. Помимо идеи и описания есть `cost.md` с COGS и MSRP, `patent.md` с формулой изобретения, `dimensions.md` с пропорциями, а также `blender_model.py` на 291 строку и два `.blend`-файла. То есть это уже не просто игрушка, а концепт с экономикой, патентной рамкой и визуальной моделью.</p>
+          <p>Это один из лучших примеров движения от идеи к продукту. У проекта уже есть не только концепция и прототип, но и расчёт себестоимости, габаритное описание, патентная рамка и сильная визуальная модель. Такой набор даёт редкое чувство цельности даже на ранней стадии.</p>
         </div>
         <div class="card">
-          <h3>Механика Ниндзя</h3>
-          <p>Этот проект оказался гораздо плотнее, чем кажется по одному `theory.md`. Есть отдельная статья, заметки, журнал наблюдений и список направлений для исследования. Особенно ценны четыре конкретных кейса в `sources.md`: змей, футбол, игра и кунг-фу на пляже. Они задают не только настроение, но и внутреннюю эмпирическую опору теории.</p>
-        </div>
-        <div class="card">
-          <h3>Ниндзи</h3>
-          <p>Художественный мир уже живёт в трёх формах: книга, сценарий и рендерный Python-скрипт для Blender на 336 строк. Скрипт строит корабли, персонажей, материалы, небо и свет, то есть мир постепенно переводится из слов в сцену. Это важный признак: проект уже хочет быть не только текстом, но и образом.</p>
+          <h3>Ниндзи и визуальное будущее</h3>
+          <p>Художественный мир уже выходит за пределы текста. Книга, сценарий и рендерный скрипт работают вместе: история может быть не только прочитана, но и показана как сцена, движение и кадр. Это открывает путь к иллюстрациям, видео и игровым адаптациям.</p>
         </div>
       </div>
       <div class="stack">
         <div class="card">
-          <h3>Пружинная гравитация Луки</h3>
-          <p>Теория получила собственную лабораторию: `calculator.html` визуализирует формулы поля, `planets.html` раскладывает планеты в таблицу наблюдений и расчётов, а `simulation.html` показывает динамическую модель с переключением формы поля. Даже если гипотеза спорная, способ её сопровождения уже инженерный.</p>
-        </div>
-        <div class="card">
-          <h3>Вывод по всей книге</h3>
-          <p>Общий мотив репозитория теперь виден яснее: Лука не ограничивается придумыванием идей. Почти у каждого сильного замысла появляется второй слой, который помогает его выращивать: документ, ассет, рендер, тест, симулятор, словарь, инструмент или производственная оценка. Именно этот второй слой и делает портфель живым.</p>
+          <h3>Исследовательские проекты</h3>
+          <p>Даже авторские теории в этом каталоге поданы не как абстрактные заметки. У Механики Ниндзя есть статья, наблюдения и внутренняя карта состояний. У Пружинной гравитации Луки — калькулятор, страница планет и симуляция поля. Идея превращается в систему именно в тот момент, когда для неё появляется свой инструмент проверки и демонстрации.</p>
         </div>
         <div class="card diagram-wrap">
-          <div class="diagram-title">Как идея становится системой</div>
-          <svg class="diagram" viewBox="0 0 420 310" xmlns="http://www.w3.org/2000/svg" aria-label="Как идея становится системой">
-            <rect x="38" y="44" width="106" height="52" rx="18" fill="#f5efdf" stroke="#c78d3a"/>
-            <text x="91" y="74" text-anchor="middle" font-size="15" font-weight="700">Идея</text>
-            <rect x="156" y="44" width="106" height="52" rx="18" fill="#dce9ef" stroke="#21536b"/>
-            <text x="209" y="74" text-anchor="middle" font-size="15" font-weight="700">Описание</text>
-            <rect x="274" y="44" width="108" height="52" rx="18" fill="#e7f0e5" stroke="#2f5d50"/>
-            <text x="328" y="74" text-anchor="middle" font-size="15" font-weight="700">Инструмент</text>
-
-            <rect x="74" y="150" width="272" height="48" rx="18" fill="#f4e5ec" stroke="#7d4156"/>
-            <text x="210" y="178" text-anchor="middle" font-size="14" font-weight="700">второй слой делает проект устойчивым</text>
-
-            <rect x="36" y="232" width="108" height="42" rx="16" fill="#ecebfd" stroke="#4a4f78"/>
-            <text x="90" y="258" text-anchor="middle" font-size="13" font-weight="700">тесты</text>
-            <rect x="156" y="232" width="108" height="42" rx="16" fill="#f3e6dc" stroke="#9b5f3f"/>
-            <text x="210" y="258" text-anchor="middle" font-size="13" font-weight="700">рендер / симуляция</text>
-            <rect x="276" y="232" width="108" height="42" rx="16" fill="#f6eddc" stroke="#c78d3a"/>
-            <text x="330" y="258" text-anchor="middle" font-size="13" font-weight="700">рынок / данные</text>
-
-            <path d="M91 96 L90 232" stroke="#6c707c" stroke-width="2"/>
-            <path d="M209 96 L210 232" stroke="#6c707c" stroke-width="2"/>
-            <path d="M328 96 L330 232" stroke="#6c707c" stroke-width="2"/>
+          <div class="diagram-title">Путь проекта</div>
+          <svg class="diagram" viewBox="0 0 420 300" xmlns="http://www.w3.org/2000/svg" aria-label="Путь проекта">
+            <rect x="34" y="62" width="88" height="46" rx="16" fill="#f5efdf" stroke="#c78d3a"/>
+            <text x="78" y="90" text-anchor="middle" font-size="14" font-weight="700">Идея</text>
+            <rect x="144" y="62" width="88" height="46" rx="16" fill="#dce9ef" stroke="#21536b"/>
+            <text x="188" y="90" text-anchor="middle" font-size="14" font-weight="700">Описание</text>
+            <rect x="254" y="62" width="88" height="46" rx="16" fill="#e7f0e5" stroke="#2f5d50"/>
+            <text x="298" y="90" text-anchor="middle" font-size="14" font-weight="700">Прототип</text>
+            <rect x="144" y="170" width="140" height="52" rx="18" fill="#f4e5ec" stroke="#7d4156"/>
+            <text x="214" y="190" text-anchor="middle" font-size="14" font-weight="700">публичная форма</text>
+            <text x="214" y="210" text-anchor="middle" font-size="11">рендер, симуляция, рынок, каталог</text>
+            <path d="M122 85 L144 85" stroke="#6c707c" stroke-width="2"/>
+            <path d="M232 85 L254 85" stroke="#6c707c" stroke-width="2"/>
+            <path d="M298 108 L244 170" stroke="#6c707c" stroke-width="2"/>
+            <path d="M188 108 L188 170" stroke="#6c707c" stroke-width="2"/>
+            <path d="M78 108 L170 170" stroke="#6c707c" stroke-width="2"/>
           </svg>
+        </div>
+        <div class="card">
+          <h3>Общий вывод</h3>
+          <p>Главная сила этого каталога в том, что идеи здесь не остаются на уровне замысла. Они получают форму, визуальный образ, рабочую логику и путь дальнейшего развития. Именно это делает портфель убедительным для публичной презентации.</p>
         </div>
       </div>
     </div>
