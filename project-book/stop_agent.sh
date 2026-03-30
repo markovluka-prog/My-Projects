@@ -17,11 +17,29 @@ fi
 PID="$(cat "$PID_FILE")"
 if kill -0 "$PID" 2>/dev/null; then
   kill "$PID"
+  for _ in {1..20}; do
+    if ! kill -0 "$PID" 2>/dev/null; then
+      break
+    fi
+    sleep 0.2
+  done
+  if kill -0 "$PID" 2>/dev/null; then
+    kill -9 "$PID"
+  fi
   echo "Agent stopped: $PID"
 else
   FALLBACK_PID="$(pgrep -f "node $AGENT_ENTRY" | tail -n 1 || true)"
   if [[ -n "$FALLBACK_PID" ]]; then
     kill "$FALLBACK_PID"
+    for _ in {1..20}; do
+      if ! kill -0 "$FALLBACK_PID" 2>/dev/null; then
+        break
+      fi
+      sleep 0.2
+    done
+    if kill -0 "$FALLBACK_PID" 2>/dev/null; then
+      kill -9 "$FALLBACK_PID"
+    fi
     echo "Agent stopped: $FALLBACK_PID"
   else
     echo "Agent process not found: $PID"

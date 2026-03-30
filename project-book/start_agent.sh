@@ -17,13 +17,13 @@ if [[ -n "$EXISTING_PID" ]]; then
 fi
 
 cd "$SCRIPT_DIR"
-nohup node "$AGENT_ENTRY" >>"$LOG_FILE" 2>&1 &
-LAUNCH_PID=$!
+setsid -f bash -lc "exec node \"$AGENT_ENTRY\" >>\"$LOG_FILE\" 2>&1 </dev/null"
 sleep 1
 
 PID="$(pgrep -f "node $AGENT_ENTRY" | tail -n 1 || true)"
 if [[ -z "$PID" ]]; then
-  PID="$LAUNCH_PID"
+  echo "Failed to detect agent PID after launch" >&2
+  exit 1
 fi
 
 echo "$PID" >"$PID_FILE"

@@ -7,7 +7,12 @@
     "build:pdf": "node generate_pdf.mjs",
     "build": "node build_site.mjs && node generate_pdf.mjs",
     "agent": "node update_agent.mjs",
-    "agent:once": "node update_agent.mjs --once"
+    "agent:once": "node update_agent.mjs --once",
+    "service:install": "bash install_service.sh",
+    "service:uninstall": "bash uninstall_service.sh",
+    "service:start": "sudo service project-book-agent start",
+    "service:stop": "sudo service project-book-agent stop",
+    "service:status": "sudo service project-book-agent status"
   },
   "dependencies": {
     "playwright": "^1.54.2"

@@ -115,7 +115,7 @@ export async function runAgent({ once = false } = {}) {
     }
   }
 
-  await tick(true);
+  await tick(false);
 
   if (once) return;
 
