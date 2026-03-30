@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Книга проектов Луки</title>
+  <style>
+    :root {
+      --paper: #f5efe4;
+      --ink: #1d1e24;
+      --muted: #5f6270;
+      --line: rgba(29, 30, 36, 0.14);
+      --gold: #c78d3a;
+      --blue: #21536b;
+      --pine: #2f5d50;
+      --rose: #7d4156;
+      --violet: #4a4f78;
+      --clay: #9b5f3f;
+      --soft: #fcf8f1;
+      --shadow: 0 18px 60px rgba(29, 30, 36, 0.14);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: #d7d0c3;
+      color: var(--ink);
+      font-family: "Trebuchet MS", "Gill Sans", sans-serif;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    body {
+      counter-reset: pageIndex;
+    }
+
+    .page {
+      position: relative;
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      padding: 18mm 18mm 16mm;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at top right, rgba(199, 141, 58, 0.14), transparent 23%),
+        radial-gradient(circle at bottom left, rgba(33, 83, 107, 0.10), transparent 27%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(245, 239, 228, 0.98)),
+        var(--paper);
+      break-after: page;
+      box-shadow: 0 0 0 1px rgba(29, 30, 36, 0.05);
+    }
+
+    .page::after {
+      counter-increment: pageIndex;
+      content: counter(pageIndex, decimal-leading-zero);
+      position: absolute;
+      right: 18mm;
+      bottom: 10mm;
+      font-size: 9pt;
+      letter-spacing: 0.22em;
+      color: rgba(29, 30, 36, 0.38);
+    }
+
+    .cover::after {
+      content: "";
+    }
+
+    .page::before {
+      content: "";
+      position: absolute;
+      inset: 7mm;
+      border: 1px solid rgba(29, 30, 36, 0.08);
+      pointer-events: none;
+    }
+
+    .cover {
+      background:
+        radial-gradient(circle at 15% 20%, rgba(199, 141, 58, 0.16), transparent 20%),
+        radial-gradient(circle at 90% 28%, rgba(47, 93, 80, 0.14), transparent 21%),
+        radial-gradient(circle at 82% 85%, rgba(74, 79, 120, 0.12), transparent 20%),
+        linear-gradient(135deg, #fbf7ef 0%, #efe6d6 45%, #f8f3ea 100%);
+    }
+
+    .theme-blue { --accent: var(--blue); }
+    .theme-pine { --accent: var(--pine); }
+    .theme-gold { --accent: var(--gold); }
+    .theme-rose { --accent: var(--rose); }
+    .theme-violet { --accent: var(--violet); }
+    .theme-clay { --accent: var(--clay); }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(29, 30, 36, 0.06);
+      color: var(--muted);
+      font-size: 9pt;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      font-family: "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      font-weight: 700;
+      line-height: 1.02;
+    }
+
+    h1 {
+      font-size: 30pt;
+    }
+
+    h2 {
+      font-size: 24pt;
+    }
+
+    h3 {
+      font-size: 14pt;
+    }
+
+    p {
+      margin: 0;
+      line-height: 1.55;
+      font-size: 10.8pt;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .cover-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 18mm;
+      height: 100%;
+      align-items: center;
+    }
+
+    .cover-title {
+      display: grid;
+      gap: 8mm;
+      align-content: start;
+    }
+
+    .cover-title p {
+      max-width: 110mm;
+      font-size: 12pt;
+    }
+
+    .cover-metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 4mm;
+    }
+
+    .metric {
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(29, 30, 36, 0.08);
+      box-shadow: var(--shadow);
+    }
+
+    .metric strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 18pt;
+      color: var(--accent, var(--blue));
+    }
+
+    .cover-collage {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .cover-collage .tile {
+      position: relative;
+      min-height: 78mm;
+      padding: 12px;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(29, 30, 36, 0.08);
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.28)),
+        rgba(255, 255, 255, 0.38);
+      box-shadow: var(--shadow);
+    }
+
+    .cover-collage .tile.tall {
+      grid-row: span 2;
+      min-height: 160mm;
+    }
+
+    .cover-collage img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: saturate(0.9) contrast(1.04);
+    }
+
+    .cover-collage .label {
+      position: absolute;
+      left: 12px;
+      bottom: 12px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(24, 25, 29, 0.68);
+      color: #f8f2e8;
+      font-size: 8.5pt;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .overview-grid,
+    .chapter-grid {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 12mm;
+      margin-top: 10mm;
+    }
+
+    .chapter-grid {
+      align-items: start;
+    }
+
+    .stack {
+      display: grid;
+      gap: 10px;
+    }
+
+    .card {
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.62);
+      border: 1px solid rgba(29, 30, 36, 0.08);
+      box-shadow: var(--shadow);
+    }
+
+    .card h3 {
+      margin-bottom: 10px;
+      color: var(--accent, var(--blue));
+    }
+
+    .keyline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 8mm 0 0;
+    }
+
+    .pill {
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: rgba(29, 30, 36, 0.05);
+      color: var(--ink);
+      font-size: 9pt;
+    }
+
+    .project-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 4mm;
+    }
+
+    .project-row {
+      display: grid;
+      grid-template-columns: 34mm 1fr;
+      gap: 12px;
+      padding: 10px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .project-row:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .project-row strong {
+      font-size: 10pt;
+      color: var(--accent, var(--blue));
+      letter-spacing: 0.04em;
+    }
+
+    .project-row span {
+      display: block;
+      font-size: 10pt;
+      line-height: 1.5;
+    }
+
+    .chapter-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 12px;
+      margin-bottom: 5mm;
+    }
+
+    .chapter-head .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .chapter-head .meta span {
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(29, 30, 36, 0.06);
+      font-size: 8.8pt;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .chapter-copy {
+      display: grid;
+      gap: 14px;
+    }
+
+    .bullet-list {
+      margin: 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 8px;
+      font-size: 10.5pt;
+      line-height: 1.5;
+    }
+
+    .quote {
+      padding: 16px 18px;
+      border-left: 3px solid var(--accent, var(--blue));
+      background: rgba(255, 255, 255, 0.48);
+      border-radius: 0 16px 16px 0;
+      font-size: 11pt;
+      line-height: 1.55;
+    }
+
+    .visuals {
+      display: grid;
+      gap: 10px;
+    }
+
+    .image-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 68mm;
+      padding: 0;
+    }
+
+    .image-card img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .image-note {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(18, 18, 22, 0.72);
+      color: #f8f4ed;
+      font-size: 9pt;
+      line-height: 1.35;
+    }
+
+    .diagram-wrap {
+      padding: 12px;
+    }
+
+    .diagram-title {
+      margin-bottom: 8px;
+      font-size: 9pt;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+    }
+
+    svg.diagram {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 14px;
+      background: #fffdf8;
+      border: 1px solid rgba(29, 30, 36, 0.08);
+    }
+
+    svg text {
+      font-family: "Trebuchet MS", "Gill Sans", sans-serif;
+      fill: #1d1e24;
+    }
+
+    .small {
+      font-size: 8.5pt;
+      color: var(--muted);
+    }
+
+    .chapter-foot {
+      margin-top: 5mm;
+      font-size: 9pt;
+      color: var(--muted);
+    }
+
+    @page {
+      size: A4;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <section class="page cover theme-blue">
+    <div class="cover-grid">
+      <div class="cover-title">
+        <span class="eyebrow">Портфолио 2026 · кроме Claude</span>
+        <h1>Книга проектов Луки</h1>
+        <p>В этой книге собраны восемь разных направлений: игры, локальные AI-инструменты, физическое изобретение, художественный мир и две авторские теории. Это не каталог готовых релизов, а снимок живой мастерской, где идеи уже обрели форму.</p>
+        <div class="cover-metrics">
+          <div class="metric">
+            <strong>8</strong>
+            <span>проектов вошло в книгу</span>
+          </div>
+          <div class="metric">
+            <strong>4</strong>
+            <span>цифровых продукта и интерфейса</span>
+          </div>
+          <div class="metric">
+            <strong>2</strong>
+            <span>авторские теории и гипотезы</span>
+          </div>
+          <div class="metric">
+            <strong>1+1</strong>
+            <span>физическое изобретение и книга</span>
+          </div>
+        </div>
+        <div class="keyline">
+          <span class="pill">Собрано: 30 марта 2026</span>
+          <span class="pill">Автор проектов: Лука Марков</span>
+        </div>
+      </div>
+      <div class="cover-collage">
+        <div class="tile tall">
+          <img src="../Звезда Луки/photo.png" alt="Звезда Луки">
+          <span class="label">Звезда Луки</span>
+        </div>
+        <div class="tile">
+          <img src="../Vocabulary Race.swiftpm/GameWeb/assets/field.png" alt="Vocabulary Race">
+          <span class="label">Vocabulary Race</span>
+        </div>
+        <div class="tile">
+          <img src="../Рыцари и Замки.swiftpm/KnightsGame/Knights_and_Castles_1920x1080.png" alt="Рыцари и Замки">
+          <span class="label">Рыцари и Замки</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page theme-pine">
+    <span class="eyebrow">Обзор портфеля</span>
+    <div class="chapter-head">
+      <h2>О чём эти проекты вместе</h2>
+      <div class="meta">
+        <span>игры</span>
+        <span>AI</span>
+        <span>изобретения</span>
+        <span>теории</span>
+        <span>fiction</span>
+      </div>
+    </div>
+    <div class="overview-grid">
+      <div class="stack">
+        <div class="card">
+          <h3>Карта направлений</h3>
+          <p>Если смотреть сверху, мастерская Луки устроена как радиальная система. В центре стоит интерес к механике: как работают слова, ход, трансформация, удача, притяжение и сюжетное действие. Вокруг этого центра расходятся разные носители одной и той же страсти к устройству мира.</p>
+          <div class="project-list">
+            <div class="project-row">
+              <strong>Цифровые вещи</strong>
+              <span>Creative an Invention, LIT GPT, Vocabulary Race и Рыцари и Замки исследуют интерфейс, игровой цикл, локальный AI и браузерную логику внутри приложений.</span>
+            </div>
+            <div class="project-row">
+              <strong>Физический объект</strong>
+              <span>Звезда Луки переносит тему трансформации из кода в реальную конструкцию: один каркас, много форм, ноль жёстких сценариев.</span>
+            </div>
+            <div class="project-row">
+              <strong>Идеи и гипотезы</strong>
+              <span>Механика Ниндзя и Пружинная гравитация Луки оформлены как авторские теории: у обеих есть внутренний язык, наблюдения и список слабых мест.</span>
+            </div>
+            <div class="project-row">
+              <strong>Мир и повествование</strong>
+              <span>Ниндзи собирает героев, королевства и сцены так, будто рядом с играми уже растёт собственная вселенная.</span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Оглавление книги</h3>
+          <div class="project-list">
+            <div class="project-row"><strong>01</strong><span>Creative an Invention</span></div>
+            <div class="project-row"><strong>02</strong><span>LIT GPT</span></div>
+            <div class="project-row"><strong>03</strong><span>Vocabulary Race</span></div>
+            <div class="project-row"><strong>04</strong><span>Рыцари и Замки</span></div>
+            <div class="project-row"><strong>05</strong><span>Звезда Луки</span></div>
+            <div class="project-row"><strong>06</strong><span>Механика Ниндзя</span></div>
+            <div class="project-row"><strong>07</strong><span>Ниндзи</span></div>
+            <div class="project-row"><strong>08</strong><span>Пружинная гравитация Луки</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="stack">
+        <div class="card diagram-wrap">
+          <div class="diagram-title">Схема портфеля</div>
+          <svg class="diagram" viewBox="0 0 420 470" xmlns="http://www.w3.org/2000/svg" aria-label="Схема проектов">
+            <defs>
+              <linearGradient id="overviewRing" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#d9b57d"/>
+                <stop offset="100%" stop-color="#21536b"/>
+              </linearGradient>
+            </defs>
+            <rect x="0" y="0" width="420" height="470" fill="#fffdf8"/>
+            <circle cx="210" cy="235" r="74" fill="url(#overviewRing)" opacity="0.16"/>
+            <circle cx="210" cy="235" r="58" fill="#f6eddc" stroke="#c7bda8"/>
+            <text x="210" y="220" text-anchor="middle" font-size="18" font-weight="700">Механика</text>
+            <text x="210" y="244" text-anchor="middle" font-size="14">как всё устроено</text>
+            <line x1="210" y1="161" x2="210" y2="82" stroke="#8a8c95" stroke-width="1.5"/>
+            <line x1="260" y1="184" x2="337" y2="132" stroke="#8a8c95" stroke-width="1.5"/>
+            <line x1="268" y1="248" x2="346" y2="279" stroke="#8a8c95" stroke-width="1.5"/>
+            <line x1="210" y1="309" x2="210" y2="391" stroke="#8a8c95" stroke-width="1.5"/>
+            <line x1="156" y1="252" x2="73" y2="288" stroke="#8a8c95" stroke-width="1.5"/>
+            <line x1="158" y1="182" x2="79" y2="128" stroke="#8a8c95" stroke-width="1.5"/>
+            <circle cx="210" cy="58" r="42" fill="#dce9ef" stroke="#21536b"/>
+            <text x="210" y="51" text-anchor="middle" font-size="14" font-weight="700">AI и интерфейсы</text>
+            <text x="210" y="72" text-anchor="middle" font-size="11">Creative, LIT GPT</text>
+            <circle cx="358" cy="116" r="44" fill="#e7f0e5" stroke="#2f5d50"/>
+            <text x="358" y="109" text-anchor="middle" font-size="14" font-weight="700">Игры</text>
+            <text x="358" y="130" text-anchor="middle" font-size="11">Vocabulary, Knights</text>
+            <circle cx="362" cy="286" r="44" fill="#f3e6dc" stroke="#9b5f3f"/>
+            <text x="362" y="279" text-anchor="middle" font-size="14" font-weight="700">Физическая форма</text>
+            <text x="362" y="300" text-anchor="middle" font-size="11">Звезда Луки</text>
+            <circle cx="210" cy="414" r="44" fill="#f4e5ec" stroke="#7d4156"/>
+            <text x="210" y="407" text-anchor="middle" font-size="14" font-weight="700">Теории</text>
+            <text x="210" y="428" text-anchor="middle" font-size="11">Ниндзя, Гравитация</text>
+            <circle cx="62" cy="304" r="42" fill="#ecebfd" stroke="#4a4f78"/>
+            <text x="62" y="297" text-anchor="middle" font-size="14" font-weight="700">Художественный мир</text>
+            <text x="62" y="318" text-anchor="middle" font-size="11">Ниндзи</text>
+            <circle cx="63" cy="116" r="41" fill="#f5efdf" stroke="#c78d3a"/>
+            <text x="63" y="109" text-anchor="middle" font-size="14" font-weight="700">Эксперимент</text>
+            <text x="63" y="130" text-anchor="middle" font-size="11">через игру и образ</text>
+          </svg>
+        </div>
+        <div class="card">
+          <h3>Что особенно чувствуется</h3>
+          <p>У этих проектов есть общий авторский почерк: желание не просто пользоваться готовыми моделями, а придумывать собственные. Даже там, где материалы сырые, уже виден хороший навык формулировки правил, архитектурных ролей и состояний системы.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page theme-blue">
+    <span class="eyebrow">01 · цифровой инструмент</span>
+    <div class="chapter-head">
+      <h2>Creative an Invention</h2>
+      <div class="meta">
+        <span>Node</span>
+        <span>локальный AI</span>
+        <span>интерфейс-панель</span>
+      </div>
+    </div>
+    <div class="chapter-grid">
+      <div class="chapter-copy">
+        <p>По текущему коду это не просто экспериментальный интерфейс, а локальная рабочая станция для проектов: визуальная оболочка в стиле IDE, Node-сервер, маршрутизация сообщений по режимам и связка с локальной моделью через Ollama. Проект выглядит как попытка собрать собственный «центр управления» для кода, файлов и исследований.</p>
+        <div class="card">
+          <h3>Что уже есть</h3>
+          <ul class="bullet-list">
+            <li>Десктопный интерфейс с панелями, activity bar и рабочими областями.</li>
+            <li>Сервер с отдельными подсказками для быстрого и агентного режимов.</li>
+            <li>Автозапуск через watchdog: приложение поднимает сервер и локальную модель.</li>
+            <li>Фокус на русском языке и на работе с проектами из общей директории.</li>
+          </ul>
+        </div>
+        <div class="quote">Это уже выглядит не как «чат», а как авторский рабочий инструмент. Важная идея проекта: собственная среда, которая думает о файлах, задачах и поиске как единая система.</div>
+        <div class="chapter-foot">Основание для описания: текущий интерфейс `index.html` и серверная логика `server.js`.</div>
+      </div>
+      <div class="visuals">
+        <div class="card diagram-wrap">
+          <div class="diagram-title">Схема работы</div>
+          <svg class="diagram" viewBox="0 0 420 320" xmlns="http://www.w3.org/2000/svg" aria-label="Схема Creative an Invention">
+            <rect x="24" y="28" width="118" height="66" rx="18" fill="#dce9ef" stroke="#21536b"/>
+            <text x="83" y="58" text-anchor="middle" font-size="16" font-weight="700">UI-панель</text>
+            <text x="83" y="77" text-anchor="middle" font-size="11">окна, меню, рабочая зона</text>
+            <rect x="154" y="122" width="112" height="72" rx="18" fill="#f5efdf" stroke="#c78d3a"/>
+            <text x="210" y="152" text-anchor="middle" font-size="16" font-weight="700">server.js</text>
+            <text x="210" y="171" text-anchor="middle" font-size="11">роутинг, режимы, инструменты</text>
+            <rect x="288" y="28" width="108" height="66" rx="18" fill="#ecebfd" stroke="#4a4f78"/>
+            <text x="342" y="58" text-anchor="middle" font-size="16" font-weight="700">Ollama</text>
+            <text x="342" y="77" text-anchor="middle" font-size="11">локальная модель</text>
+            <rect x="36" y="230" width="124" height="56" rx="18" fill="#e7f0e5" stroke="#2f5d50"/>
+            <text x="98" y="255" text-anchor="middle" font-size="15" font-weight="700">Файлы проектов</text>
+            <text x="98" y="272" text-anchor="middle" font-size="11">чтение, команды, сводки</text>
+            <rect x="260" y="230" width="124" height="56" rx="18" fill="#f3e6dc" stroke="#9b5f3f"/>
+            <text x="322" y="255" text-anchor="middle" font-size="15" font-weight="700">Веб-поиск</text>
+            <text x="322" y="272" text-anchor="middle" font-size="11">источники и ссылки</text>
+            <path d="M142 61 L288 61" stroke="#6c707c" stroke-width="2"/>
+            <path d="M210 94 L210 122" stroke="#6c707c" stroke-width="2"/>
+            <path d="M154 160 L83 230" stroke="#6c707c" stroke-width="2"/>
+            <path d="M266 160 L322 230" stroke="#6c707c" stroke-width="2"/>
+            <text x="210" y="212" text-anchor="middle" font-size="12" fill="#5f6270">агентная рабочая система</text>
+          </svg>
+        </div>
+        <div class="card">
+          <h3>Сильный следующий шаг</h3>
+          <p>Добавить в книгу проекта явную пользовательскую историю: какой сценарий он должен выигрывать у обычного чата. Например: «пойми проект, исправь файл, собери итог, сохрани память». Это мгновенно усилит продуктовую ясность.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page theme-violet">
+    <span class="eyebrow">02 · AI-проект</span>
+    <div class="chapter-head">
+      <h2>LIT GPT</h2>
+      <div class="meta">
+        <span>Pythonista</span>
+        <span>Python</span>
+        <span>v0.1</span>
+      </div>
+    </div>
+    <div class="chapter-grid">
+      <div class="chapter-copy">
+        <p>LIT GPT интересен тем, что не маскируется под большую модель: это честно сделанный с нуля маленький чат-бот, основанный на словаре, весах слов и посимвольной схожести. В этом проекте особенно заметна инженерная любознательность: разобраться в механике ответа самому, не пряча устройство за чужую библиотеку.</p>
+        <div class="card">
+          <h3>Что уже работает</h3>
+          <ul class="bullet-list">
+            <li><strong>learn(text)</strong> добавляет слова в словарь и сохраняет их в данных проекта.</li>
+            <li><strong>answer(text)</strong> перебирает слова вопроса, считает веса и схожесть, затем выбирает лучший вариант.</li>
+            <li>Исправлены важные баги: суммирование весов и обработка повторяющихся букв.</li>
+            <li>Есть явное разделение ролей файлов: UI, ядро, словарь, ранжирование и модель схожести.</li>
+          </ul>
+        </div>
+        <div class="quote">Проект ценен не только результатом, но и маршрутом мышления: сначала понять, как рождается ответ, а уже потом думать о «большом AI».</div>
+      </div>
+      <div class="visuals">
+        <div class="card diagram-wrap">
+          <div class="diagram-title">Архитектура ответа</div>
+          <svg class="diagram" viewBox="0 0 420 320" xmlns="http://www.w3.org/2000/svg" aria-label="Схема LIT GPT">
+            <rect x="34" y="40" width="108" height="56" rx="18" fill="#ecebfd" stroke="#4a4f78"/>
+            <text x="88" y="64" text-anchor="middle" font-size="16" font-weight="700">learn(text)</text>
+            <text x="88" y="82" text-anchor="middle" font-size="11">пополнение словаря</text>
+            <rect x="156" y="124" width="108" height="66" rx="18" fill="#f5efdf" stroke="#c78d3a"/>
+            <text x="210" y="152" text-anchor="middle" font-size="16" font-weight="700">Dictionary</text>
+            <text x="210" y="171" text-anchor="middle" font-size="11">слова и сохранённые данные</text>
+            <rect x="278" y="40" width="108" height="56" rx="18" fill="#dce9ef" stroke="#21536b"/>
+            <text x="332" y="64" text-anchor="middle" font-size="16" font-weight="700">answer(text)</text>
+            <text x="332" y="82" text-anchor="middle" font-size="11">подбор ответа</text>
+            <rect x="36" y="234" width="114" height="50" rx="16" fill="#e7f0e5" stroke="#2f5d50"/>
+            <text x="93" y="255" text-anchor="middle" font-size="14" font-weight="700">Base_weight</text>
+            <text x="93" y="272" text-anchor="middle" font-size="11">частота и ранг</text>
+            <rect x="270" y="234" width="114" height="50" rx="16" fill="#f3e6dc" stroke="#9b5f3f"/>
+            <text x="327" y="255" text-anchor="middle" font-size="14" font-weight="700">Root_model</text>
+            <text x="327" y="272" text-anchor="middle" font-size="11">сходство по буквам</text>
+            <path d="M142 68 L210 124" stroke="#6c707c" stroke-width="2"/>
+            <path d="M278 68 L210 124" stroke="#6c707c" stroke-width="2"/>
+            <path d="M210 190 L93 234" stroke="#6c707c" stroke-width="2"/>
+            <path d="M210 190 L327 234" stroke="#6c707c" stroke-width="2"/>
+            <text x="210" y="214" text-anchor="middle" font-size="12" fill="#5f6270">лучшее слово возвращается как ответ</text>
+          </svg>
+        </div>
+        <div class="card">
+          <h3>Сильный следующий шаг</h3>
+          <p>Расширить ответ с одного слова до короткой фразы и добавить память диалога хотя бы на 2–3 последних реплики. Это даст резкий рост ощущения «собеседника», не ломая исходную простую архитектуру.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page theme-pine">
+    <span class="eyebrow">03 · игра</span>
+    <div class="chapter-head">
+      <h2>Vocabulary Race</h2>
+      <div class="meta">
+        <span>Swift Playgrounds</span>
+        <span>HTML/JS</span>
+        <span>семейная игра</span>
+      </div>
+    </div>
+    <div class="chapter-grid">
+      <div class="chapter-copy">
+        <p>Vocabulary Race уже воспринимается как полноценная настольная игра, перенесённая на один экран. У проекта ясный цикл: карточка, сбор слов, риск провала, движение по маршруту, спецкарты и победа на дистанции. Важное качество здесь в том, что игра не держится только на словаре: у неё есть темп, ожидание и сценография хода.</p>
+        <div class="card">
+          <h3>Что выделяет проект</h3>
+          <ul class="bullet-list">
+            <li>48-клеточный маршрут настроен вручную, а фишки двигаются по точкам без «телепорта».</li>
+            <li>Поддержаны 2–4 игрока и боты с разной сложностью.</li>
+            <li>Есть экраны слепого старта, задачи, результата и победы с собственным настроением.</li>
+            <li>Спецкарты «Гонщик» и «Судья» делают партии менее предсказуемыми.</li>
+          </ul>
+        </div>
+        <div class="quote">Это хороший пример проекта, где простая основа становится живой за счёт ритма: ожидание хода, таймер, анимация фишки и внезапные карточки работают вместе.</div>
+      </div>
+      <div class="visuals">
+        <div class="card image-card">
+          <img src="../Vocabulary Race.swiftpm/GameWeb/assets/field.png" alt="Поле Vocabulary Race">
+          <div class="image-note">Поле с замкнутым маршрутом и позициями фишек. Именно ручная настройка траектории превращает схему в узнаваемую настольную сцену.</div>
+        </div>
+        <div class="card diagram-wrap">
+          <div class="diagram-title">Игровой цикл</div>
+          <svg class="diagram" viewBox="0 0 420 260" xmlns="http://www.w3.org/2000/svg" aria-label="Игровой цикл Vocabulary Race">
+            <rect x="24" y="88" width="76" height="48" rx="16" fill="#dce9ef" stroke="#21536b"/>
+            <text x="62" y="116" text-anchor="middle" font-size="14" font-weight="700">Карточка</text>
+            <rect x="120" y="88" width="76" height="48" rx="16" fill="#e7f0e5" stroke="#2f5d50"/>
+            <text x="158" y="116" text-anchor="middle" font-size="14" font-weight="700">Выбор</text>
+            <rect x="216" y="88" width="76" height="48" rx="16" fill="#f5efdf" stroke="#c78d3a"/>
+            <text x="254" y="116" text-anchor="middle" font-size="14" font-weight="700">Задание</text>
+            <rect x="312" y="88" width="84" height="48" rx="16" fill="#ecebfd" stroke="#4a4f78"/>
+            <text x="354" y="116" text-anchor="middle" font-size="14" font-weight="700">Результат</text>
+            <path d="M100 112 L120 112" stroke="#6c707c" stroke-width="2"/>
+            <path d="M196 112 L216 112" stroke="#6c707c" stroke-width="2"/>
+            <path d="M292 112 L312 112" stroke="#6c707c" stroke-width="2"/>
+            <path d="M354 136 C354 206 62 206 62 136" stroke="#6c707c" stroke-width="2" fill="none"/>
+            <text x="206" y="228" text-anchor="middle" font-size="12" fill="#5f6270">успех: вперёд · провал: назад · затем следующий игрок</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page theme-clay">
+    <span class="eyebrow">04 · стратегия</span>
+    <div class="chapter-head">
+      <h2>Рыцари и Замки</h2>
+      <div class="meta">
+        <span>тактика</span>
+        <span>кампания</span>
+        <span>горячие обновления</span>
+      </div>
+    </div>
+    <div class="chapter-grid">
+      <div class="chapter-copy">
+        <p>Рыцари и Замки стоит особняком как более «тяжёлый» игровой проект: здесь есть карта, типы юнитов, уровни ИИ, сюжетная кампания и своя темная пиксельная эстетика. Особенно сильная находка проекта не только в боевой системе, но и в способе доставки: игра может обновляться через папку Documents без пересборки приложения.</p>
+        <div class="card">
+          <h3>Почему проект кажется зрелым</h3>
+          <ul class="bullet-list">
+            <li>Игровая логика сосредоточена в одном большом браузерном файле, что упрощает быстрые итерации.</li>
+            <li>Есть 3 главы кампании и шкала ИИ от новичка до легенды.</li>
+            <li>Используется богатый набор пиксельных ассетов, музыки и тайлов.</li>
+            <li>GitHubUpdater превращает Swift-оболочку в контейнер для живой игры.</li>
+          </ul>
+        </div>
+        <div class="quote">Это уже не просто «сделать игру», а собрать для неё свой маленький движок, сюжетный каркас и канал обновления. Такой тройной слой редко появляется в ранних проектах случайно.</div>
+      </div>
+      <div class="visuals">
+        <div class="card image-card">
+          <img src="../Рыцари и Замки.swiftpm/KnightsGame/Knights_and_Castles_1920x1080.png" alt="Рыцари и Замки">
+          <div class="image-note">Обложка сразу задаёт тон: мрачный средневековый мир, где тактика и атмосфера важны одинаково.</div>
+        </div>
+        <div class="card diagram-wrap">
+          <div class="diagram-title">Структура проекта</div>
+          <svg class="diagram" viewBox="0 0 420 300" xmlns="http://www.w3.org/2000/svg" aria-label="Схема Рыцари и Замки">
+            <rect x="140" y="26" width="140" height="52" rx="18" fill="#f3e6dc" stroke="#9b5f3f"/>
+            <text x="210" y="56" text-anchor="middle" font-size="17" font-weight="700">KnightsGame</text>
+            <rect x="34" y="128" width="112" height="62" rx="18" fill="#dce9ef" stroke="#21536b"/>
+            <text x="90" y="154" text-anchor="middle" font-size="15" font-weight="700">Боевая сетка</text>
+            <text x="90" y="173" text-anchor="middle" font-size="11">юниты, ходы, позиции</text>
+            <rect x="154" y="128" width="112" height="62" rx="18" fill="#e7f0e5" stroke="#2f5d50"/>
+            <text x="210" y="154" text-anchor="middle" font-size="15" font-weight="700">Кампания</text>
+            <text x="210" y="173" text-anchor="middle" font-size="11">главы, сюжет, рост ИИ</text>
+            <rect x="274" y="128" width="112" height="62" rx="18" fill="#ecebfd" stroke="#4a4f78"/>
+            <text x="330" y="154" text-anchor="middle" font-size="15" font-weight="700">Ассеты</text>
+            <text x="330" y="173" text-anchor="middle" font-size="11">тайлы, юниты, музыка</text>
+            <rect x="128" y="226" width="164" height="46" rx="16" fill="#f5efdf" stroke="#c78d3a"/>
+            <text x="210" y="253" text-anchor="middle" font-size="14" font-weight="700">Swift-обёртка + GitHubUpdater</text>
+            <path d="M210 78 L90 128" stroke="#6c707c" stroke-width="2"/>
+            <path d="M210 78 L210 128" stroke="#6c707c" stroke-width="2"/>
+            <path d="M210 78 L330 128" stroke="#6c707c" stroke-width="2"/>
+            <path d="M210 190 L210 226" stroke="#6c707c" stroke-width="2"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page theme-gold">
+    <span class="eyebrow">05 · изобретение</span>
+    <div class="chapter-head">
+      <h2>Звезда Луки</h2>
+      <div class="meta">
+        <span>LEGO Technic</span>
+        <span>prototype ready</span>
+        <span>open-ended play</span>
+      </div>
+    </div>
+    <div class="chapter-grid">
+      <div class="chapter-copy">
+        <p>Звезда Луки — один из самых цельных проектов книги. Здесь ясна проблема, сформулирована уникальность, собран прототип и даже намечен рыночный путь. Главный нерв идеи прост и сильный: не давать ребёнку сценарий трансформации, а дать устройство, которое провоцирует собственное воображение.</p>
+        <div class="card">
+          <h3>В чём ценность конструкции</h3>
+          <ul class="bullet-list">
+            <li>Один каркас с шаровыми шарнирами создаёт десятки состояний без разборки.</li>
+            <li>Базовая форма — плоский крест, а не уже заданный «персонаж».</li>
+            <li>Зафиксированы разные образы: робот, птица, машина, краб, кольцо, танцор.</li>
+            <li>Проект уже мыслится как продукт: рынок, MSRP, тесты и патентный маршрут описаны отдельно.</li>
+          </ul>
+        </div>
+        <div class="quote">Это изобретение хорошо потому, что его ценность не в одной красивой форме, а в классе действий, который оно открывает. Игрушка делает ребёнка соавтором трансформации.</div>
+      </div>
+      <div class="visuals">
+        <div class="card image-card">
+          <img src="../Звезда Луки/zvezda_luki_render.png" alt="Рендер Звезды Луки">
+          <div class="image-note">Рендер показывает характер объекта: не «модель героя», а трансформируемый каркас с визуальной симметрией и напряжением в сочленениях.</div>
+        </div>
+        <div class="card diagram-wrap">
+          <div class="diagram-title">Принцип трансформации</div>
+          <svg class="diagram" viewBox="0 0 420 300" xmlns="http://www.w3.org/2000/svg" aria-label="Схема Звезды Луки">
+            <rect x="164" y="112" width="92" height="92" rx="18" fill="#f6eddc" stroke="#c78d3a"/>
+            <rect x="184" y="132" width="52" height="52" rx="10" fill="#fffdf8" stroke="#bfa986"/>
+            <rect x="190" y="38" width="40" height="88" rx="16" fill="#ececed" stroke="#1d1e24"/>
+            <rect x="190" y="190" width="40" height="88" rx="16" fill="#1d1e24" stroke="#1d1e24"/>
+            <rect x="90" y="138" width="88" height="40" rx="16" fill="#ececed" stroke="#1d1e24"/>
+            <rect x="242" y="138" width="88" height="40" rx="16" fill="#1d1e24" stroke="#1d1e24"/>
+            <circle cx="210" cy="82" r="8" fill="#2bb4b6"/>
+            <circle cx="210" cy="218" r="8" fill="#2bb4b6"/>
+            <circle cx="142" cy="158" r="8" fill="#2bb4b6"/>
+            <circle cx="278" cy="158" r="8" fill="#2bb4b6"/>
+            <path d="M262 60 C342 36 378 80 356 122" fill="none" stroke="#7d4156" stroke-width="2.2"/>
+            <path d="M262 256 C344 262 365 214 340 182" fill="none" stroke="#2f5d50" stroke-width="2.2"/>
+            <path d="M58 118 C42 78 84 44 152 58" fill="none" stroke="#21536b" stroke-width="2.2"/>
+            <text x="300" y="49" font-size="12">поворот</text>
+            <text x="332" y="174" font-size="12">скручивание</text>
+            <text x="52" y="104" font-size="12">новая поза</text>
+            <text x="210" y="24" text-anchor="middle" font-size="12" fill="#5f6270">базовая форма: плоский крест</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page theme-rose">
+    <span class="eyebrow">06 · авторская теория</span>
+    <div class="chapter-head">
+      <h2>Механика Ниндзя</h2>
+      <div class="meta">
+        <span>психология</span>
+        <span>поток</span>
+        <span>raw idea</span>
+      </div>
+    </div>
+    <div class="chapter-grid">
+      <div class="chapter-copy">
+        <p>Механика Ниндзя оформлена как личная теория о состоянии, в котором сознательный шум отступает, а действие берут на себя рефлексы и подсознание. Это не академическая модель, а авторская карта наблюдений: с режимами использования, методами входа и перечнем открытых вопросов.</p>
+        <div class="card">
+          <h3>Что в ней уже собрано</h3>
+          <ul class="bullet-list">
+            <li>Три уровня состояния: шум, тишина, поток.</li>
+            <li>Два метода входа: пение без мыслей и концентрация на ничто.</li>
+            <li>Три режима применения: момент, обучение, генерация новых паттернов.</li>
+            <li>Попытка связать личное наблюдение с известными идеями вроде спортивной «зоны» и Unconscious Thought Theory.</li>
+          </ul>
+        </div>
+        <div class="quote">Сильная сторона проекта в том, что он не застрял в туманном настроении. Теория уже имеет собственный язык, механизм перехода между состояниями и даже честно описанный «откат» после выхода.</div>
+        <div class="chapter-foot">Важно: это авторская теория и личная модель наблюдений, а не научный консенсус.</div>
+      </div>
+      <div class="visuals">
+        <div class="card diagram-wrap">
+          <div class="diagram-title">Три состояния</div>
+          <svg class="diagram" viewBox="0 0 420 310" xmlns="http://www.w3.org/2000/svg" aria-label="Схема Механики Ниндзя">
+            <rect x="28" y="70" width="106" height="160" rx="24" fill="#f3e6dc" stroke="#9b5f3f"/>
+            <rect x="157" y="48" width="106" height="204" rx="24" fill="#f4e5ec" stroke="#7d4156"/>
+            <rect x="286" y="84" width="106" height="134" rx="24" fill="#e7f0e5" stroke="#2f5d50"/>
+            <text x="81" y="114" text-anchor="middle" font-size="18" font-weight="700">Шум</text>
+            <text x="81" y="142" text-anchor="middle" font-size="12">мысли, сомнения,</text>
+            <text x="81" y="160" text-anchor="middle" font-size="12">страх ошибки</text>
+            <text x="210" y="108" text-anchor="middle" font-size="18" font-weight="700">Тишина</text>
+            <text x="210" y="136" text-anchor="middle" font-size="12">состояние Ниндзя:</text>
+            <text x="210" y="154" text-anchor="middle" font-size="12">мысли выключены,</text>
+            <text x="210" y="172" text-anchor="middle" font-size="12">рефлексы выходят вперёд</text>
+            <text x="339" y="124" text-anchor="middle" font-size="18" font-weight="700">Поток</text>
+            <text x="339" y="152" text-anchor="middle" font-size="12">точность, скорость,</text>
+            <text x="339" y="170" text-anchor="middle" font-size="12">ощущение удачи</text>
+            <path d="M134 150 L157 150" stroke="#6c707c" stroke-width="2"/>
+            <path d="M263 150 L286 150" stroke="#6c707c" stroke-width="2"/>
+            <text x="210" y="274" text-anchor="middle" font-size="12" fill="#5f6270">вход через пение или концентрацию на ничто</text>
+          </svg>
+        </div>
+        <div class="card">
+          <h3>Сильный следующий шаг</h3>
+          <p>Собрать короткий протокол наблюдений в табличном виде: контекст, способ входа, время удержания, результат, откат. Это не «докажет» теорию, но резко усилит её внутреннюю дисциплину.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page theme-violet">
+    <span class="eyebrow">07 · художественный мир</span>
+    <div class="chapter-head">
+      <h2>Ниндзи</h2>
+      <div class="meta">
+        <span>приключения</span>
+        <span>фэнтези</span>
+        <span>в работе</span>
+      </div>
+    </div>
+    <div class="chapter-grid">
+      <div class="chapter-copy">
+        <p>Ниндзи — это не просто набор сцен, а уже намеченная вселенная со своими именованными героями, королевствами и линиями силы. В материалах особенно заметно кинематографическое мышление: движения, абордажные манёвры, оружие, прыжки и сцены написаны как будто сразу для экранизации.</p>
+        <div class="card">
+          <h3>Что уже держит мир</h3>
+          <ul class="bullet-list">
+            <li>Центральный герой Ричард Львиное Сердце и сильный круг персонажей вокруг него.</li>
+            <li>Чёткие географические опоры: Соколист, Акстэй, Тетский остров, Отстека.</li>
+            <li>Существуют и прозаический фрагмент, и сценарная версия одной из частей.</li>
+            <li>Конфликт и движение строятся через действие, а не через объяснение мира.</li>
+          </ul>
+        </div>
+        <div class="quote">Это мир, у которого уже есть камера. Он не просто рассказывается, а ставится: видно, где монтажный склейка, где крупный план, где «продолжение следует».</div>
+      </div>
+      <div class="visuals">
+        <div class="card diagram-wrap">
+          <div class="diagram-title">Сетка персонажей</div>
+          <svg class="diagram" viewBox="0 0 420 330" xmlns="http://www.w3.org/2000/svg" aria-label="Схема мира Ниндзи">
+            <circle cx="210" cy="86" r="44" fill="#ecebfd" stroke="#4a4f78"/>
+            <text x="210" y="82" text-anchor="middle" font-size="16" font-weight="700">Ричард</text>
+            <text x="210" y="101" text-anchor="middle" font-size="11">главный герой</text>
+            <circle cx="92" cy="172" r="36" fill="#f5efdf" stroke="#c78d3a"/>
+            <text x="92" y="170" text-anchor="middle" font-size="14" font-weight="700">Бэн</text>
+            <text x="92" y="187" text-anchor="middle" font-size="10">друг и преемник</text>
+            <circle cx="210" cy="172" r="36" fill="#e7f0e5" stroke="#2f5d50"/>
+            <text x="210" y="170" text-anchor="middle" font-size="14" font-weight="700">Зантио</text>
+            <text x="210" y="187" text-anchor="middle" font-size="10">испытание капитанством</text>
+            <circle cx="328" cy="172" r="36" fill="#f3e6dc" stroke="#9b5f3f"/>
+            <text x="328" y="170" text-anchor="middle" font-size="14" font-weight="700">Соколин</text>
+            <text x="328" y="187" text-anchor="middle" font-size="10">сильный противовес</text>
+            <circle cx="122" cy="268" r="34" fill="#f4e5ec" stroke="#7d4156"/>
+            <text x="122" y="266" text-anchor="middle" font-size="13" font-weight="700">Чжэнь Ши</text>
+            <text x="122" y="283" text-anchor="middle" font-size="10">старый воин</text>
+            <circle cx="298" cy="268" r="34" fill="#dce9ef" stroke="#21536b"/>
+            <text x="298" y="266" text-anchor="middle" font-size="13" font-weight="700">Джек</text>
+            <text x="298" y="283" text-anchor="middle" font-size="10">пират в плену</text>
+            <path d="M210 130 L92 172" stroke="#6c707c" stroke-width="2"/>
+            <path d="M210 130 L210 172" stroke="#6c707c" stroke-width="2"/>
+            <path d="M210 130 L328 172" stroke="#6c707c" stroke-width="2"/>
+            <path d="M92 206 L122 234" stroke="#6c707c" stroke-width="2"/>
+            <path d="M328 206 L298 234" stroke="#6c707c" stroke-width="2"/>
+            <text x="210" y="316" text-anchor="middle" font-size="12" fill="#5f6270">дальше мир можно расширять через главы, карты и линии врагов</text>
+          </svg>
+        </div>
+        <div class="card">
+          <h3>Сильный следующий шаг</h3>
+          <p>Собрать одностраничную «библию мира»: карта отношений, хронология и правила силы героев. Это даст опору и для книги, и для сценария, и для возможной игры по мотивам.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page theme-blue">
+    <span class="eyebrow">08 · авторская гипотеза</span>
+    <div class="chapter-head">
+      <h2>Пружинная гравитация Луки</h2>
+      <div class="meta">
+        <span>физика</span>
+        <span>hypothesis</span>
+        <span>сильный каркас заметок</span>
+      </div>
+    </div>
+    <div class="chapter-grid">
+      <div class="chapter-copy">
+        <p>Пружинная гравитация Луки — самая амбициозная и самая спорная работа в книге. Проект предлагает авторскую модель, в которой сила притяжения внутри поля растёт с расстоянием, а затем обрывается на границе. Важнее всего здесь не сама согласованность с физикой, а уровень структурированности мысли: есть формулы, уровни теории, эксперименты и отдельный файл со слабыми местами.</p>
+        <div class="card">
+          <h3>Почему проект заслуживает отдельного места</h3>
+          <ul class="bullet-list">
+            <li>Теория описана сразу на макро-, квантовом и космологическом уровнях.</li>
+            <li>Есть отдельные разделы для экспериментов, «доказательств» и критики модели.</li>
+            <li>Автор не прячет проблемы: орбиты, антигравитон и универсальность параметров выделены честно.</li>
+            <li>Даже в спорной гипотезе чувствуется сильная склонность к систематизации и проверке идеи.</li>
+          </ul>
+        </div>
+        <div class="quote">Это важный проект не потому, что он уже подтверждён, а потому, что показывает редкий навык: доводить сырую мысль до формул, предсказаний, контрпримеров и списка нерешённых вопросов.</div>
+        <div class="chapter-foot">Важно: это авторская гипотеза, не признанная научная модель.</div>
+      </div>
+      <div class="visuals">
+        <div class="card diagram-wrap">
+          <div class="diagram-title">Сравнение моделей</div>
+          <svg class="diagram" viewBox="0 0 420 320" xmlns="http://www.w3.org/2000/svg" aria-label="Сравнение моделей гравитации">
+            <rect x="0" y="0" width="420" height="320" fill="#fffdf8"/>
+            <line x1="56" y1="254" x2="372" y2="254" stroke="#6c707c" stroke-width="1.5"/>
+            <line x1="56" y1="254" x2="56" y2="50" stroke="#6c707c" stroke-width="1.5"/>
+            <text x="365" y="274" font-size="12">расстояние</text>
+            <text x="22" y="54" font-size="12" transform="rotate(-90 22 54)">сила</text>
+            <path d="M70 84 C120 126 170 168 320 220" fill="none" stroke="#21536b" stroke-width="3"/>
+            <text x="304" y="208" font-size="12" fill="#21536b">Ньютон</text>
+            <path d="M70 238 L150 204 L230 162 L308 110 L332 110" fill="none" stroke="#7d4156" stroke-width="3"/>
+            <line x1="332" y1="110" x2="332" y2="254" stroke="#7d4156" stroke-width="3" stroke-dasharray="5 5"/>
+            <text x="238" y="148" font-size="12" fill="#7d4156">модель Луки</text>
+            <text x="338" y="104" font-size="11" fill="#7d4156">k_max</text>
+            <text x="210" y="298" text-anchor="middle" font-size="12" fill="#5f6270">рост внутри поля, затем резкий обрыв</text>
+          </svg>
+        </div>
+        <div class="card">
+          <h3>Сильный следующий шаг</h3>
+          <p>Свести всю теорию к одному формальному листу: определения, формулы, переменные, предсказания и список наблюдений, которые могли бы её опровергнуть. Для спорной идеи такая краткая строгость особенно ценна.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+</html>
