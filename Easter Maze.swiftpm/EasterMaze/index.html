@@ -1,0 +1,2276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<title>Easter Maze</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #000;
+  touch-action: none;
+}
+canvas { display: block; }
+
+#ui {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  pointer-events: none;
+  z-index: 10;
+}
+
+#btn-forward {
+  pointer-events: all;
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  border: 2px solid rgba(255,255,255,0.3);
+  color: #fff;
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#btn-back {
+  pointer-events: all;
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  border: 2px solid rgba(255,255,255,0.2);
+  color: #fff;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#btn-jump {
+  pointer-events: all;
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  border: 2px solid rgba(255,255,255,0.25);
+  color: #fff;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#dot {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.8);
+  pointer-events: none;
+  z-index: 20;
+  transition: transform 0.08s, background 0.08s;
+}
+#dot.pressed {
+  transform: translate(-50%, -50%) scale(1.8);
+  background: #fff;
+}
+
+#hp-bar {
+  position: fixed;
+  top: env(safe-area-inset-top, 20px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 160px;
+  height: 10px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 5px;
+  overflow: hidden;
+  z-index: 10;
+}
+#hp-fill {
+  height: 100%;
+  width: 100%;
+  background: #e63946;
+  border-radius: 5px;
+  transition: width 0.2s;
+}
+</style>
+</head>
+<body>
+
+<div id="hp-bar"><div id="hp-fill"></div></div>
+<div id="egg-debug" style="display:none;position:fixed;top:10px;left:10px;background:rgba(0,0,0,0.7);color:#0f0;font-family:monospace;font-size:13px;padding:8px 12px;border-radius:8px;z-index:999;pointer-events:none;"></div>
+<div id="dot"></div>
+
+<div id="ui">
+  <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+    <div id="btn-forward">▲</div>
+    <div id="btn-back">▼</div>
+  </div>
+  <div id="btn-jump">↑</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script>
+// ============================================================
+// Easter Maze — v0.1
+// ============================================================
+
+const W = window.innerWidth;
+const H = window.innerHeight;
+
+// --- Renderer ---
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(W, H);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+
+window.addEventListener('resize', () => {
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+});
+
+// --- Scene ---
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x87ceeb);
+scene.fog = new THREE.Fog(0x87ceeb, 20, 60);
+
+// --- Camera ---
+const camera = new THREE.PerspectiveCamera(70, W / H, 0.1, 200);
+camera.position.set(0, 4, 10);
+camera.lookAt(0, 1, 0);
+
+// --- Lights ---
+const ambient = new THREE.AmbientLight(0xffffff, 0.5);
+scene.add(ambient);
+
+const sun = new THREE.DirectionalLight(0xffffff, 1.2);
+sun.position.set(10, 20, 10);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+sun.shadow.camera.near = 0.5;
+sun.shadow.camera.far = 100;
+sun.shadow.camera.left = -30;
+sun.shadow.camera.right = 30;
+sun.shadow.camera.top = 30;
+sun.shadow.camera.bottom = -30;
+scene.add(sun);
+
+window.addEventListener('error', event => {
+  const err = document.createElement('div');
+  err.style.cssText = 'position:fixed;top:20px;left:20px;right:20px;padding:18px 22px;background:rgba(180,20,20,0.95);color:#fff;font-family:sans-serif;font-size:16px;z-index:9999;border-radius:12px;line-height:1.4;';
+  err.textContent = 'Ошибка JavaScript: ' + (event.message || event.error || 'unknown');
+  document.body.appendChild(err);
+  console.error(event.error || event.message || event);
+});
+
+// ============================================================
+// WORLD BUILDER
+// ============================================================
+
+function makeMaterial(color, rough = 0.9, metal = 0) {
+  return new THREE.MeshStandardMaterial({ color, roughness: rough, metalness: metal });
+}
+
+const WALL_H = 6.125;
+const walls          = [];
+const steps          = [];
+const supportSurfaces = [];
+const WC = 0xa08060; // цвет стен
+const raycaster = new THREE.Raycaster();
+let floor = null;
+let waterPondA = null;
+let waterPondB = null;
+let lavaPond = null;
+let hiddenGladeFloor = null;
+let sceneDecor = [];
+let secretShipGroup = null;
+let shipExplosion = false;
+let shipExplosionProgress = 0;
+let gameEnded = false;
+let specialSignPos = null;
+let diveSequence = false;
+let diveProgress = 0;
+
+function makeWall(x, z, w, h, d, color = WC) {
+  const m = new THREE.Mesh(
+    new THREE.BoxGeometry(w, h, d),
+    makeMaterial(color)
+  );
+  m.position.set(x, h / 2, z);
+  m.castShadow = true;
+  m.receiveShadow = true;
+  scene.add(m);
+  walls.push(m);
+  return m;
+}
+
+// ============================================================
+// ПАСХАЛКА #1 — ПЕТЛЯ СО СТРЕЛКАМИ
+//
+// Теперь это не набор отдельных стен, а цельное "кольцо":
+// внешний прямоугольник + внутренний блок.
+// Так коридор получается ровный и без случайных дыр.
+// ============================================================
+
+function makePath(x, z, w, d, color = 0x7b8f5f) {
+  const path = new THREE.Mesh(
+    new THREE.BoxGeometry(w, 0.1, d),
+    makeMaterial(color, 1)
+  );
+  path.position.set(x, 0.05, z);
+  path.receiveShadow = true;
+  scene.add(path);
+  supportSurfaces.push(path);
+  sceneDecor.push(path);
+  return path;
+}
+
+function makeStep(x, z, w, d, h = 0.5, color = 0x6f7385) {
+  const step = new THREE.Mesh(
+    new THREE.BoxGeometry(w, h, d),
+    makeMaterial(color)
+  );
+  step.position.set(x, h / 2, z);
+  step.castShadow = true;
+  step.receiveShadow = true;
+  step.userData = { stepHeight: h };
+  scene.add(step);
+  steps.push(step);
+  supportSurfaces.push(step);
+  return step;
+}
+
+function makeSign(x, y, z, rotY, text) {
+  const c = document.createElement('canvas');
+  c.width = 512;
+  c.height = 256;
+  const ctx = c.getContext('2d');
+
+  ctx.fillStyle = 'rgba(250,250,250,0.95)';
+  ctx.strokeStyle = '#847045';
+  ctx.lineWidth = 12;
+  ctx.beginPath();
+  ctx.moveTo(28, 28);
+  ctx.lineTo(484, 28);
+  ctx.quadraticCurveTo(504, 28, 504, 48);
+  ctx.lineTo(504, 208);
+  ctx.quadraticCurveTo(504, 228, 484, 228);
+  ctx.lineTo(28, 228);
+  ctx.quadraticCurveTo(8, 228, 8, 208);
+  ctx.lineTo(8, 48);
+  ctx.quadraticCurveTo(8, 28, 28, 28);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = '#2b2b2b';
+  ctx.font = 'bold 52px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, 256, 128);
+
+  const tex = new THREE.CanvasTexture(c);
+  tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+
+  const backing = new THREE.Mesh(
+    new THREE.PlaneGeometry(3.2, 1.3),
+    new THREE.MeshBasicMaterial({ color: 0xfff5d6, transparent: true, opacity: 0.98, side: THREE.DoubleSide })
+  );
+  backing.position.set(x, y, z);
+  backing.rotation.y = rotY;
+
+  const front = new THREE.Mesh(
+    new THREE.PlaneGeometry(3, 1.2),
+    new THREE.MeshBasicMaterial({ map: tex, transparent: true, side: THREE.DoubleSide })
+  );
+  front.position.set(x, y + 0.01, z);
+  front.rotation.y = rotY;
+
+  const group = new THREE.Group();
+  group.add(backing);
+  group.add(front);
+  scene.add(group);
+  sceneDecor.push(group);
+  return group;
+}
+
+function makeTree(x, z, crownColor = 0x5d8f3a) {
+  const trunk = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.28, 0.34, 2.4, 10),
+    makeMaterial(0x6b4423)
+  );
+  trunk.position.set(x, 1.2, z);
+  trunk.castShadow = true;
+  trunk.receiveShadow = true;
+  scene.add(trunk);
+
+  const crown = new THREE.Mesh(
+    new THREE.SphereGeometry(1.5, 14, 14),
+    makeMaterial(crownColor)
+  );
+  crown.position.set(x, 3.1, z);
+  crown.castShadow = true;
+  crown.receiveShadow = true;
+  scene.add(crown);
+}
+
+function makePond(x, z, radius, color) {
+  const pond = new THREE.Mesh(
+    new THREE.CircleGeometry(radius, 36),
+    makeMaterial(color, 0.2)
+  );
+  pond.rotation.x = -Math.PI / 2;
+  pond.position.set(x, 0.12, z);
+  pond.receiveShadow = true;
+  scene.add(pond);
+  return { x, z, radius };
+}
+
+function makeLunarRock(x, z, size, color = 0x5f667e) {
+  const rock = new THREE.Mesh(
+    new THREE.SphereGeometry(size, 16, 16),
+    makeMaterial(color, 0.7)
+  );
+  rock.position.set(x, size * 0.4, z);
+  rock.castShadow = true;
+  rock.receiveShadow = true;
+  scene.add(rock);
+  sceneDecor.push(rock);
+  walls.push(rock);
+  supportSurfaces.push(rock);
+  return rock;
+}
+
+function createConfetti() {
+  const colors = ['#ff3864', '#ffd60a', '#4ade80', '#38bdf8', '#a78bfa'];
+  const confettiParent = document.createElement('div');
+  confettiParent.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:999;overflow:hidden;';
+  document.body.appendChild(confettiParent);
+
+  for (let i = 0; i < 60; i++) {
+    const piece = document.createElement('div');
+    const size = Math.random() * 8 + 6;
+    piece.style.cssText = `position:absolute; width:${size}px; height:${size}px; background:${colors[Math.floor(Math.random() * colors.length)]}; opacity:${Math.random() * 0.6 + 0.4}; transform:rotate(${Math.random() * 360}deg); left:${Math.random() * 100}vw; top:-${size}px; border-radius:2px;`; 
+    confettiParent.appendChild(piece);
+    const speed = Math.random() * 180 + 120;
+    const drift = Math.random() * 120 - 60;
+    const rotSpeed = Math.random() * 360;
+    let y = -size;
+    const x0 = parseFloat(piece.style.left);
+    function animate() {
+      y += speed * 0.016;
+      piece.style.top = `${y}px`;
+      piece.style.left = `${x0 + drift * (y / window.innerHeight)}px`;
+      piece.style.transform = `rotate(${rotSpeed * (y / window.innerHeight)}deg)`;
+      if (y < window.innerHeight + size) {
+        requestAnimationFrame(animate);
+      } else {
+        piece.remove();
+      }
+    }
+    animate();
+  }
+  return confettiParent;
+}
+
+function showEndScreen() {
+  if (gameEnded) return;
+  gameEnded = true;
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:1000;pointer-events:none;';
+  const text = document.createElement('div');
+  text.textContent = 'КОНЕЦ';
+  text.style.cssText = 'color:#fff;font-size:96px;font-weight:900;text-transform:uppercase;letter-spacing:0.2em;text-align:center;text-shadow:0 0 28px rgba(255,255,255,0.25);';
+  overlay.appendChild(text);
+  document.body.appendChild(overlay);
+  createConfetti();
+}
+
+// ============================================================
+// СТРЕЛОЧНЫЕ ЗНАКИ
+// ============================================================
+
+function makeWallArrow(x, y, z, rotY, arrow, label = '') {
+  const c = document.createElement('canvas');
+  c.width = 512;
+  c.height = 512;
+  const ctx = c.getContext('2d');
+
+  ctx.clearRect(0, 0, 512, 512);
+  ctx.textBaseline = 'middle';
+  ctx.textAlign = 'center';
+  ctx.lineJoin = 'round';
+  ctx.strokeStyle = 'rgba(0,0,0,0.7)';
+  ctx.lineWidth = 18;
+  ctx.fillStyle = '#fff8dc';
+  ctx.font = arrow.length > 1 ? 'bold 116px sans-serif' : 'bold 320px sans-serif';
+  ctx.strokeText(arrow, 256, 210);
+  ctx.fillText(arrow, 256, 210);
+
+  if (label) {
+    ctx.font = 'bold 56px sans-serif';
+    ctx.strokeText(label, 256, 404);
+    ctx.fillText(label, 256, 404);
+  }
+
+  const tex = new THREE.CanvasTexture(c);
+  tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+
+  const face = new THREE.Mesh(
+    new THREE.PlaneGeometry(2.4, 2.4),
+    new THREE.MeshBasicMaterial({
+      map: tex,
+      side: THREE.DoubleSide,
+      transparent: true,
+      polygonOffset: true,
+      polygonOffsetFactor: -1,
+      polygonOffsetUnits: -1,
+    })
+  );
+  face.position.set(x, y, z);
+  face.rotation.y = rotY;
+
+  const group = new THREE.Group();
+  group.add(face);
+  scene.add(group);
+  sceneDecor.push(group);
+  return group;
+}
+
+// rotY=0       -> знак смотрит на юг (+z), игрок видит его снизу экрана и идёт на север
+// rotY=Math.PI -> знак смотрит на север (-z)
+// rotY=Math.PI/2  -> знак смотрит на запад (-x)
+// rotY=-Math.PI/2 -> знак смотрит на восток (+x)
+
+// Стрелки создаются только внутри buildLevel1() — здесь ничего не нужно.
+
+// ============================================================
+// PLAYER
+// ============================================================
+const playerGroup = new THREE.Group();
+scene.add(playerGroup);
+playerGroup.position.set(0, 0, 0);
+
+// Body
+const body = new THREE.Mesh(
+  new THREE.CapsuleGeometry(0.35, 0.8, 4, 8),
+  makeMaterial(0x3a86ff)
+);
+body.position.y = 0.9;
+body.castShadow = true;
+playerGroup.add(body);
+
+// Head
+const head = new THREE.Mesh(
+  new THREE.SphereGeometry(0.28, 12, 12),
+  makeMaterial(0xf4a261)
+);
+head.position.y = 1.85;
+head.castShadow = true;
+playerGroup.add(head);
+
+// ============================================================
+// STATE
+// ============================================================
+const state = {
+  yaw: 0,
+  speed: 4,
+  jumpVel: 0,
+  onGround: true,
+  hp: 100,
+  maxHp: 100,
+  moving: false,
+  movingBack: false,
+  sprinting: false,
+  jumping: false,
+  interact: false,
+  foundEgg1: false,
+  foundEgg2: false,
+  foundSecretBook: false,
+  foundCastle: false,
+  foundPhone: false,
+  lavaSequence: false,
+  secretShip: false,
+  code: [],
+  level: 1,
+};
+
+state.level = 1;
+
+// ============================================================
+// EASTER EGG SYSTEM
+// ============================================================
+const eggs = {
+  buf: [], konami: [], found: 0,
+  backwardTime: 0, stillTime: 0, lastPos: null,
+  yawLast: null, yawAccum: 0,
+  zigzag: [], dance: [],
+  jumpInPlace: 0, jumpInPlacePos: null,
+  totalJumps: 0,
+  totalDeaths: 0, lastDeathPos: null, sameDeaths: 0,
+  lavaDeaths: 0,
+  forwardSteps: 0,
+  levelInteracts: 0,
+  levelTime: 0, timeChecked: false,
+  throneTime: 0,
+  l11letters: [],
+  l12gaze: 0, l12starAngle: null, l12angleAccum: 0, l12revolutions: 0,
+  debugOn: false,
+  // milestone flags
+  m5found: false, m10deaths: false, m50jumps: false, m100steps: false,
+  // one-time flags
+  _still30: false, _backward10: false, _360done: false,
+  _5min: false, _edge: false, _l12gaze: false, _l12circle: false,
+  _throne: false,
+};
+
+function eggFound(msg, duration) {
+  eggs.found++;
+  showMessage(msg, duration || 5000);
+  if (eggs.found >= 5 && !eggs.m5found) {
+    eggs.m5found = true;
+    setTimeout(() => showMessage('🥚×5 Коллекционер яиц!', 5000), 5500);
+  }
+}
+
+function resetLevelEggs() {
+  eggs.levelTime = 0; eggs.levelInteracts = 0;
+  eggs._5min = false; eggs._edge = false;
+  eggs.l11letters = []; eggs.l12gaze = 0;
+  eggs.l12starAngle = null; eggs.l12angleAccum = 0; eggs.l12revolutions = 0;
+  eggs._l12gaze = false; eggs._l12circle = false;
+  eggs._throne = false; eggs.throneTime = 0;
+  eggs.yawAccum = 0; eggs._360done = false;
+  eggs.jumpInPlace = 0; eggs.totalJumps = 0; eggs.m50jumps = false;
+  eggs.forwardSteps = 0; eggs.m100steps = false;
+  eggs.backwardTime = 0; eggs._backward10 = false;
+  eggs.stillTime = 0; eggs._still30 = false;
+  eggs.zigzag = []; eggs.dance = [];
+}
+
+try {
+  buildWorld();
+} catch (err) {
+  const errBox = document.createElement('div');
+  errBox.style.cssText = 'position:fixed;top:20px;left:20px;right:20px;padding:18px 22px;background:rgba(180,20,20,0.95);color:#fff;font-family:sans-serif;font-size:16px;z-index:9999;border-radius:12px;line-height:1.4;';
+  errBox.textContent = 'Ошибка сборки мира: ' + (err.message || err);
+  document.body.appendChild(errBox);
+  console.error(err);
+}
+
+const gardenRespawn = new THREE.Vector3(-35.5, 0, -14);
+const lavaExit = new THREE.Vector3(-56, 0, -22.5);
+
+function addSecretShip() {
+  if (state.level !== 3) return; // Только на третьем уровне
+  if (secretShipGroup) return;
+  
+  const ship = new THREE.Group();
+  
+  // Корпус в виде луны (сфера с текстурой кратеров)
+  const c = document.createElement('canvas');
+  c.width = 512;
+  c.height = 512;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#cccccc'; // Серый фон луны
+  ctx.fillRect(0, 0, 512, 512);
+  ctx.fillStyle = '#000000'; // Кратеры
+  for (let i = 0; i < 20; i++) {
+    const x = Math.random() * 512;
+    const y = Math.random() * 512;
+    const r = Math.random() * 30 + 10;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  
+  const tex = new THREE.CanvasTexture(c);
+  tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  
+  const body = new THREE.Mesh(
+    new THREE.SphereGeometry(1.5, 16, 16),
+    new THREE.MeshStandardMaterial({ map: tex })
+  );
+  ship.add(body);
+  
+  // Текст "РАЗРАБОТЧИК" на луне
+  const textCanvas = document.createElement('canvas');
+  textCanvas.width = 512;
+  textCanvas.height = 256;
+  const textCtx = textCanvas.getContext('2d');
+  textCtx.clearRect(0, 0, 512, 256);
+  textCtx.fillStyle = '#ffffff';
+  textCtx.font = 'bold 60px sans-serif';
+  textCtx.textAlign = 'center';
+  textCtx.fillText('РАЗРАБОТЧИК', 256, 150);
+  
+  const textTex = new THREE.CanvasTexture(textCanvas);
+  textTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  
+  const textPlane = new THREE.Mesh(
+    new THREE.PlaneGeometry(2, 0.5),
+    new THREE.MeshBasicMaterial({ map: textTex, transparent: true, side: THREE.DoubleSide })
+  );
+  textPlane.position.set(0, 0, 1.6); // На поверхности луны
+  ship.add(textPlane);
+  
+  ship.position.set(0, 3.5, 0);
+  ship.rotation.y = Math.PI / 4;
+  scene.add(ship);
+  secretShipGroup = ship;
+}
+
+function triggerShipExplosion() {
+  if (!secretShipGroup || shipExplosion) return;
+  shipExplosion = true;
+  shipExplosionProgress = 0;
+}
+
+// Колонна с 4 знаками. specialDir = 'N'|'S'|'E'|'W' — та сторона получает (-)
+function makeColumn(cx, cz, specialDir = null) {
+  const pillar = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.42, 0.5, 5.2, 12),
+    makeMaterial(0x8a7f72)
+  );
+  pillar.position.set(cx, 2.6, cz);
+  pillar.castShadow = true;
+  pillar.receiveShadow = true;
+  scene.add(pillar);
+  walls.push(pillar);
+  sceneDecor.push(pillar);
+
+  const cap = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.62, 0.42, 0.28, 12),
+    makeMaterial(0x706860)
+  );
+  cap.position.set(cx, 5.34, cz);
+  cap.castShadow = true;
+  scene.add(cap);
+  sceneDecor.push(cap);
+
+  const base = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.62, 0.62, 0.24, 12),
+    makeMaterial(0x706860)
+  );
+  base.position.set(cx, 0.12, cz);
+  scene.add(base);
+  sceneDecor.push(base);
+
+  const r = 0.72;
+  const signY = 2.6;
+  const sides = [
+    { dir: 'N', dx: 0,   dz: -r, rotY: Math.PI       },
+    { dir: 'S', dx: 0,   dz:  r, rotY: 0              },
+    { dir: 'E', dx:  r,  dz: 0,  rotY: Math.PI / 2    },
+    { dir: 'W', dx: -r,  dz: 0,  rotY: -Math.PI / 2   },
+  ];
+
+  sides.forEach(s => {
+    const isSpecial = s.dir === specialDir;
+    const label = isSpecial ? '−' : '+';
+    makeSign(cx + s.dx, signY, cz + s.dz, s.rotY, label);
+    if (isSpecial) {
+      specialSignPos = new THREE.Vector3(cx + s.dx, signY, cz + s.dz);
+    }
+  });
+}
+
+function buildWorld() {
+  if      (state.level === 1)  { buildLevel1(); }
+  else if (state.level === 2)  { buildLevel2(); }
+  else if (state.level === 3)  { buildLevel3(); }
+  else if (state.level === 4)  { buildLevel4(); }
+  else if (state.level === 5)  { buildLevel5(); }
+  else if (state.level === 6)  { buildLevel6(); }
+  else if (state.level === 7)  { buildLevel7(); }
+  else if (state.level === 8)  { buildLevel8(); }
+  else if (state.level === 9)  { buildLevel9(); }
+  else if (state.level === 10) { buildLevel10(); }
+  else if (state.level === 11) { buildLevel11(); }
+  else if (state.level === 12) { buildLevel12(); }
+}
+
+function rebuildWorld() {
+  walls.forEach(w => scene.remove(w));
+  walls.length = 0;
+  steps.forEach(s => scene.remove(s));
+  steps.length = 0;
+  supportSurfaces.length = 0;
+  if (floor) scene.remove(floor);
+  if (waterPondA) { scene.remove(waterPondA); waterPondA = null; }
+  if (waterPondB) { scene.remove(waterPondB); waterPondB = null; }
+  if (lavaPond) { scene.remove(lavaPond); lavaPond = null; }
+  if (hiddenGladeFloor) { scene.remove(hiddenGladeFloor); hiddenGladeFloor = null; }
+  sceneDecor.forEach(o => scene.remove(o));
+  sceneDecor.length = 0;
+  if (secretShipGroup) {
+    scene.remove(secretShipGroup);
+    secretShipGroup = null;
+  }
+  shipExplosion = false;
+  shipExplosionProgress = 0;
+  buildWorld();
+}
+
+function buildLevel1() {
+  // Земля
+  floor = new THREE.Mesh(
+    new THREE.PlaneGeometry(300, 300),
+    makeMaterial(0x4a6a35)
+  );
+  floor.rotation.x = -Math.PI / 2;
+  floor.receiveShadow = true;
+  scene.add(floor);
+
+  // Пол петли
+  makePath(0, -6, 4, 16, 0x8b9f69);       // восточный вертикальный коридор
+  makePath(-9, -16, 18, 4, 0x93a775);     // северный горизонтальный коридор
+  makePath(-18, -6, 4, 20, 0x8b9f69);     // западный вертикальный коридор
+  makePath(-9, 4, 18, 4, 0x93a775);       // южный горизонтальный коридор
+
+  // Внешний контур
+  makeWall(2, -6, 0.4, WALL_H, 24);       // восточная внешняя стена
+  makeWall(-20, -4, 0.4, WALL_H, 20);     // западная внешняя стена (нижняя часть)
+  makeWall(-9, -18, 22.4, WALL_H, 0.4);   // северная внешняя стена
+  makeWall(-9, 6, 22.4, WALL_H, 0.4);     // южная внешняя стена
+
+  // Призрачная секция внешней западной стены: выход "сквозь стену"
+  const ghostVis = new THREE.Mesh(
+    new THREE.BoxGeometry(0.4, WALL_H, 6.4),
+    makeMaterial(WC)
+  );
+  ghostVis.position.set(-20, WALL_H / 2, -16);
+  ghostVis.castShadow = true;
+  ghostVis.receiveShadow = true;
+  scene.add(ghostVis);
+  sceneDecor.push(ghostVis);
+
+  // Внутренний блок, вокруг которого идёт петля
+  makeWall(-2, -6, 0.4, WALL_H, 16);      // восточная внутренняя стена
+  makeWall(-16, -6, 0.4, WALL_H, 16);     // западная внутренняя стена
+  makeWall(-9, -14, 14.4, WALL_H, 0.4);   // северная внутренняя стена
+  makeWall(-9, 2, 14.4, WALL_H, 0.4);     // южная внутренняя стена
+
+  // Небольшой стартовый участок внутри петли
+  makePath(0, 4, 4, 4, 0x97ab79);
+
+  // Секретный коридор за призрачной стеной
+  makePath(-27, -14, 14, 6, 0x88a16a);
+  makeWall(-27, -10.8, 14.4, WALL_H, 0.4);   // южная стена коридора
+  makeWall(-27, -17.2, 14.4, WALL_H, 0.4);   // северная стена коридора
+
+  // Большая комната-сад — вторая пасхалка
+  makePath(-45, -14, 26, 22, 0x79a857);
+
+  // Стены сада: восточная стена разбита, чтобы вход из коридора оставался открытым
+  makeWall(-45, -25, 26.4, WALL_H, 0.4);   // северная стена сада
+  makeWall(-45, -3, 26.4, WALL_H, 0.4);    // южная стена сада
+  makeWall(-58, -14, 0.4, WALL_H, 22.4);   // западная стена сада
+  makeWall(-32, -21, 0.4, WALL_H, 8.4);    // восточная стена сада сверху
+  makeWall(-32, -7, 0.4, WALL_H, 8.4);     // восточная стена сада снизу
+
+  // Небольшие детали сада
+  makeTree(-53, -20);
+  makeTree(-52, -8, 0x6aa042);
+  makeTree(-39, -21, 0x5c8a36);
+  makeTree(-36, -7, 0x68994a);
+  makeTree(-45, -23, 0x6f9f45);
+  makeTree(-43, -5, 0x77a74f);
+
+  waterPondA = makePond(-52, -16.5, 2.4, 0x56a7d8);
+  waterPondB = makePond(-50.5, -8.5, 2.1, 0x67b5e8);
+  lavaPond = makePond(-55.2, -22.2, 1.15, 0xe06721);
+
+  hiddenGladeFloor = new THREE.Mesh(
+    new THREE.CircleGeometry(4.5, 40),
+    makeMaterial(0x90b66a, 1)
+  );
+  hiddenGladeFloor.rotation.x = -Math.PI / 2;
+  hiddenGladeFloor.position.set(-45, 0.025, -14);
+  scene.add(hiddenGladeFloor);
+
+  // Табличка ОПАСНО около лавы
+  makeWallArrow(-54, 2.1, -22, Math.PI / 2, '⚠', 'ОПАСНО');
+
+  // Восточный коридор (идём на север, -z): стрелки на восточной внешней стене, смотрят на запад
+  // rotY = Math.PI/2 → нормаль +x (восток), но нам нужно чтобы знак смотрел на запад = -x → rotY = -Math.PI/2
+  makeWallArrow(1.6, 2.1,  -2, -Math.PI / 2, '↑', 'вперёд');
+  makeWallArrow(1.6, 2.1,  -8, -Math.PI / 2, '↑', 'вперёд');
+  makeWallArrow(1.6, 2.1, -12, -Math.PI / 2, '↑', 'вперёд');
+
+  // Северный коридор (идём на запад, -x): стрелки на северной внешней стене, смотрят на юг
+  // rotY = 0 → нормаль +z (юг) ✓
+  makeWallArrow( -5, 2.1, -17.6, 0, '←', 'налево');
+  makeWallArrow( -9, 2.1, -17.6, 0, '←', 'налево');
+  makeWallArrow(-13, 2.1, -17.6, 0, '←', 'налево');
+
+  // Западная призрачная стена (x=-20): смотрит на восток (+x) → rotY = Math.PI/2
+  makeWallArrow(-19.6, 2.1, -13, Math.PI / 2, '←', 'сюда');
+  makeWallArrow(-19.6, 2.1, -16, Math.PI / 2, '←', 'сюда');
+
+  // Западный коридор (идём на юг, +z): стрелки на западной внешней стене, смотрят на восток
+  // rotY = Math.PI/2 → нормаль +x (восток) ✓
+  makeWallArrow(-19.6, 2.1, -10, Math.PI / 2, '←', 'налево');
+  makeWallArrow(-19.6, 2.1,  -7, Math.PI / 2, '←', 'налево');
+  makeWallArrow(-19.6, 2.1,  -3, Math.PI / 2, '←', 'налево');
+
+  // Южный коридор (идём на восток, +x): стрелки на южной внешней стене, смотрят на север
+  // rotY = Math.PI → нормаль -z (север) ✓
+  makeWallArrow( -5, 2.1, 5.6, Math.PI, '←', 'налево');
+  makeWallArrow(-11, 2.1, 5.6, Math.PI, '←', 'налево');
+  makeWallArrow(-16, 2.1, 5.6, Math.PI, '←', 'налево');
+}
+
+function buildLevel2() {
+  scene.background = new THREE.Color(0x87ceeb);
+  scene.fog.color = new THREE.Color(0x87ceeb);
+  scene.fog.near = 20;
+  scene.fog.far = 60;
+
+  // Земля
+  floor = new THREE.Mesh(
+    new THREE.PlaneGeometry(300, 300),
+    makeMaterial(0x4a6a35)
+  );
+  floor.rotation.x = -Math.PI / 2;
+  floor.receiveShadow = true;
+  scene.add(floor);
+
+  // Стены сада
+  makeWall(-45, -25, 26.4, WALL_H, 0.4);   // северная стена сада
+  makeWall(-45, -3, 26.4, WALL_H, 0.4);    // южная стена сада
+  makeWall(-58, -14, 0.4, WALL_H, 22.4);   // западная стена сада
+  makeWall(-32, -21, 0.4, WALL_H, 8.4);    // восточная стена сада сверху
+  makeWall(-32, -7, 0.4, WALL_H, 8.4);     // восточная стена сада снизу
+
+  // Небольшие детали сада
+  makeTree(-53, -20);
+  makeTree(-52, -8, 0x6aa042);
+  makeTree(-39, -21, 0x5c8a36);
+  makeTree(-36, -7, 0x68994a);
+  makeTree(-45, -23, 0x6f9f45);
+  makeTree(-43, -5, 0x77a74f);
+
+  waterPondA = makePond(-52, -16.5, 2.4, 0x56a7d8);
+  waterPondB = makePond(-50.5, -8.5, 2.1, 0x67b5e8);
+  lavaPond = makePond(-55.2, -22.2, 1.15, 0xe06721);
+
+  hiddenGladeFloor = new THREE.Mesh(
+    new THREE.CircleGeometry(4.5, 40),
+    makeMaterial(0x90b66a, 1)
+  );
+  hiddenGladeFloor.rotation.x = -Math.PI / 2;
+  hiddenGladeFloor.position.set(-45, 0.025, -14);
+  scene.add(hiddenGladeFloor);
+
+  // Табличка ОПАСНО около лавы
+  makeWallArrow(-54, 2.1, -22, Math.PI / 2, '⚠', 'ОПАСНО');
+}
+
+function buildLevel3() {
+  specialSignPos = null;
+
+  scene.background = new THREE.Color(0x87ceab);
+  scene.fog.color = new THREE.Color(0x87ceab);
+  scene.fog.near = 30;
+  scene.fog.far = 120;
+
+  floor = new THREE.Mesh(
+    new THREE.PlaneGeometry(500, 500),
+    makeMaterial(0x5a9e5a, 1.0)
+  );
+  floor.rotation.x = -Math.PI / 2;
+  floor.position.y = -0.02;
+  floor.receiveShadow = true;
+  scene.add(floor);
+
+  const sunLight = new THREE.DirectionalLight(0xffffff, 1.1);
+  sunLight.position.set(20, 40, 20);
+  sunLight.castShadow = true;
+  scene.add(sunLight);
+  sceneDecor.push(sunLight);
+
+  const ambLight = new THREE.AmbientLight(0xffffff, 0.6);
+  scene.add(ambLight);
+  sceneDecor.push(ambLight);
+
+  // 5 колонн: 4 угловых + центральная
+  // На центральной — одна сторона со знаком (−), остальные (+)
+  makeColumn(0,   -7,   'W');   // центр — особая западная сторона (−)
+  makeColumn(-14, -14);         // угол СЗ
+  makeColumn( 14, -14);         // угол СВ
+  makeColumn(-14,  14);         // угол ЮЗ
+  makeColumn( 14,  14);         // угол ЮВ
+
+  if (state.secretShip) addSecretShip();
+}
+
+function makeBookshelf(x, z, rotY) {
+  // Каркас полки
+  const frame = new THREE.Mesh(
+    new THREE.BoxGeometry(3.6, 5.0, 0.3),
+    makeMaterial(0x5c3d1e)
+  );
+  frame.position.set(x, 2.5, z);
+  frame.rotation.y = rotY;
+  frame.castShadow = true;
+  frame.receiveShadow = true;
+  scene.add(frame);
+  walls.push(frame);
+  sceneDecor.push(frame);
+
+  // Книги — 3 полки по 5 книг
+  const bookColors = [0x8b1a1a, 0x1a3a6b, 0x1a5c2a, 0x6b4e1a, 0x4a1a6b, 0x7a3a1a, 0x1a5a5a];
+  const shelfOffsets = [0.6, 1.9, 3.2]; // высоты полок
+  const isLocal = rotY === 0 || rotY === Math.PI;
+
+  shelfOffsets.forEach(sh => {
+    for (let i = 0; i < 5; i++) {
+      const bw = 0.36 + Math.random() * 0.18;
+      const bh = 0.55 + Math.random() * 0.25;
+      const color = bookColors[Math.floor(Math.random() * bookColors.length)];
+      const book = new THREE.Mesh(
+        new THREE.BoxGeometry(bw, bh, 0.22),
+        makeMaterial(color)
+      );
+      const spread = 1.4;
+      const along = (i - 2) * 0.58;
+      const bx = isLocal ? x + along : x;
+      const bz = isLocal ? z : z + along;
+      book.position.set(bx, sh + bh / 2, bz);
+      book.rotation.y = rotY;
+      book.castShadow = true;
+      scene.add(book);
+      sceneDecor.push(book);
+    }
+  });
+}
+
+function makeTorch4(x, z) {
+  const handle = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.06, 0.09, 1.4, 8),
+    makeMaterial(0x5c3a1e)
+  );
+  handle.position.set(x, 0.7, z);
+  handle.castShadow = true;
+  scene.add(handle);
+  sceneDecor.push(handle);
+
+  const flame = new THREE.Mesh(
+    new THREE.SphereGeometry(0.16, 8, 8),
+    new THREE.MeshBasicMaterial({ color: 0xff6a00 })
+  );
+  flame.position.set(x, 1.52, z);
+  scene.add(flame);
+  sceneDecor.push(flame);
+
+  const light = new THREE.PointLight(0xff7722, 1.8, 14);
+  light.position.set(x, 1.7, z);
+  scene.add(light);
+  sceneDecor.push(light);
+}
+
+function buildLevel4() {
+  specialSignPos = null;
+
+  scene.background = new THREE.Color(0x050d1a);
+  scene.fog = new THREE.Fog(0x050d1a, 22, 75);
+
+  // Пляж — песок
+  floor = new THREE.Mesh(
+    new THREE.PlaneGeometry(500, 500),
+    makeMaterial(0xc8a96e, 1.0)
+  );
+  floor.rotation.x = -Math.PI / 2;
+  floor.position.y = -0.02;
+  floor.receiveShadow = true;
+  scene.add(floor);
+
+  // Океан вдали
+  const ocean = new THREE.Mesh(
+    new THREE.PlaneGeometry(500, 400),
+    new THREE.MeshBasicMaterial({ color: 0x071828, transparent: true, opacity: 0.94 })
+  );
+  ocean.rotation.x = -Math.PI / 2;
+  ocean.position.set(0, 0.01, -180);
+  scene.add(ocean);
+  sceneDecor.push(ocean);
+
+  // Прибрежная вода — зона ныряния (z < -20)
+  const waterEdge = new THREE.Mesh(
+    new THREE.PlaneGeometry(300, 50),
+    new THREE.MeshBasicMaterial({ color: 0x0d3a5e, transparent: true, opacity: 0.87 })
+  );
+  waterEdge.rotation.x = -Math.PI / 2;
+  waterEdge.position.set(0, 0.02, -27);
+  scene.add(waterEdge);
+  sceneDecor.push(waterEdge);
+
+  // Руины башни в воде
+  makeWall( 0,  -36, 6, 8, 6, 0x5e5448);
+  makeWall(-4,  -31, 2, 5, 2, 0x4e453c);
+  makeWall( 4,  -31, 2, 4, 2, 0x4e453c);
+  makeWall( 0,  -40, 9, 2, 2, 0x5a5040);
+
+  // Следы на песке — тянутся от старта к воде
+  for (let i = 0; i < 13; i++) {
+    const fz = 10 - i * 2.4;
+    const fx = (i % 2 === 0 ? -0.32 : 0.32);
+    const foot = new THREE.Mesh(
+      new THREE.BoxGeometry(0.22, 0.03, 0.4),
+      makeMaterial(0xb89058, 0.9)
+    );
+    foot.position.set(fx, 0.0, fz);
+    foot.rotation.y = (i % 2 === 0 ? -0.22 : 0.22);
+    scene.add(foot);
+    sceneDecor.push(foot);
+  }
+
+  // Знак у воды
+  makeSign(4.5, 2.2, -20, -Math.PI / 2, 'Не входи');
+
+  // Факелы
+  makeTorch4(-10,  8);
+  makeTorch4( 10,  8);
+  makeTorch4(-14, -4);
+  makeTorch4( 14, -4);
+  makeTorch4( -8, -16);
+  makeTorch4(  8, -16);
+
+  // Лунный свет
+  const moonLight = new THREE.DirectionalLight(0x8ab4d4, 0.35);
+  moonLight.position.set(-30, 60, 30);
+  scene.add(moonLight);
+  sceneDecor.push(moonLight);
+
+  const ambLight = new THREE.AmbientLight(0x090e18, 1.0);
+  scene.add(ambLight);
+  sceneDecor.push(ambLight);
+}
+
+function respawnAt(pos3, yaw = 0) {
+  playerGroup.position.copy(pos3);
+  state.yaw = yaw;
+  state.jumpVel = 0;
+  state.onGround = true;
+}
+
+// ============================================================
+// LEVEL 5 — ЗАМОК
+// ============================================================
+function buildLevel5() {
+  specialSignPos = null;
+  scene.background = new THREE.Color(0x8fa0b0);
+  scene.fog = new THREE.Fog(0x8fa0b0, 15, 60);
+
+  floor = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), makeMaterial(0x7a7060));
+  floor.rotation.x = -Math.PI / 2; floor.position.y = -0.02;
+  floor.receiveShadow = true; scene.add(floor);
+
+  const dl = new THREE.DirectionalLight(0xd0d8e8, 0.9); dl.position.set(10, 30, 10);
+  scene.add(dl); sceneDecor.push(dl);
+  const amb = new THREE.AmbientLight(0x9aaabb, 0.6); scene.add(amb); sceneDecor.push(amb);
+
+  const WC5 = 0x6e6a62;
+  // Внешние стены замка
+  makeWall(0, -22, 44, 8, 1, WC5);   // север
+  makeWall(0,  22, 44, 8, 1, WC5);   // юг (вход)
+  makeWall(-22, 0, 1, 8, 44, WC5);   // запад
+  makeWall( 22, 0, 1, 8, 44, WC5);   // восток
+
+  // Башни по углам
+  [[- 22,-22],[22,-22],[-22,22],[22,22]].forEach(([tx,tz]) => {
+    makeWall(tx, tz, 4, 10, 4, 0x5a564e);
+  });
+
+  // Ворота (проход на север, z < -20)
+  makeWall(-6, -22, 4, 8, 1, WC5);
+  makeWall( 6, -22, 4, 8, 1, WC5);
+  // Арка над воротами
+  makeWall(0, -22, 8, 2, 1, 0x4a4640);
+
+  // Тронный зал — помост
+  makeStep(0, 8, 10, 6, 0.6, 0x8a8070);
+  // Трон
+  makeWall(0, 10, 2, 3, 0.4, 0x5a4830);
+  makeWall(0, 9.8, 2, 0.5, 2, 0x5a4830);
+
+  // Тайная дверь за троном (пасхалка)
+  // (знак убран)
+  specialSignPos = new THREE.Vector3(0, 1, 12);
+
+  // Флаги
+  makeWall(-21, -20, 0.2, 9, 0.2, 0x3a3028);
+  makeWall( 21, -20, 0.2, 9, 0.2, 0x3a3028);
+
+  // Мощение двора
+  for (let x = -18; x <= 18; x += 6) {
+    for (let z = -18; z <= 18; z += 6) {
+      makePath(x, z, 5.8, 5.8, x % 12 === 0 ? 0x6a6258 : 0x726860);
+    }
+  }
+}
+
+// ============================================================
+// LEVEL 6 — ЗАВОД
+// ============================================================
+function buildLevel6() {
+  specialSignPos = null;
+  scene.background = new THREE.Color(0x1a1a1a);
+  scene.fog = new THREE.Fog(0x1a1a1a, 8, 40);
+
+  floor = new THREE.Mesh(new THREE.PlaneGeometry(300, 300), makeMaterial(0x252520));
+  floor.rotation.x = -Math.PI / 2; floor.position.y = -0.02;
+  floor.receiveShadow = true; scene.add(floor);
+
+  const dl = new THREE.DirectionalLight(0xff8822, 0.5); dl.position.set(0, 20, 0);
+  scene.add(dl); sceneDecor.push(dl);
+  const amb = new THREE.AmbientLight(0x221a10, 0.8); scene.add(amb); sceneDecor.push(amb);
+
+  // Стены цеха
+  makeWall(0, -18, 36, 9, 0.5, 0x383830);
+  makeWall(0,  18, 36, 9, 0.5, 0x383830);
+  makeWall(-18, 0, 0.5, 9, 36, 0x383830);
+  makeWall( 18, 0, 0.5, 9, 36, 0x383830);
+
+  // Трубы
+  [[-8,-12],[8,-12],[-8,12],[8,12],[0,0]].forEach(([px,pz]) => {
+    const pipe = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 9, 8), makeMaterial(0x4a4840));
+    pipe.position.set(px, 4.5, pz); scene.add(pipe); walls.push(pipe); sceneDecor.push(pipe);
+  });
+
+  // Контейнеры
+  [[-12,-8],[12,-8],[-12,8],[12,8]].forEach(([cx,cz]) => {
+    makeWall(cx, cz, 4, 3, 2, cx > 0 ? 0x8b3a2a : 0x2a5a8b);
+  });
+
+  // Ржавые лестницы (ступени)
+  for (let i = 0; i < 5; i++) makeStep(-14 + i * 0.9, -5, 1.5, 0.8, 0.4 + i * 0.4, 0x5a4a38);
+
+  // Огни завода
+  [[-8,0],[8,0],[0,-8],[0,8]].forEach(([lx,lz]) => {
+    const l = new THREE.PointLight(0xff6600, 1.2, 12);
+    l.position.set(lx, 6, lz); scene.add(l); sceneDecor.push(l);
+  });
+
+  // Рубильник (пасхалка)
+  const lever = new THREE.Mesh(new THREE.BoxGeometry(0.4, 1.2, 0.2), makeMaterial(0xcc3333));
+  lever.position.set(-16, 2, 0); scene.add(lever); sceneDecor.push(lever);
+
+  // Лифт — платформа в центре (interact → след. уровень)
+  makeStep(0, 0, 3, 3, 0.3, 0x5a5850);
+  specialSignPos = new THREE.Vector3(0, 0.5, 0);
+}
+
+// ============================================================
+// LEVEL 7 — ЗЕРКАЛЬНЫЙ ЗАЛ
+// ============================================================
+function buildLevel7() {
+  specialSignPos = null;
+  scene.background = new THREE.Color(0x0a0a18);
+  scene.fog = new THREE.Fog(0x0a0a18, 5, 30);
+
+  floor = new THREE.Mesh(new THREE.PlaneGeometry(200, 200),
+    new THREE.MeshStandardMaterial({ color: 0x111122, roughness: 0.1, metalness: 0.9 }));
+  floor.rotation.x = -Math.PI / 2; floor.position.y = -0.02;
+  floor.receiveShadow = true; scene.add(floor);
+
+  const amb = new THREE.AmbientLight(0x3030ff, 0.4); scene.add(amb); sceneDecor.push(amb);
+  const pt1 = new THREE.PointLight(0x8888ff, 1.5, 20); pt1.position.set(0, 6, 0);
+  scene.add(pt1); sceneDecor.push(pt1);
+
+  const mirrorMat = new THREE.MeshStandardMaterial({ color: 0xaaaacc, roughness: 0.05, metalness: 1.0, side: THREE.DoubleSide });
+
+  // Зеркальные стены-панели
+  const panels = [
+    [0, -12, 20, 6, 0],         // север
+    [-10, -6, 0.2, 6, 14, Math.PI/2],
+    [10, -6, 0.2, 6, 14, Math.PI/2],
+    [-10, 6, 0.2, 6, 14, Math.PI/2],
+    [10, 6, 0.2, 6, 14, Math.PI/2],
+  ];
+  panels.forEach(([px, pz, w, h, d, ry = 0]) => {
+    const m = new THREE.Mesh(new THREE.BoxGeometry(w || 20, h, d || 0.2), makeMaterial(0x8898aa, 0.7));
+    m.position.set(px, h / 2, pz); if (ry) m.rotation.y = ry;
+    scene.add(m); walls.push(m); sceneDecor.push(m);
+    // Зеркальный слой поверх
+    const mir = new THREE.Mesh(new THREE.PlaneGeometry(w || 20, h), mirrorMat);
+    mir.position.set(px, h / 2, pz + 0.12); if (ry) mir.rotation.y = ry;
+    scene.add(mir); sceneDecor.push(mir);
+  });
+
+  // Проходное «зеркало» справа (x > 14 → уровень 8)
+  const portalMat = new THREE.MeshStandardMaterial({ color: 0x6688ff, roughness: 0.0, metalness: 1.0, emissive: 0x112244 });
+  const portal = new THREE.Mesh(new THREE.PlaneGeometry(2, 5), portalMat);
+  portal.position.set(13.8, 2.5, 0); portal.rotation.y = -Math.PI / 2;
+  scene.add(portal); sceneDecor.push(portal);
+
+  // Дорожка
+  makePath(0, 0, 4, 22, 0x1a1a2e);
+}
+
+// ============================================================
+// LEVEL 8 — БИБЛИОТЕКА
+// ============================================================
+function buildLevel8() {
+  specialSignPos = null;
+  scene.background = new THREE.Color(0x1a1208);
+  scene.fog = new THREE.Fog(0x1a1208, 10, 45);
+
+  floor = new THREE.Mesh(new THREE.PlaneGeometry(300, 300), makeMaterial(0x3d2710));
+  floor.rotation.x = -Math.PI / 2; floor.position.y = -0.02;
+  floor.receiveShadow = true; scene.add(floor);
+
+  const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(300, 300), makeMaterial(0x1c1008));
+  ceiling.rotation.x = Math.PI / 2; ceiling.position.y = 6.0;
+  scene.add(ceiling); sceneDecor.push(ceiling);
+
+  const dl = new THREE.DirectionalLight(0xffa040, 0.4); dl.position.set(0, 10, 0);
+  scene.add(dl); sceneDecor.push(dl);
+  const amb = new THREE.AmbientLight(0x3a2a10, 0.8); scene.add(amb); sceneDecor.push(amb);
+
+  [[-8,-8],[8,-8],[-8,8],[8,8],[0,0]].forEach(([lx,lz]) => {
+    const l = new THREE.PointLight(0xffa040, 0.9, 14);
+    l.position.set(lx, 5.2, lz); scene.add(l); sceneDecor.push(l);
+  });
+
+  // Стены
+  const WL = 0x2a1c0e;
+  makeWall(-10, -18, 16, 7, 0.5, WL); makeWall(10, -18, 16, 7, 0.5, WL); // юг: проход в центре
+  makeWall(0, 18, 36, 7, 0.5, WL);
+  makeWall(-18, 0, 0.5, 7, 36, WL); makeWall(18, 0, 0.5, 7, 36, WL);
+
+  // Колонны
+  [[-8,-8],[8,-8],[-8,8],[8,8]].forEach(([cx,cz]) => {
+    const col = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.45, 6.5, 10), makeMaterial(0x4a3520));
+    col.position.set(cx, 3.25, cz); col.castShadow = true;
+    scene.add(col); walls.push(col); sceneDecor.push(col);
+  });
+
+  // Стеллажи
+  [-12,-4,4,12].forEach(x => makeBookshelf(x, -16, 0));
+  [-12,-4,4,12].forEach(x => makeBookshelf(x,  16, Math.PI));
+  [-12,-4,4,12].forEach(z => makeBookshelf(-16, z, Math.PI/2));
+  [-12,-4,4,12].forEach(z => makeBookshelf( 16, z, -Math.PI/2));
+  [-6,6].forEach(z => [-10,-3.5,3.5,10].forEach(x => makeBookshelf(x, z, 0)));
+
+  // Названия книг
+  ['О лабиринтах','Пустые коридоры','Теория стен','Атлас тупиков','Стр. 404','Неизвестный автор'].forEach((t, i) => {
+    const a = (i / 6) * Math.PI * 2;
+    makeSign(Math.round(Math.cos(a) * 11), 3.8, Math.round(Math.sin(a) * 11), a + Math.PI, t);
+  });
+
+  // Золотая книга (пасхалка)
+  const gb = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.7, 0.24), makeMaterial(0xd4af37));
+  gb.position.set(-16, 1.0, -4); gb.rotation.y = Math.PI / 2; scene.add(gb); sceneDecor.push(gb);
+  makeSign(-15.3, 1.0, -4, Math.PI / 2, '📖 ?');
+  specialSignPos = new THREE.Vector3(-16, 1.0, -4);
+
+}
+
+// ============================================================
+// LEVEL 9 — КОРАБЛЬ
+// ============================================================
+function buildLevel9() {
+  specialSignPos = null;
+  scene.background = new THREE.Color(0x1a3a5c);
+  scene.fog = new THREE.Fog(0x1a3a5c, 15, 70);
+
+  // Море
+  floor = new THREE.Mesh(new THREE.PlaneGeometry(500, 500), makeMaterial(0x0d2a45));
+  floor.rotation.x = -Math.PI / 2; floor.position.y = -0.02;
+  floor.receiveShadow = true; scene.add(floor);
+
+  const dl = new THREE.DirectionalLight(0xfff5d0, 0.8); dl.position.set(-20, 40, 20);
+  scene.add(dl); sceneDecor.push(dl);
+  const amb = new THREE.AmbientLight(0x8ab0cc, 0.5); scene.add(amb); sceneDecor.push(amb);
+
+  // Палуба корабля
+  makePath(0, 0, 12, 28, 0x6b4a2a);   // центр палубы
+  makePath(-7, 0, 2, 28, 0x5a3a1e);   // левый борт
+  makePath( 7, 0, 2, 28, 0x5a3a1e);   // правый борт
+
+  // Борта (стены)
+  makeWall(-8, 0, 0.5, 2, 28, 0x5a3a1e);
+  makeWall( 8, 0, 0.5, 2, 28, 0x5a3a1e);
+  makeWall(0, 14, 14, 2, 0.5, 0x5a3a1e);  // нос
+
+  // Мачта
+  const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.25, 12, 8), makeMaterial(0x4a3010));
+  mast.position.set(0, 6, -2); scene.add(mast); walls.push(mast); sceneDecor.push(mast);
+  // Рея
+  const yard = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 10, 6), makeMaterial(0x4a3010));
+  yard.position.set(0, 9, -2); yard.rotation.z = Math.PI / 2;
+  scene.add(yard); sceneDecor.push(yard);
+
+  // Пушки
+  [[-5, 4],[ 5, 4],[-5,-4],[ 5,-4]].forEach(([cx,cz]) => {
+    const cannon = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.3, 1.8, 8), makeMaterial(0x2a2a2a));
+    cannon.position.set(cx, 0.4, cz); cannon.rotation.z = Math.PI / 2;
+    scene.add(cannon); sceneDecor.push(cannon);
+  });
+
+  // Каюта капитана
+  makeWall(0, -8, 10, 3, 4, 0x6b4a2a);
+  makeWall(0, -6.5, 9, 3, 0.2, 0x8b6a3a);
+  makeSign(0, 2.5, -6, 0, '⚓ Капитан');
+
+  // Сундук (пасхалка)
+  const chest = new THREE.Mesh(new THREE.BoxGeometry(1, 0.8, 0.7), makeMaterial(0x8b5a1a));
+  chest.position.set(2, 0.4, -9); scene.add(chest); sceneDecor.push(chest);
+  makeSign(2, 2, -9, 0, '💎 Сундук');
+  specialSignPos = new THREE.Vector3(2, 0.5, -9);
+
+  // Якорный канат (декор)
+  const rope = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 5, 6), makeMaterial(0x9a8060));
+  rope.position.set(-3, 2.5, -1); rope.rotation.z = 0.4;
+  scene.add(rope); sceneDecor.push(rope);
+
+  // За борт (z < -18) → уровень 10
+}
+
+// ============================================================
+// LEVEL 10 — КОНЕЦ СВЕТА
+// ============================================================
+function buildLevel10() {
+  specialSignPos = null;
+  scene.background = new THREE.Color(0x201008);
+  scene.fog = new THREE.Fog(0x201008, 10, 50);
+
+  floor = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), makeMaterial(0x1a1008));
+  floor.rotation.x = -Math.PI / 2; floor.position.y = -0.02;
+  floor.receiveShadow = true; scene.add(floor);
+
+  const amb = new THREE.AmbientLight(0x1a0a00, 1.0); scene.add(amb); sceneDecor.push(amb);
+  [[-10,-10],[10,-10],[-10,10],[10,10],[0,0]].forEach(([lx,lz]) => {
+    const l = new THREE.PointLight(0xff4400, 1.4, 16);
+    l.position.set(lx, 4, lz); scene.add(l); sceneDecor.push(l);
+  });
+
+  // Руины зданий
+  [[-14,-12],[14,-12],[-14,10],[14,10],[-8,-16],[8,-16]].forEach(([rx,rz]) => {
+    const h = 4 + Math.random() * 5;
+    makeWall(rx, rz, 4 + Math.random() * 3, h, 4 + Math.random() * 3, 0x3a3028);
+  });
+  // Обломки
+  [[-5,-5],[5,-3],[-3,6],[6,4],[-7,2],[3,-7]].forEach(([rx,rz]) => {
+    makeWall(rx, rz, 2, 1, 2, 0x2e2820);
+  });
+
+  // Пепел — тёмные пятна
+  for (let i = 0; i < 8; i++) {
+    const ax = (i % 4 - 1.5) * 8, az = (Math.floor(i / 4) - 0.5) * 10;
+    makePath(ax, az, 3, 3, 0x111008);
+  }
+
+  // Телефон (пасхалка)
+  const phone = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.8, 0.08), makeMaterial(0x111111));
+  phone.position.set(0, 0.5, 5); scene.add(phone); sceneDecor.push(phone);
+  const screen = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 0.6), new THREE.MeshBasicMaterial({ color: 0x00aaff }));
+  screen.position.set(0, 0.5, 5.05); scene.add(screen); sceneDecor.push(screen);
+  specialSignPos = new THREE.Vector3(0, 0.5, 5);
+
+  // Портал в центре → след. уровень
+  const portalRing = new THREE.Mesh(new THREE.TorusGeometry(2.5, 0.25, 8, 24), makeMaterial(0xff6600));
+  portalRing.position.set(0, 2.5, -8); portalRing.rotation.x = Math.PI / 2;
+  scene.add(portalRing); sceneDecor.push(portalRing);
+  const portalFill = new THREE.Mesh(new THREE.CircleGeometry(2.4, 24), new THREE.MeshBasicMaterial({ color: 0xff3300, transparent: true, opacity: 0.5 }));
+  portalFill.position.set(0, 2.5, -8); portalFill.rotation.x = Math.PI / 2;
+  scene.add(portalFill); sceneDecor.push(portalFill);
+  // Портал → зонный переход (pos.z < -7) в tick()
+  // Телефон → specialSignPos (interact-пасхалка)
+}
+
+// ============================================================
+// LEVEL 11 — ПИРАМИДА
+// ============================================================
+function buildLevel11() {
+  specialSignPos = null;
+  scene.background = new THREE.Color(0x201810);
+  scene.fog = new THREE.Fog(0x201810, 6, 35);
+
+  floor = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), makeMaterial(0x8a7050));
+  floor.rotation.x = -Math.PI / 2; floor.position.y = -0.02;
+  floor.receiveShadow = true; scene.add(floor);
+
+  const dl = new THREE.DirectionalLight(0xffcc88, 0.7); dl.position.set(5, 20, 5);
+  scene.add(dl); sceneDecor.push(dl);
+  const amb = new THREE.AmbientLight(0x201810, 1.0); scene.add(amb); sceneDecor.push(amb);
+  const torch1 = new THREE.PointLight(0xff9933, 1.5, 10); torch1.position.set(-4, 3, 0);
+  scene.add(torch1); sceneDecor.push(torch1);
+  const torch2 = new THREE.PointLight(0xff9933, 1.5, 10); torch2.position.set(4, 3, 0);
+  scene.add(torch2); sceneDecor.push(torch2);
+
+  // Стены узких ходов
+  const SC = 0x9a8060;
+  makeWall(0, -10, 4, 4, 0.5, SC);   // сев. стена
+  makeWall(-8, -5, 0.5, 4, 10, SC);  // лев. стена
+  makeWall( 8, -5, 0.5, 4, 10, SC);  // прав. стена
+  makeWall(0, 2, 12, 4, 0.5, SC);    // центральная перегородка с проходом
+  makeWall(-4.5, 2, 3, 4, 0.5, SC);
+  makeWall( 4.5, 2, 3, 4, 0.5, SC);
+  makeWall(0, 8, 12, 4, 0.5, SC);
+  makeWall(-8, 4, 0.5, 4, 8, SC);
+  makeWall( 8, 4, 0.5, 4, 8, SC);
+
+  // Иероглифы на стенах (пасхалка — складываются в "Easter")
+  [['E',-7.5,2,-5,Math.PI/2],['a',-7.5,2,-2,Math.PI/2],['s',-7.5,2,1,Math.PI/2],
+   ['t',-7.5,2,4,Math.PI/2],['e',-7.5,2,7,Math.PI/2],['r',-7.5,2,10,Math.PI/2]].forEach(([ch,x,y,z,ry]) => {
+    makeSign(x, y, z, ry, ch);
+  });
+  makeSign(-9, 2.5, 2, Math.PI / 2, '👁 Easter');
+
+  // Саркофаг (interact → уровень 12)
+  const sarc = new THREE.Mesh(new THREE.BoxGeometry(2, 0.6, 4), makeMaterial(0xc8a050));
+  sarc.position.set(0, 0.3, -7); scene.add(sarc); sceneDecor.push(sarc);
+  const lid = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.2, 3.8), makeMaterial(0xe0b870));
+  lid.position.set(0, 0.7, -7); scene.add(lid); sceneDecor.push(lid);
+  makeSign(0, 2, -7, Math.PI, '⚰️ Саркофаг');
+  specialSignPos = new THREE.Vector3(0, 0.5, -7);
+}
+
+// ============================================================
+// LEVEL 12 — ФИНАЛ: КОСМОС
+// ============================================================
+function buildLevel12() {
+  specialSignPos = null;
+  scene.background = new THREE.Color(0x000008);
+  scene.fog = new THREE.Fog(0x000008, 30, 200);
+
+  // Платформа в пустоте (нет стандартного floor — используем makeStep)
+  const platform = new THREE.Mesh(new THREE.CylinderGeometry(12, 12, 0.5, 32), makeMaterial(0x1a1a2a));
+  platform.position.set(0, -0.25, 0); scene.add(platform);
+  supportSurfaces.push(platform); sceneDecor.push(platform);
+  floor = platform; // чтобы rebuildWorld удалил
+
+  const amb = new THREE.AmbientLight(0x080818, 1.0); scene.add(amb); sceneDecor.push(amb);
+  const starLight = new THREE.PointLight(0xffffff, 0.8, 60); starLight.position.set(0, 20, 0);
+  scene.add(starLight); sceneDecor.push(starLight);
+
+  // Звёзды (маленькие сферы далеко)
+  for (let i = 0; i < 60; i++) {
+    const a = Math.random() * Math.PI * 2, el = (Math.random() - 0.5) * Math.PI;
+    const r = 60 + Math.random() * 60;
+    const star = new THREE.Mesh(new THREE.SphereGeometry(0.15 + Math.random() * 0.3, 4, 4),
+      new THREE.MeshBasicMaterial({ color: 0xffffff }));
+    star.position.set(Math.cos(a) * Math.cos(el) * r, Math.sin(el) * r, Math.sin(a) * Math.cos(el) * r);
+    scene.add(star); sceneDecor.push(star);
+  }
+
+  // Земля вдали
+  const earth = new THREE.Mesh(new THREE.SphereGeometry(8, 24, 24), makeMaterial(0x2255cc));
+  earth.position.set(40, -20, -80); scene.add(earth); sceneDecor.push(earth);
+  // Материки
+  const land = new THREE.Mesh(new THREE.SphereGeometry(8.05, 12, 12), makeMaterial(0x228833));
+  land.position.copy(earth.position); scene.add(land); sceneDecor.push(land);
+
+  // Звезда-финал (interact → showEndScreen)
+  const finalStar = new THREE.Mesh(new THREE.SphereGeometry(1.2, 16, 16),
+    new THREE.MeshBasicMaterial({ color: 0xffdd00 }));
+  finalStar.position.set(0, 4, -8); scene.add(finalStar); sceneDecor.push(finalStar);
+  const glow = new THREE.PointLight(0xffaa00, 2.0, 10); glow.position.set(0, 4, -8);
+  scene.add(glow); sceneDecor.push(glow);
+  specialSignPos = new THREE.Vector3(0, 4, -8);
+}
+
+function goToLevel(n) {
+  // #32 — спидран
+  if (eggs.levelTime < 30 && eggs.levelTime > 3) eggFound('Спидран! ⚡');
+  createConfetti();
+  state.level = n;
+  state.secretShip = false;
+  resetLevelEggs();
+  rebuildWorld();
+  respawnAt(new THREE.Vector3(0, 1, 0), 0);
+  showMessage('Уровень ' + n);
+}
+
+function startLavaSequence() {
+  state.lavaSequence = true;
+  state.foundEgg2 = true;
+  state.level = 3;
+  rebuildWorld();
+  state.hp = state.maxHp;
+  updateHpBar();
+  state.jumpVel = 0;
+  state.onGround = false;
+  showMessage('Лава оказалась люком.<br>Проваливаешься на следующий уровень...');
+  respawnAt(new THREE.Vector3(0, 0, 0), Math.PI); // Спавн в центре level 3
+}
+
+function insidePond(pos, pond) {
+  if (!pond) return false;
+  const dx = pos.x - pond.x;
+  const dz = pos.z - pond.z;
+  return dx * dx + dz * dz <= pond.radius * pond.radius;
+}
+
+function showMessage(text, duration = 3500) {
+  const d = document.createElement('div');
+  d.style.cssText = `
+    position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+    background:rgba(0,0,0,0.85); color:#fff; padding:20px 36px;
+    border-radius:14px; font-size:22px; font-family:sans-serif;
+    text-align:center; z-index:200; pointer-events:none;
+    border:1px solid rgba(255,255,255,0.25); line-height:1.5;
+  `;
+  d.innerHTML = text;
+  document.body.appendChild(d);
+  setTimeout(() => d.remove(), duration);
+}
+
+const GRAVITY = -15;
+const JUMP_FORCE = 8.5;
+
+// ============================================================
+// INPUT
+// ============================================================
+
+// Keyboard
+const keys = {};
+const dot = document.getElementById('dot');
+
+window.addEventListener('keydown', e => {
+  keys[e.key] = true;
+  if (e.key === 'Enter') {
+    state.interact = true;
+    dot.classList.add('pressed');
+  }
+  if (e.key === '1') { goToLevel(5); }
+  
+  // Проверка кода для пасхалки (кириллица)
+  state.code.push(e.key.toLowerCase());
+  if (state.code.length > 4) state.code.shift();
+  if (state.code.join('') === 'лука') {
+    if (!state.secretShip) {
+      state.secretShip = true;
+      addSecretShip();
+      showMessage('🚀 Секретный корабль разработчика открыт!');
+    }
+  }
+
+  // ---- Расширенные пасхалки (текстовые коды) ----
+  eggs.buf.push(e.key.toLowerCase());
+  if (eggs.buf.length > 12) eggs.buf.shift();
+  const buf = eggs.buf.join('');
+
+  if (buf.endsWith('maze'))    eggFound('v1.0 — сделано с ❤️');                          // #6
+  if (buf.endsWith('luka'))    eggFound('Привет, Лука 👋');                              // #7
+  if (buf.endsWith('easter'))  eggFound('🥚 Найдено!');                                  // #8
+  if (buf.endsWith('321'))   { eggFound('3... 2... 1... Пуск!'); state.jumpVel = 8; }   // #9
+  if (buf.endsWith('hello') || buf.endsWith('привет')) eggFound('Привет, игрок 👾');     // #65
+  if (buf.endsWith('why'))     eggFound('Потому что лабиринт');                          // #69
+  if (buf.endsWith('version')) eggFound('Easter Maze v1.0 — Three.js r160');             // #68
+  if (buf.endsWith('help') || buf.endsWith('aaa')) eggFound('Тебя никто не слышит 🙂'); // #70
+  if (state.level === 12 && buf.endsWith('60')) eggFound('Астроном 🌌');                // #88
+  if (buf.endsWith('debug')) {                                                            // #67
+    eggs.debugOn = !eggs.debugOn;
+    document.getElementById('egg-debug').style.display = eggs.debugOn ? 'block' : 'none';
+    eggFound(eggs.debugOn ? '🔧 Debug ON' : '🔧 Debug OFF');
+  }
+
+  // Конами: ↑↑↓↓←→←→  (#10)
+  const km = { ArrowUp:'u', ArrowDown:'d', ArrowLeft:'l', ArrowRight:'r' };
+  if (km[e.key]) {
+    eggs.konami.push(km[e.key]);
+    if (eggs.konami.length > 8) eggs.konami.shift();
+    if (eggs.konami.join('') === 'uuddlrlr') {
+      eggFound('+30 жизней... но жизней нет 🎮');
+      eggs.konami = [];
+    }
+  }
+
+  // Зигзаг: L R L R L (#5) и Танец: L R L R (#49)
+  if (e.key === 'ArrowLeft'  || e.key === 'a' || e.key === 'A') {
+    if (eggs.zigzag[eggs.zigzag.length-1] !== 'L') eggs.zigzag.push('L');
+  }
+  if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+    if (eggs.zigzag[eggs.zigzag.length-1] !== 'R') eggs.zigzag.push('R');
+  }
+  if (eggs.zigzag.length > 10) eggs.zigzag.shift();
+  const zz = eggs.zigzag.slice(-5).join('');
+  if (zz === 'LRLRL') { eggFound('Змейка 🐍'); eggs.zigzag = []; }  // #5
+  const dd = eggs.zigzag.slice(-4).join('');
+  if (dd === 'LRLR')  { eggFound('💃 Диско'); eggs.zigzag = []; }    // #49
+});
+window.addEventListener('keyup', e => {
+  keys[e.key] = false;
+  if (e.key === 'Enter') {
+    dot.classList.remove('pressed');
+  }
+});
+
+window.addEventListener('mousemove', e => {
+  if (!dot) return;
+  dot.style.left = `${e.clientX}px`;
+  dot.style.top = `${e.clientY}px`;
+});
+
+renderer.domElement.addEventListener('mousedown', e => {
+  if (!dot) return;
+  dot.classList.add('pressed');
+  if (isPointerOnShip(e.clientX, e.clientY)) {
+    triggerShipExplosion();
+    showMessage('Корабль активирован!<br>Зажми ещё раз, чтобы взорвать.');
+  }
+});
+renderer.domElement.addEventListener('mouseup', () => {
+  if (!dot) return;
+  dot.classList.remove('pressed');
+});
+
+function isPointerOnShip(clientX, clientY) {
+  if (!secretShipGroup) return false;
+  const rect = renderer.domElement.getBoundingClientRect();
+  const x = ((clientX - rect.left) / rect.width) * 2 - 1;
+  const y = -((clientY - rect.top) / rect.height) * 2 + 1;
+  raycaster.setFromCamera({ x, y }, camera);
+  const hits = raycaster.intersectObject(secretShipGroup, true);
+  return hits.length > 0;
+}
+
+// Touch — swipe for rotation, buttons for move/jump
+let touchStart = null;
+let touchId = null;
+
+renderer.domElement.addEventListener('touchstart', e => {
+  const t = e.changedTouches[0];
+  touchStart = { x: t.clientX, y: t.clientY };
+  touchId = t.identifier;
+}, { passive: true });
+
+renderer.domElement.addEventListener('touchmove', e => {
+  for (const t of e.changedTouches) {
+    if (t.identifier === touchId && touchStart) {
+      const dx = t.clientX - touchStart.x;
+      state.yaw -= dx * 0.004;
+      touchStart = { x: t.clientX, y: t.clientY };
+    }
+  }
+}, { passive: true });
+
+renderer.domElement.addEventListener('touchend', e => {
+  for (const t of e.changedTouches) {
+    if (t.identifier === touchId) {
+      touchStart = null;
+      touchId = null;
+    }
+  }
+}, { passive: true });
+
+// Forward button
+const btnForward = document.getElementById('btn-forward');
+btnForward.addEventListener('touchstart', () => state.moving = true,  { passive: true });
+btnForward.addEventListener('touchend',   () => state.moving = false, { passive: true });
+btnForward.addEventListener('mousedown',  () => state.moving = true);
+btnForward.addEventListener('mouseup',    () => state.moving = false);
+
+// Back button
+const btnBack = document.getElementById('btn-back');
+btnBack.addEventListener('touchstart', () => state.movingBack = true,  { passive: true });
+btnBack.addEventListener('touchend',   () => state.movingBack = false, { passive: true });
+btnBack.addEventListener('mousedown',  () => state.movingBack = true);
+btnBack.addEventListener('mouseup',    () => state.movingBack = false);
+
+// Jump button
+const btnJump = document.getElementById('btn-jump');
+btnJump.addEventListener('touchstart', () => state.jumping = true, { passive: true });
+btnJump.addEventListener('mousedown',  () => state.jumping = true);
+
+// HP bar
+const hpFill = document.getElementById('hp-fill');
+function updateHpBar() {
+  hpFill.style.width = (state.hp / state.maxHp * 100) + '%';
+}
+updateHpBar();
+
+// ============================================================
+// COLLISION (AABB simple)
+// ============================================================
+const playerBox = new THREE.Box3();
+const wallBox   = new THREE.Box3();
+const stepBox   = new THREE.Box3();
+const supportBox = new THREE.Box3();
+const STEP_SNAP = 0.25;
+
+function getSupportTop(obj) {
+  const box = new THREE.Box3().setFromObject(obj);
+  return box.max.y;
+}
+
+function resolveSupportOverlap(pos) {
+  playerBox.setFromCenterAndSize(
+    new THREE.Vector3(pos.x, pos.y + 0.9, pos.z),
+    new THREE.Vector3(0.7, 1.8, 0.7)
+  );
+  for (const support of supportSurfaces) {
+    supportBox.setFromObject(support);
+    if (playerBox.intersectsBox(supportBox)) {
+      const top = getSupportTop(support);
+      // Только если падаем или стоим, и ноги игрока примерно у поверхности
+      if (state.jumpVel <= 0 && pos.y <= top + STEP_SNAP) {
+        pos.y = top;
+        state.jumpVel = 0;
+        state.onGround = true;
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+function getStepTop(step) {
+  return step.position.y + (step.userData.stepHeight || 0) / 2;
+}
+
+function resolveStepOverlap(pos) {
+  playerBox.setFromCenterAndSize(
+    new THREE.Vector3(pos.x, pos.y + 0.9, pos.z),
+    new THREE.Vector3(0.7, 1.8, 0.7)
+  );
+  for (const step of steps) {
+    stepBox.setFromObject(step);
+    if (playerBox.intersectsBox(stepBox)) {
+      const top = getStepTop(step);
+      if (state.jumpVel <= 0 && pos.y <= top + STEP_SNAP) {
+        pos.y = top;
+        state.jumpVel = 0;
+        state.onGround = true;
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+function checkWallCollision(newPos) {
+  playerBox.setFromCenterAndSize(
+    new THREE.Vector3(newPos.x, newPos.y + 0.9, newPos.z),
+    new THREE.Vector3(0.7, 1.8, 0.7)
+  );
+  for (const w of walls) {
+    wallBox.setFromObject(w);
+    if (playerBox.intersectsBox(wallBox)) return true;
+  }
+  return false;
+}
+
+function findStepCollision(newPos) {
+  playerBox.setFromCenterAndSize(
+    new THREE.Vector3(newPos.x, newPos.y + 0.9, newPos.z),
+    new THREE.Vector3(0.7, 1.8, 0.7)
+  );
+  for (const step of steps) {
+    stepBox.setFromObject(step);
+    if (playerBox.intersectsBox(stepBox)) return step;
+  }
+  return null;
+}
+
+function findStepSupport(pos) {
+  playerBox.setFromCenterAndSize(
+    new THREE.Vector3(pos.x, pos.y + 0.9, pos.z),
+    new THREE.Vector3(0.7, 1.8, 0.7)
+  );
+  for (const step of steps) {
+    const top = getStepTop(step);
+    if (pos.y > top + 0.7) continue;
+    stepBox.setFromObject(step);
+    if (playerBox.intersectsBox(stepBox) && pos.y <= top + 0.15) {
+      return top;
+    }
+  }
+  return null;
+}
+
+// ============================================================
+// LOOP
+// ============================================================
+let last = performance.now();
+
+// ============================================================
+// EGG TICK — вызывается каждый кадр
+// ============================================================
+function eggTick(dt, pos) {
+  eggs.levelTime += dt;
+
+  // Одноразовая проверка времени суток (#34, #35, #36)
+  if (!eggs.timeChecked) {
+    eggs.timeChecked = true;
+    const h = new Date().getHours();
+    const d = new Date().getDay();
+    if (h >= 23 || h < 1)    setTimeout(() => eggFound('Поздно. Ты должен спать.'), 3000);
+    else if (h >= 1 && h < 7) setTimeout(() => eggFound('Рано встал! Или не ложился?'), 3000);
+    if (d === 5)               setTimeout(() => eggFound('Пятница! Работать не надо 🎉'), 4000);
+  }
+
+  // #32 — скоростное прохождение (выход < 30 сек) — проверяется при goToLevel
+
+  // #33 — 5 минут на уровне
+  if (eggs.levelTime > 300 && !eggs._5min) {
+    eggs._5min = true;
+    eggFound('Ты здесь уже давно. Может, тебе здесь нравится?');
+  }
+
+  // #97 — край карты
+  if ((Math.abs(pos.x) > 140 || Math.abs(pos.z) > 140) && !eggs._edge) {
+    eggs._edge = true;
+    eggFound('Край мира. Дальше — void.');
+  }
+
+  // #4 — стоять 30 секунд
+  if (!eggs.lastPos) eggs.lastPos = pos.clone();
+  const moved = pos.distanceTo(eggs.lastPos) > 0.15;
+  if (moved) { eggs.lastPos.copy(pos); eggs.stillTime = 0; eggs._still30 = false; }
+  else {
+    eggs.stillTime += dt;
+    if (eggs.stillTime > 30 && !eggs._still30) {
+      eggs._still30 = true;
+      eggFound('Ты не двигался 30 секунд. Всё в порядке?');
+    }
+  }
+
+  // #1 — идти назад 10 секунд
+  const goingBack = state.movingBack || keys['ArrowDown'] || keys['s'] || keys['S'];
+  if (goingBack) {
+    eggs.backwardTime += dt;
+    if (eggs.backwardTime > 10 && !eggs._backward10) {
+      eggs._backward10 = true; eggFound('Ты идёшь не туда. Или туда?');
+    }
+  } else { eggs.backwardTime = 0; eggs._backward10 = false; }
+
+  // #3 — поворот 360°
+  if (eggs.yawLast === null) eggs.yawLast = state.yaw;
+  let dy = state.yaw - eggs.yawLast;
+  while (dy > Math.PI) dy -= Math.PI * 2;
+  while (dy < -Math.PI) dy += Math.PI * 2;
+  eggs.yawAccum += Math.abs(dy);
+  eggs.yawLast = state.yaw;
+  if (eggs.yawAccum > Math.PI * 2 && !eggs._360done) {
+    eggs._360done = true; eggFound('Земля всё ещё круглая 🌍');
+  }
+  if (eggs.yawAccum > Math.PI * 6) eggs.yawAccum = 0; // сброс
+
+  // #71 — 100 шагов вперёд
+  const goingFwd = state.moving || keys['ArrowUp'] || keys['w'] || keys['W'];
+  if (goingFwd && moved) {
+    eggs.forwardSteps++;
+    if (eggs.forwardSteps >= 100 && !eggs.m100steps) {
+      eggs.m100steps = true; eggFound('100 шагов. Марафон начинается с первого.');
+    }
+  }
+
+  // #81 — Level 5: стоять у трона 5 секунд
+  if (state.level === 5) {
+    const thronePos = new THREE.Vector3(0, 0, 9);
+    if (pos.distanceTo(thronePos) < 2.5) {
+      eggs.throneTime += dt;
+      if (eggs.throneTime > 5 && !eggs._throne) {
+        eggs._throne = true; eggFound('Ты — король. Но лабиринт всё равно не пройден.');
+      }
+    } else { eggs.throneTime = 0; }
+  }
+
+  // #87 — Level 11: буквы E-a-s-t-e-r по порядку
+  if (state.level === 11) {
+    const lpos = [
+      new THREE.Vector3(-7.5,2,-5), new THREE.Vector3(-7.5,2,-2),
+      new THREE.Vector3(-7.5,2,1),  new THREE.Vector3(-7.5,2,4),
+      new THREE.Vector3(-7.5,2,7),  new THREE.Vector3(-7.5,2,10),
+    ];
+    const ni = eggs.l11letters.length;
+    if (ni < 6 && pos.distanceTo(lpos[ni]) < 2.5) {
+      eggs.l11letters.push(ni);
+      if (eggs.l11letters.length === 6) eggFound('E-A-S-T-E-R ✨', 7000);
+    }
+  }
+
+  // #99, #100 — Level 12: смотреть на звезду / обойти её
+  if (state.level === 12 && specialSignPos) {
+    // #99 — гейз на звезду 5 сек
+    const toStar = specialSignPos.clone().sub(pos).normalize();
+    const fwd = new THREE.Vector3(-Math.sin(state.yaw), 0, -Math.cos(state.yaw));
+    const dist = pos.distanceTo(specialSignPos);
+    if (fwd.dot(toStar) > 0.92 && dist < 40) {
+      eggs.l12gaze += dt;
+      if (eggs.l12gaze > 5 && !eggs._l12gaze) {
+        eggs._l12gaze = true; eggFound('Она тебя видит ⭐');
+      }
+    } else eggs.l12gaze = Math.max(0, eggs.l12gaze - dt);
+
+    // #100 — обойти звезду 3 раза
+    const angle = Math.atan2(pos.z - specialSignPos.z, pos.x - specialSignPos.x);
+    if (eggs.l12starAngle !== null) {
+      let delta = angle - eggs.l12starAngle;
+      while (delta > Math.PI) delta -= Math.PI * 2;
+      while (delta < -Math.PI) delta += Math.PI * 2;
+      eggs.l12angleAccum += delta;
+      if (Math.abs(eggs.l12angleAccum) >= Math.PI * 6 && !eggs._l12circle) {
+        eggs._l12circle = true;
+        eggFound('Звезда летит к тебе... ⭐');
+        setTimeout(() => showEndScreen(), 3500);
+      }
+    }
+    eggs.l12starAngle = angle;
+  } else if (state.level !== 12) {
+    eggs.l12starAngle = null; eggs.l12angleAccum = 0;
+  }
+
+  // Debug overlay
+  if (eggs.debugOn) {
+    const dbg = document.getElementById('egg-debug');
+    if (dbg) dbg.textContent =
+      `xyz: ${pos.x.toFixed(1)} ${pos.y.toFixed(1)} ${pos.z.toFixed(1)}` +
+      ` | yaw: ${(state.yaw*180/Math.PI).toFixed(0)}°` +
+      ` | lvl: ${state.level} | 🥚: ${eggs.found}`;
+  }
+}
+
+function tick() {
+  requestAnimationFrame(tick);
+
+  const now = performance.now();
+  const dt = Math.min((now - last) / 1000, 0.05);
+  last = now;
+
+  const pos = playerGroup.position;
+
+  if (state.lavaSequence) {
+    pos.y -= 8 * dt;
+    playerGroup.rotation.y += 1.5 * dt;
+
+    if (pos.y < -10) {
+      state.lavaSequence = false;
+      playerGroup.rotation.y = 0;
+      respawnAt(new THREE.Vector3(0, 0, 0), Math.PI);
+      showMessage('🔥 Следующий уровень');
+      return; // следующий кадр уже с нормальной камерой
+    }
+
+    const camTarget = new THREE.Vector3(pos.x, pos.y + 1.0, pos.z);
+    camera.position.set(pos.x + 2.6, pos.y + 4.2, pos.z + 2.6);
+    camera.lookAt(camTarget);
+    renderer.render(scene, camera);
+    return;
+  }
+
+  if (diveSequence) {
+    diveProgress += dt;
+    pos.y -= 5 * dt;
+    pos.z -= 2 * dt;
+    playerGroup.rotation.x -= 1.2 * dt;
+
+    const camTarget = new THREE.Vector3(pos.x, pos.y + 1.0, pos.z);
+    camera.position.set(pos.x, pos.y + 3.5, pos.z + 5);
+    camera.lookAt(camTarget);
+    renderer.render(scene, camera);
+
+    if (diveProgress > 2.2) {
+      diveSequence = false;
+      diveProgress = 0;
+      playerGroup.rotation.x = 0;
+      goToLevel(5);
+    }
+    return;
+  }
+
+  if (gameEnded) {
+    renderer.render(scene, camera);
+    return;
+  }
+
+  // --- Rotation from keyboard ---
+  if (keys['ArrowLeft']  || keys['a'] || keys['A']) state.yaw += 2.0 * dt;
+  if (keys['ArrowRight'] || keys['d'] || keys['D']) state.yaw -= 2.0 * dt;
+
+  // --- Sprint ---
+  const isSprinting = keys['Shift'];
+
+  // --- Forward / Back movement ---
+  const wantMove = state.moving
+    || keys['ArrowUp'] || keys['w'] || keys['W'];
+  const wantBack = state.movingBack
+    || keys['ArrowDown'] || keys['s'] || keys['S'];
+
+  // Unstuck: если игрок уже внутри стены — вытолкнуть
+  if (checkWallCollision(pos)) {
+    const nudge = 0.35;
+    for (const t of [
+      new THREE.Vector3(nudge, 0, 0), new THREE.Vector3(-nudge, 0, 0),
+      new THREE.Vector3(0, 0, nudge), new THREE.Vector3(0, 0, -nudge),
+    ]) {
+      const attempt = pos.clone().add(t);
+      if (!checkWallCollision(attempt)) { pos.copy(attempt); break; }
+    }
+  }
+
+  if (wantMove || wantBack) {
+    const currentSpeed = isSprinting && wantMove ? state.speed * 2.2 : state.speed;
+    const dir = wantBack ? -1 : 1;
+    const dx = Math.sin(state.yaw) * currentSpeed * dt * dir;
+    const dz = Math.cos(state.yaw) * currentSpeed * dt * dir;
+    const next = pos.clone().add(new THREE.Vector3(-dx, 0, -dz));
+    const stepHit = findStepCollision(next);
+    // Подъём на ступеньку только когда стоим или падаем, не во время прыжка вверх
+    if (stepHit && state.jumpVel <= 0) {
+      const stepTop = getStepTop(stepHit);
+      const currentBottom = pos.y;
+      if (stepTop - currentBottom <= 1.0) {
+        next.y = stepTop;
+        state.jumpVel = 0;
+        state.onGround = true;
+        pos.copy(next);
+      }
+    } else if (!stepHit && !checkWallCollision(next)) {
+      pos.copy(next);
+    } else if (stepHit && state.jumpVel > 0) {
+      // Прыгаем — просто двигаемся горизонтально мимо ступеньки
+      if (!checkWallCollision(next)) pos.copy(next);
+    } else {
+      // Скольжение вдоль стены: пробуем X и Z по отдельности
+      const nextX = new THREE.Vector3(pos.x - dx, pos.y, pos.z);
+      if (!checkWallCollision(nextX)) {
+        pos.copy(nextX);
+      } else {
+        const nextZ = new THREE.Vector3(pos.x, pos.y, pos.z - dz);
+        if (!checkWallCollision(nextZ)) pos.copy(nextZ);
+      }
+    }
+  }
+
+  // --- Jump ---
+  if ((state.jumping || keys[' ']) && state.onGround) {
+    state.jumpVel = JUMP_FORCE;
+    state.onGround = false;
+    eggs.totalJumps++;
+    // #2 — 7 прыжков на месте
+    if (!eggs.jumpInPlacePos) eggs.jumpInPlacePos = pos.clone();
+    if (pos.distanceTo(eggs.jumpInPlacePos) < 1.0) {
+      eggs.jumpInPlace++;
+      if (eggs.jumpInPlace >= 7) { eggFound('×7'); eggs.jumpInPlace = 0; }
+    } else {
+      eggs.jumpInPlace = 0;
+      eggs.jumpInPlacePos.copy(pos);
+    }
+    // #47 — 50 прыжков на уровне
+    if (eggs.totalJumps >= 50 && !eggs.m50jumps) {
+      eggs.m50jumps = true;
+      eggFound('50 прыжков. Устал?');
+    }
+  }
+  state.jumping = false;
+
+  // --- Gravity ---
+  state.jumpVel += GRAVITY * dt;
+  pos.y += state.jumpVel * dt;
+  if (pos.y <= 0) {
+    pos.y = 0;
+    state.jumpVel = 0;
+    state.onGround = true;
+  } else if (state.jumpVel < 0) {
+    if (!resolveSupportOverlap(pos)) {
+      resolveStepOverlap(pos);
+    }
+  }
+
+  // --- Easter egg #1: прошёл сквозь призрачную стену ---
+  if (pos.x < -20.5 && pos.z > -18.5 && pos.z < -13.5 && !state.foundEgg1) {
+    state.foundEgg1 = true;
+    showMessage('Ты прошёл сквозь стену!<br>🎉 Пасхалка найдена');
+  }
+
+  // --- Easter egg #2: сад с двумя водами и одной лавой ---
+  if (insidePond(pos, waterPondA) || insidePond(pos, waterPondB)) {
+    state.hp = Math.max(0, state.hp - 38 * dt);
+    updateHpBar();
+    if (state.hp <= 0.01) {
+      state.hp = state.maxHp;
+      updateHpBar();
+      // Трекинг смертей
+      eggs.totalDeaths++;
+      const dp = pos.clone();
+      if (eggs.lastDeathPos && dp.distanceTo(eggs.lastDeathPos) < 3) {
+        eggs.sameDeaths++;
+        if (eggs.sameDeaths >= 3) { eggFound('Это место тебя не любит'); eggs.sameDeaths = 0; } // #48
+      } else { eggs.sameDeaths = 0; }
+      eggs.lastDeathPos = dp;
+      if (eggs.totalDeaths >= 10 && !eggs.m10deaths) { eggs.m10deaths = true; eggFound('10 смертей. Ты несмертелен — ну почти.'); } // #73
+      respawnAt(gardenRespawn, Math.PI / 2);
+      showMessage('Вода оказалась ловушкой.<br>Возрождение у входа в сад.');
+    }
+  }
+
+  if (insidePond(pos, lavaPond) && !state.foundEgg2) {
+    eggs.lavaDeaths++;
+    if (eggs.lavaDeaths >= 3) { eggFound('Тебе нравится лава?'); eggs.lavaDeaths = 0; } // #95
+    startLavaSequence();
+  }
+
+  // Нырок в башню на пляже (уровень 4)
+  if (state.level === 4 && !diveSequence && !gameEnded && pos.z < -20 && pos.y <= 0.5) {
+    diveSequence = true;
+    diveProgress = 0;
+    showMessage('Ты вошёл в воду...<br>🌊');
+  }
+
+  // Egg tick
+  if (!gameEnded) eggTick(dt, pos);
+
+  // Зонные переходы между уровнями
+  if (state.level === 5 && pos.z < -21 && !gameEnded) {
+    goToLevel(6);
+  }
+  if (state.level === 7 && pos.x > 13.5 && !gameEnded) {
+    goToLevel(8);
+  }
+  if (state.level === 8 && pos.z < -17 && !gameEnded) {
+    goToLevel(9);
+  }
+  if (state.level === 9 && pos.z < -17 && !gameEnded) {
+    showMessage('🌊 Прыгаешь за борт...');
+    goToLevel(10);
+  }
+  if (state.level === 10 && pos.z < -7 && !gameEnded) {
+    showMessage('🔥 Портал затягивает...');
+    goToLevel(11);
+  }
+
+  if (state.interact) {
+    eggs.levelInteracts++;
+    if (eggs.levelInteracts === 5) eggFound('Любопытный 🔍'); // #77
+    if (state.level === 3) {
+      if (!state.secretShip && specialSignPos && pos.distanceTo(specialSignPos) < 2.8) {
+        state.secretShip = true;
+        addSecretShip();
+        showMessage('Знак сработал.<br>🚀 Корабль появился посреди сада!');
+      } else if (secretShipGroup) {
+        const shipPos = secretShipGroup.position;
+        if (pos.distanceTo(shipPos) < 4.5) {
+          triggerShipExplosion();
+          showMessage('🚀 Корабль активирован!');
+        }
+      }
+    } else if (state.level === 4) {
+      if (specialSignPos && pos.distanceTo(specialSignPos) < 2.5 && !state.foundSecretBook) {
+        state.foundSecretBook = true;
+        showMessage(
+          '📖 «Тот, кто дочитал до этой страницы,<br>уже прошёл лабиринт.»',
+          6000
+        );
+      }
+    } else if (state.level === 5) {
+      // Тайная дверь за троном (#11)
+      if (specialSignPos && pos.distanceTo(specialSignPos) < 2.5 && !state.foundCastle) {
+        state.foundCastle = true;
+        eggFound('👑 Тайный ход за троном открылся!', 6000);
+      }
+    } else if (state.level === 6) {
+      if (specialSignPos && pos.distanceTo(specialSignPos) < 2.5) {
+        showMessage('🔼 Лифт едет вверх...');
+        goToLevel(7);
+      }
+    } else if (state.level === 8) {
+      if (specialSignPos && pos.distanceTo(specialSignPos) < 2.5 && !state.foundSecretBook) {
+        state.foundSecretBook = true;
+        showMessage('📖 «Тот, кто дочитал до этой страницы,<br>уже прошёл лабиринт.»', 6000);
+      }
+    } else if (state.level === 10) {
+      if (specialSignPos && pos.distanceTo(specialSignPos) < 2.5 && !state.foundPhone) {
+        state.foundPhone = true;
+        eggFound('📱 СМС: «Мы ждём тебя»', 5000);
+      }
+    } else if (state.level === 11) {
+      if (specialSignPos && pos.distanceTo(specialSignPos) < 2.5) {
+        showMessage('⚰️ Саркофаг открывается...');
+        createConfetti();
+        state.level = 12;
+        state.secretShip = false;
+        rebuildWorld();
+        respawnAt(new THREE.Vector3(0, 2, 0), 0);
+        showMessage('Уровень 12');
+      }
+    } else if (state.level === 12) {
+      if (specialSignPos && pos.distanceTo(specialSignPos) < 3.0) {
+        showEndScreen();
+      }
+    }
+    state.interact = false;
+  }
+
+  if (shipExplosion) {
+    shipExplosionProgress += dt;
+    if (secretShipGroup) {
+      secretShipGroup.rotation.x += 3.5 * dt;
+      secretShipGroup.rotation.y += 4.7 * dt;
+      const scale = 1 + shipExplosionProgress * 0.4;
+      secretShipGroup.scale.set(scale, scale, scale);
+    }
+    if (shipExplosionProgress > 1.2) {
+      shipExplosion = false;
+      shipExplosionProgress = 0;
+      createConfetti();
+      showMessage('🎆 Переход на уровень 4!');
+      state.level = 4;
+      state.secretShip = false;
+      rebuildWorld();
+      respawnAt(new THREE.Vector3(0, 0, 12), 0); // смотрит на север — к воде
+    }
+  }
+
+  // --- Player rotation ---
+  playerGroup.rotation.y = state.yaw;
+
+  // --- Camera follow (third person) с защитой от стен ---
+  const CAM_DIST_MAX = 4.2;
+  const CAM_HEIGHT = 3.2;
+  const camTarget = new THREE.Vector3(pos.x, pos.y + 1.2, pos.z);
+
+  // Желаемая позиция камеры
+  const camDesired = new THREE.Vector3(
+    pos.x + Math.sin(state.yaw) * CAM_DIST_MAX,
+    pos.y + CAM_HEIGHT,
+    pos.z + Math.cos(state.yaw) * CAM_DIST_MAX
+  );
+
+  // Raycast от игрока к желаемой позиции камеры
+  const camOrigin = new THREE.Vector3(pos.x, pos.y + CAM_HEIGHT, pos.z);
+  const camDir = camDesired.clone().sub(camOrigin).normalize();
+  const camRay = new THREE.Raycaster(camOrigin, camDir, 0.1, CAM_DIST_MAX);
+  const camHits = camRay.intersectObjects(walls);
+
+  let camDist = CAM_DIST_MAX;
+  if (camHits.length > 0) {
+    camDist = Math.max(0.5, camHits[0].distance - 0.3);
+  }
+
+  camera.position.set(
+    pos.x + Math.sin(state.yaw) * camDist,
+    pos.y + CAM_HEIGHT,
+    pos.z + Math.cos(state.yaw) * camDist
+  );
+  camera.lookAt(camTarget);
+
+  renderer.render(scene, camera);
+}
+
+tick();
+</script>
+</body>
+</html>

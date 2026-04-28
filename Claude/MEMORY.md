@@ -90,6 +90,21 @@ MyApp.swift:
 - Статус: теория оформлена, статья написана (article.md), эксперименты записаны но не проведены
 - Файлы: `theory.md`, `sources.md`, `experiments.md`, `notes.md`, `article.md`, `context.md`
 
+### Easter Maze Level Process
+- [Easter Maze — процесс создания уровня](MEMORY/easter_maze_level_process.md) — правила buildLevelN(), массивы объектов, критические ошибки, helper-функции
+
+### Easter Maze
+- Папка: `Easter Maze.swiftpm/`
+- Тип: Приложение — Swift Playgrounds, 3D лабиринт на HTML/JS внутри WKWebView
+- Идея: 3D лабиринт от третьего лица, полный пасхалок. Нет финала — только исследование
+- Управление: W/стрелка вверх = вперёд, свайп = поворот, нажатие = прыжок/взаимодействие
+- Стиль: реализм, смешанные зоны (природа, здания, подземелье)
+- Опасность: враги + ловушки, возрождение на месте смерти
+- Пасхалки: (1) петля стрелок — 4 стрелки водят по кругу, выход сквозь стену; (2) луг с 3 озёрами — вода убивает, лава = тоннель дальше
+- Статус: создана структура проекта, игры ещё нет
+- Игровая папка: `EasterMaze/index.html`
+- Файлы: `info.md`, `description.md`, `roadmap.md`, `bugs.md`, `changelog.md`, `context.md`
+
 ### My App (KnightsGame)
 - Папка: `My App.swiftpm/`
 - Тип: Приложение — Swift Playgrounds приложение с HTML-игрой внутри WKWebView
