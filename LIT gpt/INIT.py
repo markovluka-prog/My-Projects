@@ -1,6 +1,7 @@
 import Functions
 from Functions import clean
 import Dictionary
+from Transitions import Transitions
 
 def answer(text):
 	question = clean(text)
@@ -20,20 +21,22 @@ def answer(text):
 	used = {first_word}
 	current_word = first_word
 
-	# Шаг 2: цепочка — каждое следующее слово выбирается по предыдущему
+	# Шаг 2: цепочка — следующее слово только из разрешённых переходов
+	transitions = Transitions().load()
 	for _ in range(n - 1):
 		weight = Functions.WeightCheck(current_word)
 		chain_scores = Functions.RootModel([current_word], weight)
 
-		next_word = max(
-			(w for w in chain_scores if w not in used),
-			key=chain_scores.get,
-			default=None
-		)
+		allowed = transitions.get(current_word)
+		if allowed:
+			candidates = [w for w in chain_scores if w not in used and w in allowed]
+		else:
+			candidates = [w for w in chain_scores if w not in used]
 
-		if next_word is None:
+		if not candidates:
 			break
 
+		next_word = max(candidates, key=chain_scores.get)
 		answers.append(next_word)
 		used.add(next_word)
 		current_word = next_word
@@ -41,5 +44,6 @@ def answer(text):
 	return " ".join(answers)
 
 def learn(text):
-	text = " ".join(Functions.clean(text))
-	x = Functions.LoadDict(text)
+	words = Functions.clean(text)
+	Functions.LoadDict(" ".join(words))
+	Transitions().update(words)
