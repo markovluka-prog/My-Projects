@@ -113,6 +113,11 @@ MyApp.swift:
 - Assets: `KnightsGame/assets/`, `KnightsGame/Tiny Swords/`, звуки .mp3
 - Это шаблон кода для новых приложений
 
+## CLAUDE.md
+- Путь: `/home/user/My-Projects/CLAUDE.md`
+- Правило 1: В начале каждого нового чата читать `Claude/MEMORY.md`
+- Правило 2: На протяжении всего чата задавать вопросы **исключительно** через `AskUserQuestion`
+
 ## Инструкции по работе с проектами
 - Читать MEMORY.md в начале каждой сессии
 - При работе со старым проектом — читать его `context.md` сразу
