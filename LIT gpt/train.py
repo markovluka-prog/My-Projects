@@ -261,12 +261,18 @@ for idx, sentence in enumerate(corpus):
 	if (idx + 1) % 25 == 0:
 		print(f"  [{idx + 1}/{len(corpus)}] обработано...")
 
-print(f"\nГотово! Словарь обновлён.")
+print(f"\nГотово!")
 
-# Показываем размер словаря
 import Dictionary
+from Cooccurrence import Cooccurrence
+from Transitions import Transitions
+
 words = Dictionary.Dictionary().load()
-print(f"Слов в словаре: {len(words)}")
+cooc = Cooccurrence().load()
+trans = Transitions().load()
+print(f"Слов в словаре:       {len(words)}")
+print(f"Слов в co-occurrence: {len(cooc)}")
+print(f"Слов в transitions:   {len(trans)}")
 
 # Тест
 print("\n--- Тест ---")

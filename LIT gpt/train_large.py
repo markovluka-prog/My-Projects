@@ -519,9 +519,24 @@ weight_obj.save()
 print("Веса сохранены.")
 
 # ============================================================
-# РАЗГОВОР С МОДЕЛЬЮ
+# ОБУЧЕНИЕ CO-OCCURRENCE И TRANSITIONS
 # ============================================================
 import INIT
+
+print(f"\nОбучение co-occurrence и transitions на {len(all_sentences)} фразах...")
+for idx, sentence in enumerate(all_sentences):
+    INIT.learn(sentence)
+    if (idx + 1) % 20 == 0:
+        print(f"  [{idx+1}/{len(all_sentences)}] обработано...")
+
+from Cooccurrence import Cooccurrence
+from Transitions import Transitions
+print(f"Co-occurrence: {len(Cooccurrence().load())} слов")
+print(f"Transitions:   {len(Transitions().load())} слов")
+
+# ============================================================
+# РАЗГОВОР С МОДЕЛЬЮ
+# ============================================================
 import Dictionary as D
 
 print(f"\nСловарь: {len(D.Dictionary().load())} слов")
