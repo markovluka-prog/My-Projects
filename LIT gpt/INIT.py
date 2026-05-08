@@ -42,18 +42,18 @@ def answer(text):
 	used = set(question) | {first_word}
 	current_word = first_word
 
-	# Цепочка: следующее слово только из разрешённых переходов
+	# Цепочка: следующее слово только из выученных переходов
+	# Без переходов — останавливаемся (не добавляем случайный мусор)
+	max_len = min(8 + len(question), 12)
 	transitions = Transitions().load()
 	cooc = Cooccurrence()
-	for _ in range(n - 1):
+	for _ in range(max_len - 1):
 		allowed = transitions.get(current_word)
+		if not allowed:
+			break
+
 		chain_scores = cooc.scores_for([current_word])
-
-		if allowed:
-			candidates = [w for w in allowed if w not in used]
-		else:
-			candidates = [w for w in chain_scores if w not in used]
-
+		candidates = [w for w in allowed if w not in used]
 		if not candidates:
 			break
 
