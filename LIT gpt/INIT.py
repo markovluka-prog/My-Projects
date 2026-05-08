@@ -1,31 +1,44 @@
-import Functions, console, dialogs
+import Functions
 from Functions import clean
 import Dictionary
 
 def answer(text):
 	question = clean(text)
-	
+	n = max(2, len(question))
+
+	# Шаг 1: оцениваем весь словарь по вопросу → выбираем первое слово
 	weights = {}
 	for i in question:
 		weights[i] = Functions.WeightCheck(i)
-		
-	root_model = {}
-	for i in Dictionary.Dictionary().load():
-		root_model[i] = 0
+
+	root_model = {w: 0 for w in Dictionary.Dictionary().load()}
 	for i in question:
-		second_dict = {}
-		second_dict = Functions.RootModel(question, weights[i])
-		root_model = Functions.add_two_dicts(root_model, second_dict)
-	root_model_items = list(root_model.values())
-	root_model_words = list(root_model.keys())
-	
-	answers = []
-	for i in root_model_items:
-		answer = root_model_words[root_model_items.index(Functions.ChooseTheBiggest(root_model_items))]
-		answers.append(answer)
-		root_model_items[root_model_items.index(Functions.ChooseTheBiggest(root_model_items))] = -1000000000000000000000
-	n = max(2, len(question))
-	return " ".join(answers[:n])
+		root_model = Functions.add_two_dicts(root_model, Functions.RootModel(question, weights[i]))
+
+	first_word = max(root_model, key=root_model.get)
+	answers = [first_word]
+	used = {first_word}
+	current_word = first_word
+
+	# Шаг 2: цепочка — каждое следующее слово выбирается по предыдущему
+	for _ in range(n - 1):
+		weight = Functions.WeightCheck(current_word)
+		chain_scores = Functions.RootModel([current_word], weight)
+
+		next_word = max(
+			(w for w in chain_scores if w not in used),
+			key=chain_scores.get,
+			default=None
+		)
+
+		if next_word is None:
+			break
+
+		answers.append(next_word)
+		used.add(next_word)
+		current_word = next_word
+
+	return " ".join(answers)
 
 def learn(text):
 	text = " ".join(Functions.clean(text))
