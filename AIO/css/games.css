@@ -21,12 +21,12 @@
   max-width: 500px;
   margin: 0 auto;
   width: 100%;
+  position: relative;
   box-shadow:
     0 0 10px rgba(241,196,15,0.5),
     0 0 30px rgba(241,196,15,0.2),
     inset 0 0 20px rgba(0,0,0,0.3);
-  animation: anim-neon 3s ease-in-out infinite;
-  position: relative;
+  animation: neon-flicker 3s linear infinite;
 }
 
 /* Light bulbs along the border */
@@ -200,3 +200,8 @@
   transition: background var(--transition-fast), border-color var(--transition-fast);
 }
 .game-tent__game:hover { background: rgba(255,255,255,0.12); border-color: rgba(241,196,15,0.3); }
+
+@media (max-width: 600px) {
+  .game-tent { width: 140px; }
+  .games-sign { padding: 8px 12px; }
+}

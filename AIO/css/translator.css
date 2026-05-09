@@ -253,3 +253,10 @@
 }
 .lang-option:hover { background: rgba(139,69,19,0.1); }
 .lang-option.active { background: var(--babel-brick); color: #fff; }
+
+@media (max-width: 640px) {
+  .babel-scene { flex-direction: column; }
+  .babel-tower { width: 100%; flex-direction: row; flex-wrap: wrap; border-right: none; border-bottom: 2px solid rgba(139,69,19,0.4); padding: 8px; max-height: 100px; overflow-x: auto; overflow-y: hidden; }
+  .babel-tier { width: auto; flex-shrink: 0; }
+  .babel-inputs { min-height: 120px; }
+}

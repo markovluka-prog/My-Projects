@@ -9,7 +9,7 @@
 .section--weather::before {
   content: '';
   position: absolute;
-  top: -60px;
+  top: 60px;   /* было -60px → скрыто overflow:hidden, теперь внутри секции */
   right: 80px;
   width: 200px;
   height: 200px;
@@ -215,3 +215,10 @@
 .weather-stat-label { font-size: 0.75rem; color: #666; }
 .weather-stat-value { font-size: 1.2rem; font-weight: 700; color: var(--color-text); }
 .weather-pressure-desc { font-size: 0.72rem; color: #888; }
+
+@media (max-width: 768px) {
+  .weather-details { flex-direction: column; }
+  .weather-map-panel { width: 100%; }
+  .weather-stats { grid-template-columns: 1fr 1fr; }
+  .section--weather::before { display: none; }
+}

@@ -205,3 +205,8 @@
   font-size: 0.68rem;
   margin-right: 6px;
 }
+
+@media (max-width: 600px) {
+  .news-kiosk { gap: 12px; padding: 12px; }
+  .newspaper-cover { width: 140px; min-height: 180px; }
+}
