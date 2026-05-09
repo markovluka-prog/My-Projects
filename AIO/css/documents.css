@@ -175,3 +175,8 @@
 .signed-card:hover { transform: translateX(3px); box-shadow: 3px 3px 10px rgba(0,0,0,0.08); }
 .signed-card__seal { font-size: 1.2rem; }
 .signed-card__name { flex: 1; }
+
+@media (max-width: 640px) {
+  .mailbox-scene { flex-direction: column; }
+  .mailbox-sent { width: 100%; }
+}

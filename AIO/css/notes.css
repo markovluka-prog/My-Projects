@@ -376,3 +376,8 @@
 }
 .select-action:hover { background: rgba(255,255,255,0.3); }
 #cancelSelectBtn { margin-left: auto; }
+
+@media (max-width: 768px) {
+  .notes-layout { flex-direction: column; }
+  .note-editor { width: 100%; border-left: none; border-top: 3px solid #b88040; box-shadow: 0 -4px 16px rgba(0,0,0,0.1); }
+}

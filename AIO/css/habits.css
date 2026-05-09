@@ -5,17 +5,19 @@
   overflow: hidden;
 }
 
-/* Animated clouds */
+/* Animated clouds — doubled content + width:200% → wave-x(-50%) = 1 viewport → seamless loop */
 .section--habits::before {
-  content: '☁  ☁    ☁';
+  content: '☁  ☁    ☁    ☁  ☁    ☁    ☁';
   position: absolute;
   top: 60px;
-  left: -100px;
+  left: 0;
+  width: 200%;
+  white-space: nowrap;
   font-size: 2.5rem;
-  color: rgba(255,255,255,0.7);
+  color: rgba(255,255,255,0.65);
   pointer-events: none;
   z-index: 0;
-  animation: wave-x 30s linear infinite;
+  animation: float-sm 6s ease-in-out infinite, wave-x 30s linear infinite;
   letter-spacing: 30px;
 }
 
@@ -206,3 +208,8 @@
   border: 2px solid rgba(46,204,113,0.2);
 }
 .habit-modal-card h3 { font-size: 1.1rem; font-weight: 700; }
+
+@media (max-width: 600px) {
+  .habit-bed { min-width: 140px; padding: 14px; }
+  .garden-add-btn { width: 100%; text-align: center; }
+}
