@@ -1,0 +1,180 @@
+/* ===== Recipes ===== */
+.section--recipes { background: linear-gradient(180deg, #f5ede0 0%, #f0e8d8 100%); }
+.recipes-title { color: var(--recipe-brown); }
+
+.market-scene {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 24px 60px;
+}
+
+.market-header {
+  font-size: 0.9rem;
+  color: var(--recipe-brown);
+  font-weight: 500;
+}
+
+.market-stalls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.market-stall {
+  background: var(--color-surface);
+  border: 2px solid var(--recipe-brown);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  min-width: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.market-stall__name {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--recipe-brown);
+}
+
+.market-stall__items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.market-ingredient {
+  background: rgba(139,69,19,0.07);
+  border: 1px solid rgba(139,69,19,0.2);
+  border-radius: 20px;
+  padding: 4px 9px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+.market-ingredient.selected {
+  background: var(--recipe-brown);
+  color: #fff;
+  border-color: var(--recipe-brown);
+}
+.market-ingredient:hover { background: rgba(139,69,19,0.15); }
+.market-ingredient.selected:hover { background: rgba(139,69,19,0.8); }
+
+.market-basket-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.market-basket {
+  flex: 1;
+  background: rgba(255,255,255,0.6);
+  border: 2px dashed var(--recipe-brown);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  font-size: 0.85rem;
+  color: var(--recipe-brown);
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.market-basket-label { font-weight: 600; flex-shrink: 0; }
+
+.market-find-btn {
+  padding: 10px 20px;
+  background: var(--recipe-green);
+  color: #fff;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  transition: opacity var(--transition-fast);
+}
+.market-find-btn:hover { opacity: 0.85; }
+
+.recipes-scroll {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.recipe-scroll {
+  background: #fffef0;
+  border: 2px solid var(--recipe-brown);
+  border-radius: 8px 8px 4px 4px;
+  padding: 16px;
+  min-width: 240px;
+  max-width: 300px;
+  box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.recipe-scroll__title {
+  font-family: 'Caveat', cursive;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--recipe-brown);
+}
+
+.recipe-scroll__time {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.recipe-scroll__steps {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.recipe-step {
+  font-family: 'Caveat', cursive;
+  font-size: 0.9rem;
+  color: var(--color-text);
+  padding-left: 14px;
+  position: relative;
+}
+.recipe-step::before {
+  content: attr(data-num) '.';
+  position: absolute;
+  left: 0;
+  color: var(--recipe-brown);
+  font-weight: 700;
+}
+
+.recipe-save-btn {
+  padding: 6px 14px;
+  background: var(--recipe-green);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+  width: max-content;
+}
+.recipe-save-btn:hover { opacity: 0.85; }
+
+.recipes-cellar-btn-wrap {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.recipes-cellar-btn {
+  padding: 8px 16px;
+  background: rgba(139,69,19,0.1);
+  border: 1px solid var(--recipe-brown);
+  border-radius: var(--radius-md);
+  color: var(--recipe-brown);
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: background var(--transition-fast);
+}
+.recipes-cellar-btn:hover { background: rgba(139,69,19,0.2); }

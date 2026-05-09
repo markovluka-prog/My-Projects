@@ -1,0 +1,134 @@
+/* ===== Habits ===== */
+.section--habits { background: linear-gradient(180deg, var(--habit-sky) 0%, #c8f0e0 100%); }
+.habits-title { color: var(--habit-dark); }
+
+.garden-scene {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 24px 60px;
+  background: linear-gradient(180deg, rgba(46,204,113,0.05) 0%, rgba(46,204,113,0.1) 100%);
+}
+
+.garden-sky {
+  height: 60px;
+  background: linear-gradient(180deg, #b3e5fc 0%, var(--habit-sky) 100%);
+  border-radius: var(--radius-lg);
+}
+
+.garden-beds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.habit-bed {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  border: 2px solid rgba(46,204,113,0.2);
+  position: relative;
+}
+
+.habit-bed__plant {
+  font-size: 3rem;
+  transition: font-size var(--transition-slow);
+}
+
+.habit-bed__plant.wilting { filter: grayscale(60%); font-size: 2.2rem; }
+.habit-bed__plant.dried { filter: grayscale(100%); font-size: 1.8rem; opacity: 0.6; }
+
+.habit-bed__name {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--habit-dark);
+  text-align: center;
+}
+
+.habit-bed__streak {
+  font-size: 0.75rem;
+  color: var(--habit-green);
+  font-weight: 600;
+}
+
+.habit-bed__check {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid var(--habit-green);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  color: var(--habit-green);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+.habit-bed__check.done {
+  background: var(--habit-green);
+  color: #fff;
+}
+.habit-bed__check:hover { background: rgba(46,204,113,0.1); }
+
+.habit-bed__freq {
+  font-size: 0.7rem;
+  color: #aaa;
+}
+
+.habit-bed__delete {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 0.8rem;
+  color: #ccc;
+  cursor: pointer;
+}
+.habit-bed__delete:hover { color: #c0392b; }
+
+.habit-soil {
+  background: linear-gradient(180deg, var(--habit-soil) 0%, #5a3a00 100%);
+  height: 20px;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  margin: -20px -20px -20px;
+}
+
+.garden-add-btn {
+  padding: 12px 24px;
+  background: var(--habit-green);
+  color: #fff;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: 0.95rem;
+  width: max-content;
+  transition: opacity var(--transition-fast);
+}
+.garden-add-btn:hover { opacity: 0.85; }
+
+/* Habit add modal */
+.habit-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.habit-modal-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.habit-modal-card h3 { font-size: 1.1rem; font-weight: 700; }

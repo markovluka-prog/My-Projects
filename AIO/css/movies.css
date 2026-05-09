@@ -1,0 +1,117 @@
+/* ===== Movies ===== */
+.section--movies {
+  background: linear-gradient(180deg, #0a1628 0%, #0d2137 100%);
+}
+.movies-title { color: #e8c97a; }
+
+.movies-body {
+  flex: 1;
+  padding: 20px 24px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.movies-search-row {
+  display: flex;
+  justify-content: center;
+}
+
+.movies-search-board {
+  background: #1a2a3a;
+  border: 2px solid var(--movies-brass);
+  border-radius: 6px;
+  padding: 4px 12px;
+  width: 100%;
+  max-width: 520px;
+}
+
+.movies-search-input {
+  width: 100%;
+  background: transparent;
+  color: #e8c97a;
+  font-size: 1rem;
+  padding: 8px 0;
+}
+.movies-search-input::placeholder { color: rgba(232,201,122,0.4); }
+
+.movies-section-label {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.movies-portholes,
+.movies-search-results {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.porthole {
+  width: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform var(--transition-fast);
+}
+.porthole:hover { transform: scale(1.05); }
+
+.porthole__frame {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 8px solid #5a4a2a;
+  background: #0a1e30;
+  box-shadow: 0 0 0 4px #2a1e0a, 0 8px 24px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  overflow: hidden;
+  position: relative;
+}
+.porthole__frame::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.07);
+}
+
+.porthole__label {
+  color: #e8c97a;
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-align: center;
+  max-width: 140px;
+}
+
+.movie-info-panel {
+  background: rgba(10,30,48,0.95);
+  border: 1px solid var(--movies-brass);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  max-width: 480px;
+  margin: 0 auto;
+  color: #e8e4dc;
+}
+
+.movie-info-panel h3 { color: #e8c97a; font-size: 1.2rem; margin-bottom: 8px; }
+.movie-info-panel p { font-size: 0.88rem; line-height: 1.6; margin-bottom: 16px; opacity: 0.8; }
+
+.movie-watch-btn {
+  padding: 10px 24px;
+  background: var(--movies-brass);
+  color: #1a1206;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.movie-watch-btn:hover { opacity: 0.85; }

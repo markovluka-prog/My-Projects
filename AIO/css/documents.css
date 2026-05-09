@@ -1,0 +1,111 @@
+/* ===== Documents ===== */
+.section--documents { background: var(--doc-beige); }
+.documents-title { color: var(--doc-blue); }
+
+.mailbox-scene {
+  flex: 1;
+  display: flex;
+  gap: 20px;
+  padding: 20px 24px 60px;
+  flex-wrap: wrap;
+}
+
+.mailbox-main {
+  flex: 1;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mailbox-slot-area {
+  background: var(--color-surface);
+  border: 3px solid var(--doc-blue);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.mailbox-icon { font-size: 3rem; }
+
+.mailbox-scan-btn {
+  padding: 10px 20px;
+  background: var(--doc-blue);
+  color: #fff;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: opacity var(--transition-fast);
+}
+.mailbox-scan-btn:hover { opacity: 0.85; }
+
+.mailbox-inbox-label,
+.mailbox-sent-label {
+  font-weight: 700;
+  color: var(--doc-blue);
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.mailbox-letters,
+.mailbox-signed {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.letter-card {
+  background: var(--color-surface);
+  border-left: 4px solid var(--doc-blue);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 12px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 2px 2px 8px rgba(0,0,0,0.06);
+  transition: transform var(--transition-fast);
+}
+.letter-card:hover { transform: translateX(3px); }
+
+.letter-card__icon { font-size: 1.5rem; }
+.letter-card__info { flex: 1; }
+.letter-card__name { font-size: 0.9rem; font-weight: 600; color: var(--color-text); }
+.letter-card__date { font-size: 0.72rem; color: #888; }
+
+.letter-card__sign-btn {
+  padding: 5px 10px;
+  background: var(--doc-red);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: opacity var(--transition-fast);
+}
+.letter-card__sign-btn:hover { opacity: 0.85; }
+
+.mailbox-sent {
+  width: 220px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.signed-card {
+  background: var(--color-surface);
+  border-left: 4px solid var(--doc-red);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  margin-bottom: 6px;
+  cursor: pointer;
+}
+.signed-card__seal { font-size: 1.2rem; }
+.signed-card__name { flex: 1; }

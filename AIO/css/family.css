@@ -1,0 +1,155 @@
+/* ===== Family ===== */
+.section--family { background: linear-gradient(180deg, #7ec8a0 0%, #a8d8b0 100%); }
+.family-title { color: #1a3a26; }
+
+.village-scene {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px 24px 60px;
+}
+
+.village-board {
+  display: flex;
+  justify-content: center;
+}
+
+.village-well {
+  background: rgba(255,255,255,0.6);
+  border: 3px solid var(--family-wood);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  max-width: 500px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.village-well-label,
+.village-market-label {
+  font-weight: 700;
+  color: var(--family-wood);
+  font-size: 0.95rem;
+}
+
+.village-events {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 40px;
+}
+
+.village-event {
+  background: rgba(255,255,255,0.7);
+  border-left: 3px solid var(--family-wood);
+  padding: 8px 12px;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 0.88rem;
+}
+
+.village-add-event {
+  padding: 8px 16px;
+  background: var(--family-wood);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  width: max-content;
+}
+.village-add-event:hover { opacity: 0.85; }
+
+.village-houses {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.village-house {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: transform var(--transition-fast);
+  background: rgba(255,255,255,0.5);
+  border-radius: var(--radius-md);
+  padding: 14px 20px;
+  border: 2px solid rgba(139,105,20,0.3);
+}
+.village-house:hover { transform: translateY(-3px); }
+
+.village-house__icon { font-size: 3rem; }
+.village-house__name { font-weight: 600; color: #1a3a26; font-size: 0.9rem; }
+
+.village-add-house {
+  padding: 10px 20px;
+  background: rgba(255,255,255,0.6);
+  border: 2px dashed var(--family-wood);
+  border-radius: var(--radius-md);
+  color: var(--family-wood);
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background var(--transition-fast);
+}
+.village-add-house:hover { background: rgba(255,255,255,0.85); }
+
+.village-market {
+  background: rgba(255,255,255,0.6);
+  border: 3px solid var(--family-wood);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  max-width: 500px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.village-shopping-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 40px;
+}
+
+.shopping-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  background: rgba(255,255,255,0.7);
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+}
+.shopping-item.checked { opacity: 0.5; text-decoration: line-through; }
+.shopping-item__check { cursor: pointer; font-size: 1rem; }
+.shopping-item__name { flex: 1; }
+.shopping-item__del { color: #c0392b; font-size: 0.85rem; cursor: pointer; }
+
+.village-add-item-row {
+  display: flex;
+  gap: 8px;
+}
+.village-add-item-row .sidebar__input {
+  background: rgba(255,255,255,0.5);
+  border-color: rgba(139,105,20,0.4);
+  color: var(--color-text);
+}
+
+.village-add-item-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--family-wood);
+  color: #fff;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.village-add-item-btn:hover { opacity: 0.85; }

@@ -1,0 +1,118 @@
+/* ===== Games ===== */
+.section--games {
+  background: linear-gradient(160deg, #1a0a00 0%, #2d1500 100%);
+}
+.games-title { color: var(--games-yellow); }
+
+.games-fair {
+  flex: 1;
+  padding: 20px 24px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.games-sign {
+  background: linear-gradient(135deg, #8b3a3a, #c0392b);
+  border: 4px solid var(--games-yellow);
+  border-radius: 12px;
+  padding: 10px 20px;
+  max-width: 500px;
+  margin: 0 auto;
+  width: 100%;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+.games-search {
+  width: 100%;
+  background: transparent;
+  color: var(--games-yellow);
+  font-size: 1rem;
+  text-align: center;
+}
+.games-search::placeholder { color: rgba(241,196,15,0.5); }
+
+.games-tents {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+.game-tent {
+  width: 180px;
+  background: transparent;
+  cursor: pointer;
+  transition: transform var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.game-tent:hover { transform: scale(1.05); }
+
+.game-tent__roof {
+  width: 100%;
+  height: 50px;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.game-tent__roof::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  clip-path: polygon(0% 100%, 50% 0%, 100% 100%);
+}
+
+.game-tent--red .game-tent__roof::before { background: var(--games-red); }
+.game-tent--blue .game-tent__roof::before { background: var(--games-blue); }
+.game-tent--green .game-tent__roof::before { background: var(--games-green); }
+.game-tent--yellow .game-tent__roof::before { background: var(--games-yellow); }
+.game-tent--purple .game-tent__roof::before { background: #9b59b6; }
+
+.game-tent__body {
+  width: 100%;
+  min-height: 100px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.game-tent--red .game-tent__body { background: rgba(231,76,60,0.2); }
+.game-tent--blue .game-tent__body { background: rgba(52,152,219,0.2); }
+.game-tent--green .game-tent__body { background: rgba(46,204,113,0.2); }
+.game-tent--yellow .game-tent__body { background: rgba(241,196,15,0.15); }
+.game-tent--purple .game-tent__body { background: rgba(155,89,182,0.2); }
+
+.game-tent__icon { font-size: 2rem; }
+.game-tent__label {
+  color: var(--games-yellow);
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.game-tent__games {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.game-tent__game {
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 4px;
+  padding: 5px 8px;
+  font-size: 0.75rem;
+  color: #e8e4dc;
+  text-align: left;
+  transition: background var(--transition-fast);
+}
+.game-tent__game:hover { background: rgba(255,255,255,0.1); }
