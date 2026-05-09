@@ -92,10 +92,16 @@
   100% { background-position: 200% 50%; }
 }
 
-/* Tick (conveyor belt) */
+/* Tick (conveyor belt) — pattern is 32px wide, must match exactly for seamless loop */
 @keyframes conveyor-move {
   from { background-position: 0 0; }
-  to { background-position: 40px 0; }
+  to { background-position: 32px 0; }
+}
+
+/* Sky hue shift — works via filter, not background-position */
+@keyframes sky-hue {
+  0%, 100% { filter: hue-rotate(0deg) brightness(1); }
+  50%       { filter: hue-rotate(18deg) brightness(1.04); }
 }
 
 /* Curtain reveal */

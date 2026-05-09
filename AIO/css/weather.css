@@ -32,17 +32,20 @@
   animation: gear-spin-cw 60s linear infinite;
 }
 
-/* CSS cloud floating in background */
+/* CSS clouds — контент удвоен, wave-x двигает на -50% ширины = 1 вьюпорт → seamless loop */
 .section--weather::after {
-  content: '☁';
+  content: '☁    ☁      ☁  ☁    ☁      ☁  ☁    ☁      ☁';
   position: absolute;
   top: 30px;
-  left: -80px;
-  font-size: 5rem;
-  color: rgba(255,255,255,0.6);
+  left: 0;
+  width: 200%;
+  white-space: nowrap;
+  font-size: 3rem;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 24px;
   pointer-events: none;
   z-index: 0;
-  animation: float-sm 8s ease-in-out infinite, wave-x 20s linear infinite;
+  animation: float-sm 8s ease-in-out infinite, wave-x 22s linear infinite;
 }
 
 .weather-title { color: var(--weather-blue); }

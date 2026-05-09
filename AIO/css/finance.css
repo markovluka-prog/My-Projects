@@ -91,16 +91,18 @@
   position: relative;
 }
 
-/* Vault combination dial decoration */
+/* Vault combination dial decoration.
+   Центровка через left: calc(50% - 1rem) вместо left:50%+translateX(-50%),
+   чтобы animation: gear-spin-cw (transform:rotate) не перезаписывал translate. */
 .finance-vault-door::before {
   content: '⚙';
   position: absolute;
   top: -18px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: calc(50% - 1rem);
   font-size: 2rem;
   color: var(--finance-gold);
   text-shadow: 0 0 12px rgba(212,160,23,0.6);
+  transform-origin: center center;
   animation: gear-spin-cw 12s linear infinite;
 }
 
