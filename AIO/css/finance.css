@@ -234,3 +234,9 @@
   transition: opacity var(--transition-fast);
 }
 .finance-modal-save:hover { opacity: 0.85; }
+
+@media (max-width: 640px) {
+  .finance-vault { padding: 12px 12px 60px; }
+  .finance-vault-door { padding: 12px; }
+  .finance-cells { grid-template-columns: 1fr 1fr; }
+}

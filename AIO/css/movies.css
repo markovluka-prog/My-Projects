@@ -178,3 +178,9 @@
   transition: opacity var(--transition-fast), transform var(--transition-fast);
 }
 .movie-watch-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+@media (max-width: 640px) {
+  .porthole { width: 120px; }
+  .porthole__frame { width: 100px; height: 100px; font-size: 2rem; border-width: 7px; }
+  .movies-body { padding: 12px 12px 60px; }
+}

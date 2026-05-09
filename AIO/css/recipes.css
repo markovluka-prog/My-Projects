@@ -164,6 +164,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  overflow: hidden; /* клипирует ::before ролик по border-radius карточки */
   transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 .recipe-scroll:hover { transform: translateY(-4px) rotate(0.5deg); box-shadow: 5px 8px 20px rgba(0,0,0,0.15); }

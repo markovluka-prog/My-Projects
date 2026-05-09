@@ -11,6 +11,7 @@
 .section--family::before {
   content: '☀';
   position: absolute;
+  display: block; /* позиционирование text-символа ведёт себя предсказуемо как block */
   top: 60px;
   right: 80px;
   font-size: 3.5rem;
@@ -210,3 +211,10 @@
   transition: opacity var(--transition-fast), transform var(--transition-fast);
 }
 .village-add-item-btn:hover { opacity: 0.85; transform: scale(1.1); }
+
+@media (max-width: 640px) {
+  .village-scene { padding: 12px 12px 80px; }
+  .village-well, .village-market { padding: 14px; }
+  .village-houses { gap: 10px; }
+  .village-house { padding: 10px 14px; }
+}
