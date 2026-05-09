@@ -1,0 +1,137 @@
+/* ===== AIO Shared Animations ===== */
+
+/* Pulsing glow */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes pulse-glow-shadow {
+  0%, 100% { box-shadow: 0 0 12px var(--glow-color, rgba(245,200,66,0.4)); }
+  50% { box-shadow: 0 0 28px var(--glow-color, rgba(245,200,66,0.8)), 0 0 48px var(--glow-color, rgba(245,200,66,0.3)); }
+}
+
+/* Floating / levitation */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes float-sm {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+/* Gold shimmer sweep */
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Water wave */
+@keyframes wave {
+  0%, 100% { transform: translateX(0) scaleY(1); }
+  25% { transform: translateX(-5px) scaleY(1.05); }
+  75% { transform: translateX(5px) scaleY(0.95); }
+}
+
+@keyframes wave-x {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Plant sway */
+@keyframes sway {
+  0%, 100% { transform: rotate(-2deg); transform-origin: bottom center; }
+  50% { transform: rotate(2deg); transform-origin: bottom center; }
+}
+
+/* Neon flicker */
+@keyframes neon-flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+  20%, 24%, 55% { opacity: 0.4; }
+}
+
+/* Gear spin — used in calc */
+@keyframes gear-spin-cw {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes gear-spin-ccw {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+
+/* Section enter */
+@keyframes section-enter {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Star twinkle */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* Spotlight sweep */
+@keyframes spotlight {
+  0%, 100% { opacity: 0.12; }
+  50% { opacity: 0.22; }
+}
+
+/* Sunrise sky */
+@keyframes sunrise {
+  0% { background-position: 50% 100%; }
+  100% { background-position: 50% 0%; }
+}
+
+/* Gold text shimmer */
+@keyframes gold-shimmer {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* Tick (conveyor belt) */
+@keyframes conveyor-move {
+  from { background-position: 0 0; }
+  to { background-position: 40px 0; }
+}
+
+/* Curtain reveal */
+@keyframes curtain-open {
+  from { clip-path: inset(0 50% 0 50%); }
+  to { clip-path: inset(0 0% 0 0%); }
+}
+
+/* Bounce in */
+@keyframes bounce-in {
+  0% { transform: scale(0.7); opacity: 0; }
+  60% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Ripple */
+@keyframes ripple {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+
+/* Sky gradient shift */
+@keyframes sky-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Page transition animation helper class */
+.anim-section-enter {
+  animation: section-enter 0.35s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* Float helpers */
+.anim-float { animation: float 4s ease-in-out infinite; }
+.anim-float-sm { animation: float-sm 3s ease-in-out infinite; }
+.anim-sway { animation: sway 3s ease-in-out infinite; }
+.anim-pulse { animation: pulse-glow 2s ease-in-out infinite; }
+.anim-neon { animation: neon-flicker 3s linear infinite; }

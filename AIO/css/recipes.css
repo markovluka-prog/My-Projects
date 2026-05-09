@@ -1,5 +1,31 @@
 /* ===== Recipes ===== */
-.section--recipes { background: linear-gradient(180deg, #f5ede0 0%, #f0e8d8 100%); }
+.section--recipes {
+  background:
+    /* parchment texture lines */
+    repeating-linear-gradient(
+      0deg,
+      rgba(139,69,19,0.04) 0px, rgba(139,69,19,0.04) 1px,
+      transparent 1px, transparent 32px
+    ),
+    /* warm parchment gradient */
+    radial-gradient(ellipse 80% 80% at 50% 30%, #fdf5e4 0%, #f5ead0 50%, #ece0c0 100%);
+  position: relative;
+}
+
+/* Parchment edge vignette */
+.section--recipes::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 25% 25% at 0% 0%, rgba(139,90,20,0.08) 0%, transparent 100%),
+    radial-gradient(ellipse 25% 25% at 100% 0%, rgba(139,90,20,0.06) 0%, transparent 100%),
+    radial-gradient(ellipse 20% 20% at 100% 100%, rgba(100,60,10,0.1) 0%, transparent 100%),
+    radial-gradient(ellipse 20% 20% at 0% 100%, rgba(100,60,10,0.08) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
 .recipes-title { color: var(--recipe-brown); }
 
 .market-scene {
@@ -8,14 +34,18 @@
   flex-direction: column;
   gap: 16px;
   padding: 16px 24px 60px;
+  position: relative;
+  z-index: 1;
 }
 
 .market-header {
   font-size: 0.9rem;
   color: var(--recipe-brown);
   font-weight: 500;
+  font-style: italic;
 }
 
+/* ===== Market stalls ===== */
 .market-stalls {
   display: flex;
   gap: 10px;
@@ -23,7 +53,7 @@
 }
 
 .market-stall {
-  background: var(--color-surface);
+  background: rgba(255,255,255,0.75);
   border: 2px solid var(--recipe-brown);
   border-radius: var(--radius-md);
   padding: 14px 16px;
@@ -33,6 +63,15 @@
   align-items: center;
   gap: 10px;
   cursor: pointer;
+  transition: background var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+  box-shadow: 0 2px 8px rgba(139,69,19,0.1);
+  /* Awning stripe at top */
+  border-top: 6px solid var(--recipe-brown);
+}
+.market-stall:hover {
+  background: rgba(255,255,255,0.95);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(139,69,19,0.15);
 }
 
 .market-stall__name {
@@ -48,8 +87,8 @@
 }
 
 .market-ingredient {
-  background: rgba(139,69,19,0.07);
-  border: 1px solid rgba(139,69,19,0.2);
+  background: rgba(139,69,19,0.06);
+  border: 1px solid rgba(139,69,19,0.18);
   border-radius: 20px;
   padding: 4px 9px;
   font-size: 0.75rem;
@@ -61,9 +100,10 @@
   color: #fff;
   border-color: var(--recipe-brown);
 }
-.market-ingredient:hover { background: rgba(139,69,19,0.15); }
+.market-ingredient:hover { background: rgba(139,69,19,0.14); }
 .market-ingredient.selected:hover { background: rgba(139,69,19,0.8); }
 
+/* ===== Basket ===== */
 .market-basket-row {
   display: flex;
   align-items: center;
@@ -89,16 +129,18 @@
 
 .market-find-btn {
   padding: 10px 20px;
-  background: var(--recipe-green);
+  background: linear-gradient(135deg, var(--recipe-green), #2d5e38);
   color: #fff;
   border-radius: var(--radius-md);
   font-weight: 700;
   font-size: 0.9rem;
   white-space: nowrap;
-  transition: opacity var(--transition-fast);
+  box-shadow: 0 4px 14px rgba(58,125,68,0.3);
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
 }
-.market-find-btn:hover { opacity: 0.85; }
+.market-find-btn:hover { opacity: 0.9; transform: translateY(-1px); }
 
+/* ===== Recipe scrolls ===== */
 .recipes-scroll {
   display: flex;
   gap: 16px;
@@ -106,16 +148,36 @@
 }
 
 .recipe-scroll {
-  background: #fffef0;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0px, transparent 27px,
+      rgba(139,69,19,0.06) 27px, rgba(139,69,19,0.06) 28px
+    ),
+    linear-gradient(180deg, #fffef0, #fff8e8);
   border: 2px solid var(--recipe-brown);
   border-radius: 8px 8px 4px 4px;
   padding: 16px;
   min-width: 240px;
   max-width: 300px;
-  box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 3px 3px 12px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.8);
   display: flex;
   flex-direction: column;
   gap: 10px;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+.recipe-scroll:hover { transform: translateY(-4px) rotate(0.5deg); box-shadow: 5px 8px 20px rgba(0,0,0,0.15); }
+
+/* Scroll roll at top */
+.recipe-scroll::before {
+  content: '';
+  display: block;
+  width: calc(100% + 16px);
+  height: 10px;
+  background: linear-gradient(180deg, #c8a070, #a07040);
+  border-radius: 4px;
+  margin: -16px -8px 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
 .recipe-scroll__title {
@@ -153,12 +215,14 @@
 
 .recipe-save-btn {
   padding: 6px 14px;
-  background: var(--recipe-green);
+  background: linear-gradient(135deg, var(--recipe-green), #2d5e38);
   color: #fff;
   border-radius: var(--radius-sm);
   font-size: 0.8rem;
   font-weight: 600;
   width: max-content;
+  box-shadow: 0 2px 8px rgba(58,125,68,0.25);
+  transition: opacity var(--transition-fast);
 }
 .recipe-save-btn:hover { opacity: 0.85; }
 
@@ -169,7 +233,7 @@
 
 .recipes-cellar-btn {
   padding: 8px 16px;
-  background: rgba(139,69,19,0.1);
+  background: rgba(139,69,19,0.08);
   border: 1px solid var(--recipe-brown);
   border-radius: var(--radius-md);
   color: var(--recipe-brown);
@@ -177,4 +241,4 @@
   font-weight: 600;
   transition: background var(--transition-fast);
 }
-.recipes-cellar-btn:hover { background: rgba(139,69,19,0.2); }
+.recipes-cellar-btn:hover { background: rgba(139,69,19,0.16); }

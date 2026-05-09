@@ -1,5 +1,39 @@
 /* ===== Habits ===== */
-.section--habits { background: linear-gradient(180deg, var(--habit-sky) 0%, #c8f0e0 100%); }
+.section--habits {
+  background: linear-gradient(180deg, #7dd3fc 0%, var(--habit-sky) 40%, #c8f0e0 100%);
+  animation: sky-shift 20s ease-in-out infinite alternate;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animated clouds */
+.section--habits::before {
+  content: '☁  ☁    ☁';
+  position: absolute;
+  top: 60px;
+  left: -100px;
+  font-size: 2.5rem;
+  color: rgba(255,255,255,0.7);
+  pointer-events: none;
+  z-index: 0;
+  animation: wave-x 30s linear infinite;
+  letter-spacing: 30px;
+}
+
+/* Grass wave at bottom */
+.section--habits::after {
+  content: '';
+  position: absolute;
+  bottom: 55px;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: linear-gradient(180deg, #2ecc71 0%, #27ae60 100%);
+  clip-path: ellipse(52% 60% at 50% 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
 .habits-title { color: var(--habit-dark); }
 
 .garden-scene {
@@ -7,14 +41,28 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 20px 24px 60px;
-  background: linear-gradient(180deg, rgba(46,204,113,0.05) 0%, rgba(46,204,113,0.1) 100%);
+  padding: 20px 24px 80px;
+  position: relative;
+  z-index: 1;
 }
 
 .garden-sky {
   height: 60px;
-  background: linear-gradient(180deg, #b3e5fc 0%, var(--habit-sky) 100%);
+  background: linear-gradient(180deg, #7dd3fc 0%, var(--habit-sky) 100%);
   border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 16px;
+  box-shadow: 0 2px 8px rgba(29,78,216,0.1);
+}
+
+/* Sun */
+.garden-sky::before {
+  content: '☀';
+  font-size: 1.8rem;
+  animation: pulse-glow 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 6px rgba(255,220,50,0.8));
 }
 
 .garden-beds {
@@ -24,7 +72,7 @@
 }
 
 .habit-bed {
-  background: var(--color-surface);
+  background: linear-gradient(180deg, #fffef8, #f8f5e8);
   border-radius: var(--radius-lg);
   padding: 20px;
   min-width: 180px;
@@ -32,18 +80,36 @@
   flex-direction: column;
   align-items: center;
   gap: 12px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-  border: 2px solid rgba(46,204,113,0.2);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08), 0 1px 0 rgba(255,255,255,0.8) inset;
+  border: 2px solid rgba(46,204,113,0.25);
   position: relative;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+.habit-bed:hover { transform: translateY(-4px); box-shadow: 0 8px 28px rgba(0,0,0,0.12); }
+
+/* Soil strip at bottom */
+.habit-bed::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: linear-gradient(180deg, #9a6b2a 0%, #7a4a10 100%);
+  border-radius: 0 0 calc(var(--radius-lg) - 2px) calc(var(--radius-lg) - 2px);
 }
 
 .habit-bed__plant {
   font-size: 3rem;
   transition: font-size var(--transition-slow);
+  animation: sway 4s ease-in-out infinite;
+  display: inline-block;
+  transform-origin: bottom center;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
 }
 
-.habit-bed__plant.wilting { filter: grayscale(60%); font-size: 2.2rem; }
-.habit-bed__plant.dried { filter: grayscale(100%); font-size: 1.8rem; opacity: 0.6; }
+.habit-bed__plant.wilting { filter: grayscale(60%); font-size: 2.2rem; animation: none; }
+.habit-bed__plant.dried   { filter: grayscale(100%); font-size: 1.8rem; opacity: 0.6; animation: none; }
 
 .habit-bed__name {
   font-weight: 700;
@@ -70,13 +136,14 @@
   font-size: 1.1rem;
   color: var(--habit-green);
   cursor: pointer;
-  transition: background var(--transition-fast), color var(--transition-fast);
+  transition: background var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
 }
 .habit-bed__check.done {
   background: var(--habit-green);
   color: #fff;
+  box-shadow: 0 0 12px rgba(46,204,113,0.5);
 }
-.habit-bed__check:hover { background: rgba(46,204,113,0.1); }
+.habit-bed__check:hover { background: rgba(46,204,113,0.12); }
 
 .habit-bed__freq {
   font-size: 0.7rem;
@@ -90,6 +157,7 @@
   font-size: 0.8rem;
   color: #ccc;
   cursor: pointer;
+  transition: color var(--transition-fast);
 }
 .habit-bed__delete:hover { color: #c0392b; }
 
@@ -102,15 +170,16 @@
 
 .garden-add-btn {
   padding: 12px 24px;
-  background: var(--habit-green);
+  background: linear-gradient(135deg, var(--habit-dark), var(--habit-green));
   color: #fff;
   border-radius: var(--radius-md);
   font-weight: 700;
   font-size: 0.95rem;
   width: max-content;
-  transition: opacity var(--transition-fast);
+  box-shadow: 0 4px 14px rgba(39,174,96,0.35);
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
 }
-.garden-add-btn:hover { opacity: 0.85; }
+.garden-add-btn:hover { opacity: 0.9; transform: translateY(-2px); }
 
 /* Habit add modal */
 .habit-modal {
@@ -121,6 +190,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  backdrop-filter: blur(3px);
 }
 .habit-modal-card {
   background: var(--color-surface);
@@ -130,5 +200,8 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  animation: bounce-in 0.3s var(--easing-bounce) both;
+  border: 2px solid rgba(46,204,113,0.2);
 }
 .habit-modal-card h3 { font-size: 1.1rem; font-weight: 700; }

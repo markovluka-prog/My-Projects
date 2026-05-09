@@ -7,97 +7,119 @@
   --color-shadow: rgba(0,0,0,0.12);
 
   /* Sidebar */
-  --sidebar-bg: #1a1a2e;
+  --sidebar-bg: #0d0d1f;
   --sidebar-text: #e8e4dc;
   --sidebar-accent: #f5c842;
-  --sidebar-hover: rgba(245,200,66,0.12);
+  --sidebar-hover: rgba(245,200,66,0.1);
   --sidebar-width: 280px;
 
   /* Notes — green + yellow, library */
   --notes-green: #3a7d44;
   --notes-yellow: #f5c842;
-  --notes-shelf: #8b6914;
-  --notes-wood: #c8a96e;
+  --notes-shelf: #7a5a10;
+  --notes-wood: #b8924a;
   --notes-paper: #fffef0;
+  --notes-glow: rgba(58,125,68,0.5);
 
   /* Timer — blue-white */
   --timer-blue: #2563eb;
   --timer-light: #e8f0fe;
   --atlantis-gold: #d4a017;
   --atlantis-sea: #1e6091;
-  --atlantis-sky: #0a2342;
+  --atlantis-sky: #060e1c;
   --alarm-red: #c0392b;
   --alarm-wood: #8b6914;
   --port-blue: #1a3a5c;
   --port-wood: #c8a96e;
+  --timer-glow: rgba(37,99,235,0.5);
 
   /* Weather — blue-white */
-  --weather-sky: #e0f0ff;
-  --weather-blue: #2563eb;
+  --weather-sky: #cce8ff;
+  --weather-blue: #1d4ed8;
+  --weather-glow: rgba(29,78,216,0.4);
 
   /* Movies — ship */
-  --movies-ocean: #0a3d62;
-  --movies-porthole: #2c3e50;
+  --movies-ocean: #04223a;
+  --movies-porthole: #1a2a3a;
   --movies-brass: #b8860b;
+  --movies-glow: rgba(10,61,98,0.6);
 
   /* News — beige-black, newspaper */
-  --news-paper: #f5f0e8;
+  --news-paper: #f0ead8;
   --news-ink: #1a1206;
   --news-accent: #8b6914;
+  --news-glow: rgba(139,105,20,0.4);
 
   /* Games — bright fairground */
   --games-red: #e74c3c;
   --games-yellow: #f1c40f;
   --games-blue: #3498db;
   --games-green: #2ecc71;
+  --games-glow: rgba(231,76,60,0.5);
 
   /* Finance — dark green + gold */
-  --finance-dark: #0d2b1a;
-  --finance-green: #1a4731;
+  --finance-dark: #060f09;
+  --finance-green: #0d2b1a;
   --finance-gold: #d4a017;
-  --finance-surface: #1a3a26;
+  --finance-surface: #0f2218;
+  --finance-glow: rgba(212,160,23,0.4);
 
   /* Translator — brick-beige, ancient */
-  --babel-brick: #8b4513;
+  --babel-brick: #7a3a10;
   --babel-beige: #f5e6d3;
-  --babel-stone: #a0917a;
+  --babel-stone: #9a846a;
+  --babel-glow: rgba(139,69,19,0.4);
 
   /* Calculator — grey-steel, industrial */
-  --calc-steel: #2c3e50;
-  --calc-mid: #445566;
-  --calc-light: #607080;
+  --calc-steel: #1a2530;
+  --calc-mid: #2a3a4a;
+  --calc-light: #4a6070;
   --calc-accent: #e67e22;
+  --calc-glow: rgba(230,126,34,0.4);
+  --calc-lcd-bg: #0a1a0a;
+  --calc-lcd-green: #00e060;
 
   /* Family — warm wood, cozy */
-  --family-wood: #8b6914;
+  --family-wood: #7a5810;
   --family-warm: #fef3e2;
   --family-green: #3a7d44;
+  --family-glow: rgba(122,88,16,0.4);
 
   /* Recipes — green-brown, village */
   --recipe-green: #3a7d44;
-  --recipe-brown: #8b4513;
+  --recipe-brown: #7a3a10;
   --recipe-warm: #fff8f0;
+  --recipe-glow: rgba(58,125,68,0.4);
 
   /* Habits — green, nature */
-  --habit-green: #2ecc71;
-  --habit-dark: #1a5e36;
-  --habit-soil: #8b6914;
-  --habit-sky: #e0f7ef;
+  --habit-green: #27ae60;
+  --habit-dark: #145a32;
+  --habit-soil: #7a5810;
+  --habit-sky: #d4f1f9;
+  --habit-glow: rgba(39,174,96,0.4);
 
   /* Documents — beige-blue, postal */
-  --doc-beige: #f5efe0;
+  --doc-beige: #f2ead8;
   --doc-blue: #2c5f8a;
   --doc-red: #c0392b;
+  --doc-glow: rgba(44,95,138,0.4);
 
   /* Music — burgundy-gold, theater */
-  --music-burgundy: #6b1c2e;
+  --music-burgundy: #5a1526;
   --music-gold: #d4a017;
-  --music-dark: #2c0d17;
+  --music-dark: #1a0810;
+  --music-velvet: #8b0000;
+  --music-glow: rgba(107,28,46,0.5);
+
+  /* Easing */
+  --easing-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --easing-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --easing-sharp: cubic-bezier(0.4, 0, 0.6, 1);
 
   /* Transitions */
-  --transition-fast: 0.15s ease;
-  --transition-med: 0.3s ease;
-  --transition-slow: 0.5s ease;
+  --transition-fast: 0.15s var(--easing-smooth);
+  --transition-med: 0.3s var(--easing-smooth);
+  --transition-slow: 0.5s var(--easing-smooth);
 
   /* Radius */
   --radius-sm: 6px;
