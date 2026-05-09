@@ -77,9 +77,11 @@
   position: relative;
   z-index: 2;
 }
-/* Counter-rotate label so it stays upright */
-.gear:nth-child(odd)  .gear-label { animation: gear-spin-ccw 8s linear infinite; }
-.gear:nth-child(even) .gear-label { animation: gear-spin-cw  6s linear infinite; }
+/* Counter-rotate label at SAME speed as parent gear so it stays upright */
+.gear:nth-child(1) .gear-label { animation: gear-spin-ccw 8s  linear infinite; }
+.gear:nth-child(2) .gear-label { animation: gear-spin-cw  6s  linear infinite; }
+.gear:nth-child(3) .gear-label { animation: gear-spin-ccw 10s linear infinite; }
+.gear:nth-child(4) .gear-label { animation: gear-spin-cw  7s  linear infinite; }
 
 /* ===== Main panel ===== */
 .factory-panel {

@@ -1,8 +1,6 @@
 /* ===== Habits ===== */
 .section--habits {
   background: linear-gradient(180deg, #7dd3fc 0%, var(--habit-sky) 40%, #c8f0e0 100%);
-  /* sky-hue uses filter:hue-rotate — работает в отличие от sky-shift (background-position) */
-  animation: sky-hue 20s ease-in-out infinite;
   position: relative;
   overflow: hidden;
 }
@@ -56,6 +54,8 @@
   padding: 0 20px;
   gap: 16px;
   box-shadow: 0 2px 8px rgba(29,78,216,0.1);
+  /* Анимируем только полосу неба, не всю секцию — текст и иконки не затрагиваются */
+  animation: sky-hue 20s ease-in-out infinite;
 }
 
 /* Sun */

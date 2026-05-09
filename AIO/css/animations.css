@@ -42,8 +42,8 @@
 
 /* Plant sway */
 @keyframes sway {
-  0%, 100% { transform: rotate(-2deg); transform-origin: bottom center; }
-  50% { transform: rotate(2deg); transform-origin: bottom center; }
+  0%, 100% { transform: rotate(-2deg); }
+  50%       { transform: rotate(2deg); }
 }
 
 /* Neon flicker */
