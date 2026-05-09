@@ -19,6 +19,7 @@
   z-index: 0;
   animation: float-sm 6s ease-in-out infinite, wave-x 30s linear infinite;
   letter-spacing: 30px;
+  will-change: transform;
 }
 
 /* Grass wave at bottom */

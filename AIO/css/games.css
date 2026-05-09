@@ -83,6 +83,7 @@
   align-items: center;
 }
 .game-tent:hover { transform: scale(1.05); filter: brightness(1.1); }
+.game-tent:focus-visible { outline: 2px solid var(--games-yellow); outline-offset: 4px; border-radius: var(--radius-sm); }
 
 /* Tent roof with stripe pattern */
 .game-tent__roof {

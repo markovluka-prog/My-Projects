@@ -46,6 +46,7 @@
   pointer-events: none;
   z-index: 0;
   animation: float-sm 8s ease-in-out infinite, wave-x 22s linear infinite;
+  will-change: transform;
 }
 
 .weather-title { color: var(--weather-blue); }

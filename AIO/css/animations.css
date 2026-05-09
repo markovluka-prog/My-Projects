@@ -141,3 +141,14 @@
 .anim-sway { animation: sway 3s ease-in-out infinite; }
 .anim-pulse { animation: pulse-glow 2s ease-in-out infinite; }
 .anim-neon { animation: neon-flicker 3s linear infinite; }
+
+/* ===== Accessibility: respect user motion preference ===== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
