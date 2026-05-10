@@ -17,7 +17,9 @@
   color: rgba(255,255,255,0.65);
   pointer-events: none;
   z-index: 0;
-  animation: float-sm 6s ease-in-out infinite, wave-x 30s linear infinite;
+  /* wave-x and float-sm both write `transform`; wave-x wins as the last listed.
+     Use wave-x alone for the seamless horizontal cloud drift. */
+  animation: wave-x 30s linear infinite;
   letter-spacing: 30px;
   will-change: transform;
 }
@@ -148,6 +150,10 @@
   box-shadow: 0 0 12px rgba(46,204,113,0.5);
 }
 .habit-bed__check:hover { background: rgba(46,204,113,0.12); }
+.habit-bed__check:focus-visible {
+  outline: 2px solid var(--habit-green);
+  outline-offset: 2px;
+}
 
 .habit-bed__freq {
   font-size: 0.7rem;
@@ -184,6 +190,10 @@
   transition: opacity var(--transition-fast), transform var(--transition-fast);
 }
 .garden-add-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+.garden-add-btn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
 
 /* Habit add modal */
 .habit-modal {

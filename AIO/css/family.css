@@ -104,6 +104,10 @@
   transition: opacity var(--transition-fast), transform var(--transition-fast);
 }
 .village-add-event:hover { opacity: 0.9; transform: translateY(-1px); }
+.village-add-event:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
 
 .village-houses {
   display: flex;
@@ -146,6 +150,10 @@
   transition: background var(--transition-fast), transform var(--transition-fast);
 }
 .village-add-house:hover { background: rgba(255,255,255,0.8); transform: translateY(-2px); }
+.village-add-house:focus-visible {
+  outline: 2px solid var(--family-wood);
+  outline-offset: 4px;
+}
 
 .village-market {
   background: rgba(255,255,255,0.7);
@@ -211,6 +219,11 @@
   transition: opacity var(--transition-fast), transform var(--transition-fast);
 }
 .village-add-item-btn:hover { opacity: 0.85; transform: scale(1.1); }
+.village-add-item-btn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+  border-radius: 50%;
+}
 
 @media (max-width: 640px) {
   .village-scene { padding: 12px 12px 80px; }

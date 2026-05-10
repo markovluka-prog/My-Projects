@@ -167,6 +167,10 @@
 }
 .news-filter-btn.active,
 .news-filter-btn:hover { background: var(--news-accent); color: #fff; border-color: var(--news-accent); }
+.news-filter-btn:focus-visible {
+  outline: 2px solid var(--news-accent);
+  outline-offset: 2px;
+}
 
 .news-headlines {
   display: flex;

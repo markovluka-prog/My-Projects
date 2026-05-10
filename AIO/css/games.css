@@ -201,6 +201,10 @@
   transition: background var(--transition-fast), border-color var(--transition-fast);
 }
 .game-tent__game:hover { background: rgba(255,255,255,0.12); border-color: rgba(241,196,15,0.3); }
+.game-tent__game:focus-visible {
+  outline: 2px solid var(--games-yellow);
+  outline-offset: 2px;
+}
 
 @media (max-width: 600px) {
   .game-tent { width: 140px; }

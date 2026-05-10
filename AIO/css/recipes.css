@@ -73,6 +73,10 @@
   transform: translateY(-3px);
   box-shadow: 0 6px 18px rgba(139,69,19,0.15);
 }
+.market-stall:focus-visible {
+  outline: 2px solid var(--recipe-brown);
+  outline-offset: 4px;
+}
 
 .market-stall__name {
   font-size: 0.8rem;
@@ -139,6 +143,10 @@
   transition: opacity var(--transition-fast), transform var(--transition-fast);
 }
 .market-find-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+.market-find-btn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
 
 /* ===== Recipe scrolls ===== */
 .recipes-scroll {
@@ -226,6 +234,10 @@
   transition: opacity var(--transition-fast);
 }
 .recipe-save-btn:hover { opacity: 0.85; }
+.recipe-save-btn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
 
 .recipes-cellar-btn-wrap {
   display: flex;

@@ -77,6 +77,11 @@
   transition: background var(--transition-fast);
 }
 .sidebar__close:hover { background: rgba(255,255,255,0.06); }
+.sidebar__close:focus-visible {
+  outline: 2px solid rgba(245,200,66,0.8);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
 .sidebar__close span {
   display: block;
   height: 2px;
@@ -186,6 +191,10 @@
   border-color: rgba(245,200,66,0.5);
   background: rgba(255,255,255,0.08);
 }
+.sidebar__input:focus-visible {
+  outline: 2px solid rgba(245,200,66,0.8);
+  outline-offset: 2px;
+}
 .sidebar__input option { background: #1a1a2e; color: var(--sidebar-text); }
 
 .sidebar__save-btn {
@@ -294,6 +303,11 @@
   padding-left: 16px;
 }
 
+.sidebar__nav-btn:focus-visible {
+  outline: 2px solid var(--sidebar-accent);
+  outline-offset: 2px;
+}
+
 .sidebar__nav-btn.active {
   background: rgba(245,200,66,0.12);
   color: var(--sidebar-accent);
@@ -301,4 +315,17 @@
   border-left-color: var(--sidebar-accent);
   padding-left: 16px;
   box-shadow: inset 0 0 12px rgba(245,200,66,0.05);
+}
+
+@media (max-width: 640px) {
+  .sidebar {
+    position: fixed;
+    z-index: 300;
+    width: 80vw;
+    max-width: 280px;
+  }
+  .sidebar__section-title { font-size: 0.6rem; }
+  .sidebar__nav-btn { padding: 8px 10px; font-size: 0.8rem; }
+  .sidebar__user-info { display: none; }
+  .sidebar__ai-chat { max-height: 120px; }
 }

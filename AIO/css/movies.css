@@ -97,6 +97,11 @@
   transition: transform var(--transition-fast), filter var(--transition-fast);
 }
 .porthole:hover { transform: scale(1.06); filter: brightness(1.08); }
+.porthole:focus-visible {
+  outline: 3px solid var(--movies-brass);
+  outline-offset: 6px;
+  border-radius: 50%;
+}
 
 .porthole__frame {
   width: 140px;
@@ -178,6 +183,10 @@
   transition: opacity var(--transition-fast), transform var(--transition-fast);
 }
 .movie-watch-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+.movie-watch-btn:focus-visible {
+  outline: 2px solid var(--movies-brass);
+  outline-offset: 4px;
+}
 
 @media (max-width: 640px) {
   .porthole { width: 120px; }

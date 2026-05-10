@@ -73,6 +73,11 @@
 }
 .bookshelf__add-shelf:hover,
 .bookshelf__add-book:hover { filter: brightness(1.15); transform: translateY(-1px); }
+.bookshelf__add-shelf:focus-visible,
+.bookshelf__add-book:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
 
 .bookshelf__shelves { display: flex; flex-direction: column; gap: 28px; }
 

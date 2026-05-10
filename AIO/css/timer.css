@@ -52,6 +52,10 @@
 }
 .timer-choice-icon { font-size: 2.8rem; transition: transform 0.2s var(--easing-bounce); }
 .timer-choice-btn:hover .timer-choice-icon { transform: scale(1.15) rotate(-5deg); }
+.timer-choice-btn:focus-visible {
+  outline: 2px solid var(--timer-blue);
+  outline-offset: 4px;
+}
 
 .timer-back-view {
   position: absolute;
@@ -487,6 +491,10 @@
   background: rgba(212,160,23,0.15);
   box-shadow: 0 0 12px rgba(212,160,23,0.2);
 }
+.calendar-nav:focus-visible {
+  outline: 2px solid var(--atlantis-gold);
+  outline-offset: 2px;
+}
 
 .calendar-months {
   display: grid;
@@ -526,6 +534,10 @@
   color: var(--port-wood);
 }
 .cal-month-pier:hover::before { opacity: 1; }
+.cal-month-pier:focus-visible {
+  outline: 2px solid var(--atlantis-gold);
+  outline-offset: 2px;
+}
 .cal-month-pier.has-events { border-color: rgba(212,160,23,0.5); color: var(--atlantis-gold); }
 
 .calendar-days {
@@ -546,6 +558,10 @@
   transition: all var(--transition-fast);
 }
 .cal-day:hover { background: rgba(255,255,255,0.1); border-color: rgba(200,169,110,0.35); color: #e8e4dc; }
+.cal-day:focus-visible {
+  outline: 2px solid var(--atlantis-gold);
+  outline-offset: 2px;
+}
 .cal-day.has-events { border-color: rgba(212,160,23,0.5); }
 .cal-day__num { font-weight: 700; font-size: 0.78rem; margin-bottom: 4px; }
 .cal-day__event {
@@ -559,4 +575,17 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+@media (max-width: 640px) {
+  .timer-home { gap: 24px; padding: 20px; }
+  .timer-logo { font-size: 3rem; }
+  .timer-choices { gap: 16px; }
+  .timer-choice-btn { width: 120px; height: 120px; font-size: 0.9rem; }
+  .timer-choice-icon { font-size: 2rem; }
+  .atlantis-rings { width: 200px; height: 200px; }
+  .atlantis-ring--outer { width: 200px; height: 200px; }
+  .atlantis-ring--mid { width: 140px; height: 140px; }
+  .atlantis-ring--inner { width: 90px; height: 90px; }
+  .calendar-months { grid-template-columns: 1fr 1fr; }
 }
