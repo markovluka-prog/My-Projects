@@ -248,6 +248,11 @@
   transition: background var(--transition-fast), color var(--transition-fast);
 }
 .note-editor__close:hover { background: #f0e0e0; color: #c0392b; }
+.note-editor__close:focus-visible {
+  outline: 2px solid #c0392b;
+  outline-offset: 2px;
+  border-radius: 50%;
+}
 
 .note-editor__title,
 .note-editor__subtitle {
@@ -299,6 +304,10 @@
   transition: all var(--transition-fast);
 }
 .note-editor__save:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.note-editor__save:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
 
 /* List note */
 .note-list-item {
@@ -383,6 +392,10 @@
   transition: background var(--transition-fast);
 }
 .select-action:hover { background: rgba(255,255,255,0.3); }
+.select-action:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
 #cancelSelectBtn { margin-left: auto; }
 
 @media (max-width: 768px) {
