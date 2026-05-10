@@ -367,7 +367,10 @@
   gap: 12px;
   z-index: 50;
   box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
+  transition: left var(--transition-med);
 }
+/* When sidebar is collapsed, bar fills full width (matches pattern in main.css) */
+.main-content.sidebar-collapsed .notes-select-bar { left: 0; }
 
 .select-action {
   padding: 6px 14px;

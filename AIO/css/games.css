@@ -64,6 +64,11 @@
   font-weight: 600;
 }
 .games-search::placeholder { color: rgba(241,196,15,0.5); }
+.games-search:focus-visible {
+  outline: 2px solid var(--games-yellow);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
 
 /* ===== Tents ===== */
 .games-tents {
