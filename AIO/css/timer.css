@@ -367,6 +367,11 @@
   transform: scale(1.15);
   box-shadow: 0 5px 20px rgba(212,160,23,0.7);
 }
+.alarm-add-btn:focus-visible {
+  outline: 2px solid var(--atlantis-gold);
+  outline-offset: 4px;
+  border-radius: 50%;
+}
 
 .alarm-arrows-container {
   flex: 1;

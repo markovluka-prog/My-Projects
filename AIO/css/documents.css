@@ -136,6 +136,10 @@
   background: linear-gradient(90deg, transparent 0%, rgba(44,95,138,0.06) 100%);
 }
 .letter-card:hover { transform: translateX(5px); box-shadow: 4px 4px 16px rgba(0,0,0,0.1); }
+.letter-card:focus-visible {
+  outline: 2px solid var(--doc-blue);
+  outline-offset: 2px;
+}
 
 .letter-card__icon { font-size: 1.5rem; }
 .letter-card__info { flex: 1; }
@@ -181,6 +185,10 @@
   transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 .signed-card:hover { transform: translateX(3px); box-shadow: 3px 3px 10px rgba(0,0,0,0.08); }
+.signed-card:focus-visible {
+  outline: 2px solid var(--doc-red);
+  outline-offset: 2px;
+}
 .signed-card__seal { font-size: 1.2rem; }
 .signed-card__name { flex: 1; }
 

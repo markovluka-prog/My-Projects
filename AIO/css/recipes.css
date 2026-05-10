@@ -106,6 +106,10 @@
 }
 .market-ingredient:hover { background: rgba(139,69,19,0.14); }
 .market-ingredient.selected:hover { background: rgba(139,69,19,0.8); }
+.market-ingredient:focus-visible {
+  outline: 2px solid var(--recipe-brown);
+  outline-offset: 2px;
+}
 
 /* ===== Basket ===== */
 .market-basket-row {
@@ -255,6 +259,10 @@
   transition: background var(--transition-fast);
 }
 .recipes-cellar-btn:hover { background: rgba(139,69,19,0.16); }
+.recipes-cellar-btn:focus-visible {
+  outline: 2px solid var(--recipe-brown);
+  outline-offset: 2px;
+}
 
 @media (max-width: 600px) {
   .recipe-scroll { min-width: 100%; max-width: 100%; }

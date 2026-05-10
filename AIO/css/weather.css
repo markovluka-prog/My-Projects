@@ -113,6 +113,11 @@
   border: 1px solid rgba(255,255,255,0.5);
 }
 .weather-day-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(29,78,216,0.15); }
+.weather-day-card:focus-visible {
+  outline: 2px solid var(--weather-blue);
+  outline-offset: 3px;
+  border-radius: var(--radius-md);
+}
 .weather-day-card.today { border: 2px solid var(--weather-blue); }
 
 .weather-day-name { font-size: 0.75rem; font-weight: 600; color: #555; }
