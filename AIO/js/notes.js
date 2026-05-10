@@ -73,6 +73,9 @@ const Notes = {
     const el = document.createElement('div');
     el.className = `book book--${book.type}`;
     el.dataset.bookId = book.id;
+    el.setAttribute('role', 'button');
+    el.setAttribute('tabindex', '0');
+    el.setAttribute('aria-label', book.title || 'Без названия');
 
     const titleEl = document.createElement('span');
     titleEl.className = 'book__title';
@@ -85,13 +88,15 @@ const Notes = {
     el.appendChild(titleEl);
     el.appendChild(iconEl);
 
-    el.addEventListener('click', () => {
+    const activateBook = () => {
       if (this.selectMode) {
         this.toggleBookSelection(book.id, el);
       } else {
         this.openEditor(book, shelf);
       }
-    });
+    };
+    el.addEventListener('click', activateBook);
+    el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activateBook(); } });
 
     if (this.selected.has(book.id)) el.classList.add('selected');
 

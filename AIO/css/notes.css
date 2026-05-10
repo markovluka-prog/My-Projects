@@ -182,6 +182,7 @@
 }
 .book:active { transform: translateY(-5px) rotate(-1deg); }
 .book.selected { outline: 3px solid var(--notes-yellow); outline-offset: 2px; }
+.book:focus-visible { outline: 2px solid rgba(255,255,255,0.9); outline-offset: 3px; }
 
 .book__title {
   writing-mode: vertical-rl;

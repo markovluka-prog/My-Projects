@@ -63,17 +63,22 @@ const Finance = {
 
       const cell = document.createElement('div');
       cell.className = 'finance-cell';
+      cell.setAttribute('role', 'button');
+      cell.setAttribute('tabindex', '0');
+      cell.setAttribute('aria-label', `${cat.name}: ${total.toLocaleString('ru-RU')} ₽`);
       cell.innerHTML = `
         <div class="finance-cell__icon">${cat.icon}</div>
         <div class="finance-cell__name">${cat.name}</div>
         <div class="finance-cell__amount">${total.toLocaleString('ru-RU')} ₽</div>
         <div class="finance-cell__lock">🔒 ${catExpenses.length} трат</div>
       `;
-      cell.addEventListener('click', () => {
+      const openCell = () => {
         if (!catExpenses.length) { alert(`В категории «${cat.name}» пока нет трат.`); return; }
         const list = catExpenses.map(e => `• ${e.date}: ${e.amount} ₽ — ${e.note || '(без заметки)'}`).join('\n');
         alert(`${cat.icon} ${cat.name}\n\n${list}\n\nИтого: ${total} ₽`);
-      });
+      };
+      cell.addEventListener('click', openCell);
+      cell.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openCell(); } });
       cellsEl.appendChild(cell);
     });
   }

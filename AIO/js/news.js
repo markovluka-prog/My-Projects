@@ -113,6 +113,8 @@ const NewsModule = {
     filtered.forEach(h => {
       const el = document.createElement('div');
       el.className = 'news-headline';
+      el.setAttribute('role', 'button');
+      el.setAttribute('tabindex', '0');
       el.innerHTML = `
         <div class="news-headline__title">${h.title}</div>
         <div class="news-headline__meta">
@@ -120,9 +122,11 @@ const NewsModule = {
           ${h.date}
         </div>
       `;
-      el.addEventListener('click', () => {
+      const openHeadline = () => {
         alert(`Открытие статьи: "${h.title}"\nИсточник: ${h.source}\n\n(В реальном приложении здесь откроется мини-браузер)`);
-      });
+      };
+      el.addEventListener('click', openHeadline);
+      el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openHeadline(); } });
       container.appendChild(el);
     });
   },

@@ -40,11 +40,16 @@ const Movies = {
     movies.forEach(m => {
       const el = document.createElement('div');
       el.className = 'porthole';
+      el.setAttribute('role', 'button');
+      el.setAttribute('tabindex', '0');
+      el.setAttribute('aria-label', `${m.title} (${m.year})`);
       el.innerHTML = `
         <div class="porthole__frame">${m.emoji}</div>
         <div class="porthole__label">${m.title}<br/><span style="opacity:0.5;font-size:0.7rem;">${m.year}</span></div>
       `;
-      el.addEventListener('click', () => this.showMovieInfo(m, container));
+      const openMovie = () => this.showMovieInfo(m, container);
+      el.addEventListener('click', openMovie);
+      el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openMovie(); } });
       container.appendChild(el);
     });
   },
