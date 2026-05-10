@@ -46,7 +46,7 @@
           <span class="sidebar__user-name" id="userName">Гость</span>
           <span class="sidebar__user-age" id="userAgeLabel">Укажите возраст</span>
         </div>
-        <button class="sidebar__edit-btn" id="editUserBtn" title="Настройки">⚙️</button>
+        <button class="sidebar__edit-btn" id="editUserBtn" aria-label="Настройки профиля">⚙️</button>
       </div>
       <!-- User edit form (hidden by default) -->
       <div class="sidebar__user-form hidden" id="userForm">
@@ -72,8 +72,8 @@
       </div>
       <div class="sidebar__ai-input-row">
         <input class="sidebar__input sidebar__ai-input" type="text" id="aiInput" placeholder="Спросите меня..." />
-        <button class="sidebar__ai-voice" id="aiVoiceBtn" title="Голосовой ввод">🎤</button>
-        <button class="sidebar__ai-send" id="aiSendBtn">→</button>
+        <button class="sidebar__ai-voice" id="aiVoiceBtn" aria-label="Голосовой ввод">🎤</button>
+        <button class="sidebar__ai-send" id="aiSendBtn" aria-label="Отправить">→</button>
       </div>
     </div>
 
@@ -195,7 +195,7 @@
         <!-- Note editor -->
         <div class="note-editor hidden" id="noteEditor">
           <div class="note-editor__header">
-            <button class="note-editor__close" id="noteEditorClose">✕</button>
+            <button class="note-editor__close" id="noteEditorClose" aria-label="Закрыть редактор">✕</button>
             <input class="note-editor__title" id="noteTitle" type="text" placeholder="Заголовок" />
             <input class="note-editor__subtitle" id="noteSubtitle" type="text" placeholder="Подзаголовок" />
           </div>
@@ -284,7 +284,7 @@
         <div class="alarm-scene">
           <div class="alarm-building">
             <div class="alarm-roof">🏯</div>
-            <div class="alarm-add-btn" id="addAlarmBtn">+</div>
+            <div class="alarm-add-btn" id="addAlarmBtn" role="button" tabindex="0" aria-label="Добавить будильник">+</div>
           </div>
           <div class="alarm-arrows-container" id="alarmArrows">
             <!-- Arrows added by JS -->
@@ -298,9 +298,9 @@
         <button class="timer-back-view" data-timer-view="home">← Назад</button>
         <div class="calendar-port">
           <div class="calendar-port__header">
-            <button class="calendar-nav" id="calPrevYear">‹‹</button>
+            <button class="calendar-nav" id="calPrevYear" aria-label="Предыдущий год">‹‹</button>
             <h2 class="calendar-port__year" id="calYear">2026</h2>
-            <button class="calendar-nav" id="calNextYear">››</button>
+            <button class="calendar-nav" id="calNextYear" aria-label="Следующий год">››</button>
           </div>
           <div class="calendar-months" id="calMonths">
             <!-- Month piers rendered by JS -->
@@ -513,7 +513,7 @@
               <span class="babel-lang-label" id="fromLangLabel">Русский</span>
               <button class="babel-lang-change" id="fromLangBtn">Изменить</button>
             </div>
-            <button class="babel-swap-btn" id="swapLangsBtn">⇄</button>
+            <button class="babel-swap-btn" id="swapLangsBtn" aria-label="Поменять языки местами">⇄</button>
             <div class="babel-lang-box">
               <span class="babel-lang-label" id="toLangLabel">Английский</span>
               <button class="babel-lang-change" id="toLangBtn">Изменить</button>
@@ -617,7 +617,7 @@
           <div class="village-shopping-list" id="villageShoppingList"></div>
           <div class="village-add-item-row">
             <input type="text" class="sidebar__input" id="shoppingInput" placeholder="Добавить товар..." />
-            <button class="village-add-item-btn" id="addShoppingItemBtn">+</button>
+            <button class="village-add-item-btn" id="addShoppingItemBtn" aria-label="Добавить товар">+</button>
           </div>
         </div>
       </div>
@@ -716,9 +716,9 @@
             <div class="concert-curtain" id="stageCurtain"></div>
           </div>
           <div class="concert-stage__controls">
-            <button class="concert-control" id="musicPrev">⏮</button>
-            <button class="concert-control concert-control--main" id="musicPlayPause">▶</button>
-            <button class="concert-control" id="musicNext">⏭</button>
+            <button class="concert-control" id="musicPrev" aria-label="Предыдущий трек">⏮</button>
+            <button class="concert-control concert-control--main" id="musicPlayPause" aria-label="Воспроизведение/Пауза">▶</button>
+            <button class="concert-control" id="musicNext" aria-label="Следующий трек">⏭</button>
           </div>
         </div>
         <div class="concert-ticket-booth">

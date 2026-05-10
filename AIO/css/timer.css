@@ -16,6 +16,7 @@
 .timer-logo {
   font-size: 5rem;
   animation: float 4s ease-in-out infinite;
+  will-change: transform;
   filter: drop-shadow(0 8px 20px rgba(37,99,235,0.3));
 }
 
@@ -257,7 +258,7 @@
 }
 
 .atlantis-timer.running .atlantis-tsunami {
-  animation: wave 2s ease-in-out infinite, tsunamiRise linear forwards;
+  animation: wave 2s ease-in-out infinite, tsunamiRise 60s linear forwards;
 }
 
 @keyframes tsunamiRise {

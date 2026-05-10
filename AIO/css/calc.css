@@ -54,6 +54,7 @@
   position: relative;
   cursor: pointer;
   animation: gear-spin-cw 8s linear infinite;
+  will-change: transform;
   box-shadow: none;
 }
 .gear:nth-child(2) { animation: gear-spin-ccw 6s linear infinite; width: 56px; height: 56px; }

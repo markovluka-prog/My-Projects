@@ -101,6 +101,12 @@ const TimerModule = {
     document.getElementById('atlantisAction').textContent = 'Пауза';
     document.getElementById('atlantisTimer').classList.add('running');
 
+    const tsunami = document.querySelector('#atlantisTimer .atlantis-tsunami');
+    if (tsunami) {
+      tsunami.style.animationDuration = `2s, ${total}s`;
+      tsunami.style.animationPlayState = 'running, running';
+    }
+
     this.countdown.interval = setInterval(() => {
       this.countdown.remaining--;
       this.renderCountdownDisplay();
@@ -109,6 +115,7 @@ const TimerModule = {
         this.countdown.running = false;
         document.getElementById('atlantisAction').textContent = 'Запустить';
         document.getElementById('atlantisTimer').classList.remove('running');
+        if (tsunami) { tsunami.style.animationDuration = ''; tsunami.style.animationPlayState = ''; }
         this.playAlarmSound();
         alert('Время вышло! ⚡');
       }
@@ -121,6 +128,8 @@ const TimerModule = {
     clearInterval(this.countdown.interval);
     this.countdown.running = false;
     document.getElementById('atlantisAction').textContent = 'Запустить';
+    const tsunami = document.querySelector('#atlantisTimer .atlantis-tsunami');
+    if (tsunami) tsunami.style.animationPlayState = 'running, paused';
   },
 
   renderCountdownDisplay() {
@@ -152,7 +161,9 @@ const TimerModule = {
   /* ===== Alarm ===== */
   initAlarm() {
     this.alarms = Storage.get('alarms', []);
-    document.getElementById('addAlarmBtn').addEventListener('click', () => this.addAlarm());
+    const addAlarmBtn = document.getElementById('addAlarmBtn');
+    addAlarmBtn.addEventListener('click', () => this.addAlarm());
+    addAlarmBtn.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.addAlarm(); } });
   },
 
   addAlarm() {

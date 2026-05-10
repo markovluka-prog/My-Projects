@@ -125,6 +125,7 @@
 .concert-stage__artist {
   font-size: 5rem;
   animation: float 3s ease-in-out infinite;
+  will-change: transform;
   filter: drop-shadow(0 8px 20px rgba(212,160,23,0.3));
   position: relative;
   z-index: 1;
