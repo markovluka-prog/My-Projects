@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AIO — All In One</title>
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/reset.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/sidebar.css" />
+  <link rel="stylesheet" href="css/notes.css" />
+  <link rel="stylesheet" href="css/timer.css" />
+  <link rel="stylesheet" href="css/weather.css" />
+  <link rel="stylesheet" href="css/movies.css" />
+  <link rel="stylesheet" href="css/news.css" />
+  <link rel="stylesheet" href="css/games.css" />
+  <link rel="stylesheet" href="css/finance.css" />
+  <link rel="stylesheet" href="css/translator.css" />
+  <link rel="stylesheet" href="css/calc.css" />
+  <link rel="stylesheet" href="css/family.css" />
+  <link rel="stylesheet" href="css/recipes.css" />
+  <link rel="stylesheet" href="css/habits.css" />
+  <link rel="stylesheet" href="css/documents.css" />
+  <link rel="stylesheet" href="css/music.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <!-- Sidebar -->
+  <div id="sidebar" class="sidebar sidebar--open">
+    <div class="sidebar__header">
+      <div class="sidebar__logo">
+        <span class="sidebar__logo-text">AIO</span>
+        <span class="sidebar__logo-sub">All In One</span>
+      </div>
+      <button class="sidebar__close" id="sidebarToggle" aria-label="Свернуть панель">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+    <!-- User settings -->
+    <div class="sidebar__section">
+      <div class="sidebar__user" id="userPanel">
+        <div class="sidebar__avatar" id="userAvatar">👤</div>
+        <div class="sidebar__user-info">
+          <span class="sidebar__user-name" id="userName">Гость</span>
+          <span class="sidebar__user-age" id="userAgeLabel">Укажите возраст</span>
+        </div>
+        <button class="sidebar__edit-btn" id="editUserBtn" aria-label="Настройки профиля">⚙️</button>
+      </div>
+      <!-- User edit form (hidden by default) -->
+      <div class="sidebar__user-form hidden" id="userForm">
+        <input class="sidebar__input" type="text" id="inputName" placeholder="Ваше имя" maxlength="20" />
+        <input class="sidebar__input" type="number" id="inputAge" placeholder="Возраст" min="5" max="120" />
+        <select class="sidebar__input" id="inputEmoji">
+          <option value="👤">👤 Нет аватара</option>
+          <option value="🧑">🧑 Подросток</option>
+          <option value="👨">👨 Мужчина</option>
+          <option value="👩">👩 Женщина</option>
+          <option value="🧓">🧓 Пожилой</option>
+          <option value="🧒">🧒 Ребёнок</option>
+        </select>
+        <button class="sidebar__save-btn" id="saveUserBtn">Сохранить</button>
+      </div>
+    </div>
+
+    <!-- AI Guide -->
+    <div class="sidebar__section">
+      <div class="sidebar__section-title">🤖 ИИ-Проводник</div>
+      <div class="sidebar__ai-chat" id="aiChat">
+        <div class="ai-message ai-message--bot">Привет! Я помогу вам найти нужный раздел. Что ищете?</div>
+      </div>
+      <div class="sidebar__ai-input-row">
+        <input class="sidebar__input sidebar__ai-input" type="text" id="aiInput" placeholder="Спросите меня..." />
+        <button class="sidebar__ai-voice" id="aiVoiceBtn" aria-label="Голосовой ввод">🎤</button>
+        <button class="sidebar__ai-send" id="aiSendBtn" aria-label="Отправить">→</button>
+      </div>
+    </div>
+
+    <!-- Section navigation -->
+    <div class="sidebar__section">
+      <div class="sidebar__section-title">Разделы</div>
+      <nav class="sidebar__nav" id="sidebarNav">
+        <button class="sidebar__nav-btn active" data-section="home">🏠 Главная</button>
+        <button class="sidebar__nav-btn" data-section="notes">📝 Записи</button>
+        <button class="sidebar__nav-btn" data-section="timer">⏱️ Тайм-менеджер</button>
+        <button class="sidebar__nav-btn" data-section="weather">🌤️ Погода</button>
+        <button class="sidebar__nav-btn" data-section="movies">🎬 Фильмы</button>
+        <button class="sidebar__nav-btn" data-section="news">🗞️ Новости</button>
+        <button class="sidebar__nav-btn" data-section="games">🎮 Игры</button>
+        <button class="sidebar__nav-btn" data-section="finance">💰 Финансы</button>
+        <button class="sidebar__nav-btn" data-section="translator">🌐 Переводчик</button>
+        <button class="sidebar__nav-btn" data-section="calc">🖩 Калькулятор</button>
+        <button class="sidebar__nav-btn" data-section="family">👨‍👩‍👧 Семья</button>
+        <button class="sidebar__nav-btn" data-section="recipes">🍽️ Рецепты</button>
+        <button class="sidebar__nav-btn" data-section="habits">🏃 Привычки</button>
+        <button class="sidebar__nav-btn" data-section="documents">📄 Документы</button>
+        <button class="sidebar__nav-btn" data-section="music">🎵 Музыка</button>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Sidebar overlay (mobile) -->
+  <div class="sidebar-overlay hidden" id="sidebarOverlay"></div>
+
+  <!-- Main content -->
+  <main class="main-content" id="mainContent">
+    <!-- Floating sidebar toggle (visible when sidebar is closed) -->
+    <button class="sidebar-open-btn hidden" id="sidebarOpenBtn" aria-label="Открыть панель">☰</button>
+
+    <!-- Home section -->
+    <section class="section section--home active" id="section-home">
+      <div class="home-header">
+        <h1 class="home-title">AIO</h1>
+        <p class="home-subtitle">All In One — все важные приложения в одном месте</p>
+      </div>
+      <div class="home-grid" id="homeGrid">
+        <button class="home-card" data-section="notes">
+          <div class="home-card__icon notes-icon">📝</div>
+          <span class="home-card__label">Записи</span>
+        </button>
+        <button class="home-card" data-section="timer">
+          <div class="home-card__icon timer-icon">⏱️</div>
+          <span class="home-card__label">Тайм-менеджер</span>
+        </button>
+        <button class="home-card" data-section="weather">
+          <div class="home-card__icon weather-icon">🌤️</div>
+          <span class="home-card__label">Погода</span>
+        </button>
+        <button class="home-card" data-section="movies">
+          <div class="home-card__icon movies-icon">🎬</div>
+          <span class="home-card__label">Фильмы</span>
+        </button>
+        <button class="home-card" data-section="news">
+          <div class="home-card__icon news-icon">🗞️</div>
+          <span class="home-card__label">Новости</span>
+        </button>
+        <button class="home-card" data-section="games">
+          <div class="home-card__icon games-icon">🎮</div>
+          <span class="home-card__label">Игры</span>
+        </button>
+        <button class="home-card" data-section="finance">
+          <div class="home-card__icon finance-icon">💰</div>
+          <span class="home-card__label">Финансы</span>
+        </button>
+        <button class="home-card" data-section="translator">
+          <div class="home-card__icon translator-icon">🌐</div>
+          <span class="home-card__label">Переводчик</span>
+        </button>
+        <button class="home-card" data-section="calc">
+          <div class="home-card__icon calc-icon">🖩</div>
+          <span class="home-card__label">Калькулятор</span>
+        </button>
+        <button class="home-card" data-section="family">
+          <div class="home-card__icon family-icon">👨‍👩‍👧</div>
+          <span class="home-card__label">Семья</span>
+        </button>
+        <button class="home-card" data-section="recipes">
+          <div class="home-card__icon recipes-icon">🍽️</div>
+          <span class="home-card__label">Рецепты</span>
+        </button>
+        <button class="home-card" data-section="habits">
+          <div class="home-card__icon habits-icon">🏃</div>
+          <span class="home-card__label">Привычки</span>
+        </button>
+        <button class="home-card" data-section="documents">
+          <div class="home-card__icon documents-icon">📄</div>
+          <span class="home-card__label">Документы</span>
+        </button>
+        <button class="home-card" data-section="music">
+          <div class="home-card__icon music-icon">🎵</div>
+          <span class="home-card__label">Музыка</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Notes section -->
+    <section class="section section--notes hidden" id="section-notes">
+      <div class="section-topbar">
+        <button class="back-btn" data-section="home">← Назад</button>
+        <h2 class="section-title notes-title">📝 Записи</h2>
+        <button class="notes-select-btn" id="notesSelectBtn">Выбрать</button>
+      </div>
+      <div class="notes-layout">
+        <!-- Bookshelf -->
+        <div class="bookshelf" id="bookshelf">
+          <div class="bookshelf__controls">
+            <button class="bookshelf__add-shelf" id="addShelfBtn">+ Полка</button>
+            <button class="bookshelf__add-book" id="addBookBtn">+ Запись</button>
+          </div>
+          <div class="bookshelf__shelves" id="shelvesContainer">
+            <!-- Shelves rendered by JS -->
+          </div>
+        </div>
+        <!-- Note editor -->
+        <div class="note-editor hidden" id="noteEditor">
+          <div class="note-editor__header">
+            <button class="note-editor__close" id="noteEditorClose" aria-label="Закрыть редактор">✕</button>
+            <input class="note-editor__title" id="noteTitle" type="text" placeholder="Заголовок" />
+            <input class="note-editor__subtitle" id="noteSubtitle" type="text" placeholder="Подзаголовок" />
+          </div>
+          <div class="note-editor__body" id="noteBody">
+            <!-- Dynamic content based on note type -->
+          </div>
+          <div class="note-editor__actions">
+            <button class="note-editor__save" id="noteSaveBtn">Сохранить</button>
+          </div>
+        </div>
+      </div>
+      <!-- Selection toolbar -->
+      <div class="notes-select-bar hidden" id="notesSelectBar">
+        <span id="selectedCount">0 выбрано</span>
+        <button class="select-action" id="deleteSelectedBtn">🗑️ Удалить</button>
+        <button class="select-action" id="printSelectedBtn">🖨️ Печать</button>
+        <button class="select-action" id="exportSelectedBtn">📤 Экспорт</button>
+        <button class="select-action" id="cancelSelectBtn">Отмена</button>
+      </div>
+      <div class="source-banner">📝 Записи хранятся локально на вашем устройстве</div>
+    </section>
+
+    <!-- Timer section -->
+    <section class="section section--timer hidden" id="section-timer">
+      <div class="section-topbar">
+        <button class="back-btn" data-section="home">← Назад</button>
+        <h2 class="section-title timer-title">⏱️ Тайм-менеджер</h2>
+      </div>
+      <div class="timer-home" id="timerHome">
+        <div class="timer-logo">⏱️</div>
+        <div class="timer-choices">
+          <button class="timer-choice-btn" data-timer-view="countdown">
+            <div class="timer-choice-icon">⏳</div>
+            <span>Таймер</span>
+          </button>
+          <button class="timer-choice-btn" data-timer-view="alarm">
+            <div class="timer-choice-icon">⏰</div>
+            <span>Будильник</span>
+          </button>
+          <button class="timer-choice-btn" data-timer-view="calendar">
+            <div class="timer-choice-icon">📅</div>
+            <span>Календарь</span>
+          </button>
+        </div>
+      </div>
+      <!-- Countdown timer (Atlantis theme) -->
+      <div class="atlantis-timer hidden" id="atlantisTimer">
+        <button class="timer-back-view" data-timer-view="home">← Назад</button>
+        <div class="atlantis-scene">
+          <div class="atlantis-sky">
+            <div class="lightning lightning--left">⚡</div>
+            <div class="atlantis-time-display" id="atlantisTimeDisplay">00:00:00</div>
+            <div class="lightning lightning--right">⚡</div>
+          </div>
+          <div class="atlantis-city" id="atlantisCityBtn">
+            <div class="atlantis-rings">
+              <div class="atlantis-ring atlantis-ring--outer"></div>
+              <div class="atlantis-ring atlantis-ring--mid"></div>
+              <div class="atlantis-ring atlantis-ring--inner"></div>
+              <div class="atlantis-center">
+                <span id="atlantisAction">Запустить</span>
+              </div>
+            </div>
+            <div class="atlantis-tsunami" id="atlantisTsunami"></div>
+          </div>
+          <div class="atlantis-setup" id="atlantisSetup">
+            <div class="time-scroll-group">
+              <div class="time-scroll" id="scrollHours">
+                <div class="time-scroll__track" data-max="23" data-unit="ч"></div>
+              </div>
+              <span class="time-scroll-sep">:</span>
+              <div class="time-scroll" id="scrollMinutes">
+                <div class="time-scroll__track" data-max="59" data-unit="м"></div>
+              </div>
+              <span class="time-scroll-sep">:</span>
+              <div class="time-scroll" id="scrollSeconds">
+                <div class="time-scroll__track" data-max="59" data-unit="с"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Alarm (Chinese theme) -->
+      <div class="alarm-view hidden" id="alarmView">
+        <button class="timer-back-view" data-timer-view="home">← Назад</button>
+        <div class="alarm-scene">
+          <div class="alarm-building">
+            <div class="alarm-roof">🏯</div>
+            <div class="alarm-add-btn" id="addAlarmBtn" role="button" tabindex="0" aria-label="Добавить будильник">+</div>
+          </div>
+          <div class="alarm-arrows-container" id="alarmArrows">
+            <!-- Arrows added by JS -->
+          </div>
+          <div class="alarm-gong">🔔</div>
+          <div class="alarm-person">🧍</div>
+        </div>
+      </div>
+      <!-- Calendar (Port theme) -->
+      <div class="calendar-view hidden" id="calendarView">
+        <button class="timer-back-view" data-timer-view="home">← Назад</button>
+        <div class="calendar-port">
+          <div class="calendar-port__header">
+            <button class="calendar-nav" id="calPrevYear" aria-label="Предыдущий год">‹‹</button>
+            <h2 class="calendar-port__year" id="calYear">2026</h2>
+            <button class="calendar-nav" id="calNextYear" aria-label="Следующий год">››</button>
+          </div>
+          <div class="calendar-months" id="calMonths">
+            <!-- Month piers rendered by JS -->
+          </div>
+          <div class="calendar-days hidden" id="calDays">
+            <!-- Day docks rendered by JS -->
+          </div>
+        </div>
+      </div>
+      <div class="source-banner">⏱️ Данные хранятся локально на вашем устройстве</div>
+    </section>
+
+    <!-- Weather section -->
+    <section class="section section--weather hidden" id="section-weather">
+      <div class="section-topbar">
+        <button class="back-btn" data-section="home">← Назад</button>
+        <h2 class="section-title weather-title">🌤️ Прогноз погоды</h2>
+        <div class="weather-location-row">
+          <span id="weatherLocationLabel">📍 Ваш город</span>
+          <button class="weather-change-loc" id="changeLocationBtn">Изменить</button>
+        </div>
+      </div>
+      <div class="weather-body">
+        <div class="weather-week" id="weatherWeek">
+          <!-- 7 day cards rendered by JS -->
+        </div>
+        <div class="weather-details">
+          <div class="weather-map-panel">
+            <div class="weather-map-placeholder">🗺️<br/>Карта погоды</div>
+            <div class="weather-map-filters">
+              <button class="weather-filter active">🌡️ Темп.</button>
+              <button class="weather-filter">💨 Ветер</button>
+              <button class="weather-filter">🌧️ Осадки</button>
+              <button class="weather-filter">☀️ УФ</button>
+              <button class="weather-filter">💨 Воздух</button>
+            </div>
+          </div>
+          <div class="weather-stats">
+            <div class="weather-stat-card">
+              <span class="weather-stat-icon">💨</span>
+              <span class="weather-stat-label">Ветер</span>
+              <span class="weather-stat-value" id="weatherWind">12 км/ч</span>
+            </div>
+            <div class="weather-stat-card">
+              <span class="weather-stat-icon">☀️</span>
+              <span class="weather-stat-label">УФ-индекс</span>
+              <span class="weather-stat-value" id="weatherUV">3</span>
+            </div>
+            <div class="weather-stat-card weather-dust">
+              <span class="weather-stat-icon">🌫️</span>
+              <span class="weather-stat-label">Качество воздуха</span>
+              <span class="weather-stat-value" id="weatherAir">Хорошее</span>
+            </div>
+            <div class="weather-stat-card weather-pressure">
+              <span class="weather-stat-icon">📊</span>
+              <span class="weather-stat-label">Давление</span>
+              <span class="weather-stat-value" id="weatherPressure">762 мм рт. ст.</span>
+              <span class="weather-pressure-desc" id="weatherPressureDesc">Обычное · Стабильно</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="source-banner">🌤️ Источники: OpenMeteo · OpenWeather · MetNo · ECMWF</div>
+    </section>
+
+    <!-- Movies section -->
+    <section class="section section--movies hidden" id="section-movies">
+      <div class="section-topbar">
+        <button class="back-btn" data-section="home">← Назад</button>
+        <h2 class="section-title movies-title">🎬 Фильмы</h2>
+      </div>
+      <div class="movies-body">
+        <div class="movies-search-row">
+          <div class="movies-search-board">
+            <input class="movies-search-input" type="text" id="moviesSearch" placeholder="🔍 Найти фильм..." />
+          </div>
+        </div>
+        <div class="movies-section-label">🎞️ Рекомендации для вас</div>
+        <div class="movies-portholes" id="moviesPortholes">
+          <!-- Porthole movie cards rendered by JS -->
+        </div>
+        <div class="movies-search-results hidden" id="moviesResults">
+          <!-- Search results portholes -->
+        </div>
+      </div>
+      <div class="source-banner">🎬 Источники: VK Video · YouTube · Rutube</div>
+    </section>
+
+    <!-- News section -->
+    <section class="section section--news hidden" id="section-news">
+      <div class="section-topbar">
+        <button class="back-btn" data-section="home">← Назад</button>
+        <h2 class="section-title news-title">🗞️ Новости</h2>
+        <div class="news-date-badge" id="newsTodayBadge">Свежие новости · <span id="newsDateDisplay"></span></div>
+      </div>
+      <div class="news-fact-card" id="newsFactCard">
+        <span class="news-fact-bulb">💡</span>
+        <p class="news-fact-text" id="newsFactText">Загрузка факта дня...</p>
+      </div>
+      <div class="news-kiosk" id="newsKiosk">
+        <div class="news-newspaper" data-paper="world">
+          <div class="newspaper-cover">
+            <div class="newspaper-icon">🌍</div>
+            <div class="newspaper-title">МИР</div>
+          </div>
+        </div>
+        <div class="news-newspaper" data-paper="science">
+          <div class="newspaper-cover">
+            <div class="newspaper-icon">🔬</div>
+            <div class="newspaper-title">НАУКА</div>
+          </div>
+        </div>
+        <div class="news-newspaper" data-paper="tech">
+          <div class="newspaper-cover">
+            <div class="newspaper-icon">💻</div>
+            <div class="newspaper-title">ТЕХНОЛОГИИ</div>
+          </div>
+        </div>
+      </div>
+      <div class="news-open-paper hidden" id="newsOpenPaper">
+        <button class="news-close-paper" id="newsClosePaper">← Назад</button>
+        <div class="news-paper-header" id="newsPaperHeader"></div>
+        <div class="news-filters" id="newsFilters"></div>
+        <div class="news-headlines" id="newsHeadlines">
+          <!-- Headlines rendered by JS -->
+        </div>
+      </div>
+      <div class="source-banner">🗞️ Источники: RSS-ленты · Lenta.ru · N+1 · Habr · Meduza</div>
+    </section>
+
+    <!-- Games section -->
+    <section class="section section--games hidden" id="section-games">
+      <div class="section-topbar">
+        <button class="back-btn" data-section="home">← Назад</button>
+        <h2 class="section-title games-title">🎮 Игры</h2>
+      </div>
+      <div class="games-fair">
+        <div class="games-sign">
+          <input class="games-search" type="text" id="gamesSearch" placeholder="🔍 Что хотите поиграть?" />
+        </div>
+        <div class="games-tents" id="gamesTents">
+          <!-- Tent cards rendered by JS -->
+        </div>
+      </div>
+      <div class="source-banner">🎮 Источники: CrazyGames · Itch.io · Google Games</div>
+    </section>
+
+    <!-- Finance section -->
+    <section class="section section--finance hidden" id="section-finance">
+      <div class="section-topbar">
+        <button class="back-btn" data-section="home">← Назад</button>
+        <h2 class="section-title finance-title">💰 Финансы</h2>
+      </div>
+      <div class="finance-vault">
+        <div class="finance-scales">
+          <div class="finance-scales__label">Доходы</div>
+          <div class="finance-scales__beam" id="financeBeam">
+            <div class="finance-scales__left-pan" id="incomePan">
+              <span id="incomeTotal">0 ₽</span>
+            </div>
+            <div class="finance-scales__right-pan" id="expensePan">
+              <span id="expenseTotal">0 ₽</span>
+            </div>
+          </div>
+          <div class="finance-scales__label">Расходы</div>
+        </div>
+        <div class="finance-vault-door">
+          <div class="finance-cells" id="financeCells">
+            <!-- Category cells rendered by JS -->
+          </div>
+        </div>
+        <button class="finance-add-btn" id="financeAddBtn">+ Добавить трату</button>
+      </div>
+      <div class="finance-add-modal hidden" id="financeModal">
+        <div class="finance-modal-card">
+          <h3>Новая трата</h3>
+          <input type="number" class="sidebar__input" id="financeAmount" placeholder="Сумма (₽)" />
+          <select class="sidebar__input" id="financeCategory">
+            <option value="Еда">🍕 Еда</option>
+            <option value="Транспорт">🚗 Транспорт</option>
+            <option value="Развлечения">🎉 Развлечения</option>
+            <option value="Здоровье">💊 Здоровье</option>
+            <option value="Одежда">👕 Одежда</option>
+            <option value="Прочее">📦 Прочее</option>
+          </select>
+          <input type="text" class="sidebar__input" id="financeNote" placeholder="Заметка" />
+          <div class="finance-modal-btns">
+            <button class="finance-modal-cancel" id="financeModalCancel">Отмена</button>
+            <button class="finance-modal-save" id="financeModalSave">Сохранить</button>
+          </div>
+        </div>
+      </div>
+      <div class="source-banner">💰 Данные хранятся локально на вашем устройстве</div>
+    </section>
+
+    <!-- Translator section -->
+    <section class="section section--translator hidden" id="section-translator">
+      <div class="section-topbar">
+        <button class="back-btn" data-section="home">← Назад</button>
+        <h2 class="section-title translator-title">🌐 Переводчик</h2>
+      </div>
+      <div class="babel-scene">
+        <div class="babel-tower" id="babelTower">
+          <div class="babel-top">🗼</div>
+          <!-- Tower tiers rendered by JS -->
+        </div>
+        <div class="babel-translate-area">
+          <div class="babel-lang-selectors">
+            <div class="babel-lang-box">
+              <span class="babel-lang-label" id="fromLangLabel">Русский</span>
+              <button class="babel-lang-change" id="fromLangBtn">Изменить</button>
+            </div>
+            <button class="babel-swap-btn" id="swapLangsBtn" aria-label="Поменять языки местами">⇄</button>
+            <div class="babel-lang-box">
+              <span class="babel-lang-label" id="toLangLabel">Английский</span>
+              <button class="babel-lang-change" id="toLangBtn">Изменить</button>
+            </div>
+          </div>
+          <div class="babel-inputs">
+            <textarea class="babel-input" id="translateInput" placeholder="Введите текст у подножия башни..."></textarea>
+            <div class="babel-stone-tablet">
+              <p class="babel-output" id="translateOutput">Перевод появится здесь</p>
+            </div>
+          </div>
+          <div class="babel-actions">
+            <button class="babel-action-btn" id="translateBtn">🔄 Перевести</button>
+            <button class="babel-action-btn" id="voiceTranslateBtn">🎤 Голос</button>
+          </div>
+        </div>
+      </div>
+      <div class="source-banner">🌐 Источник: LibreTranslate (бесплатно)</div>
+    </section>
+
+    <!-- Calculator section -->
+    <section class="section section--calc hidden" id="section-calc">
+      <div class="section-topbar">
+        <button class="back-btn" data-section="home">← Назад</button>
+        <h2 class="section-title calc-title">🖩 Калькулятор</h2>
+      </div>
+      <div class="factory-scene">
+        <div class="factory-bg">
+          <div class="factory-gears">
+            <div class="gear gear--plus" id="gearPlus">➕
+              <div class="gear-label">+</div>
+            </div>
+            <div class="gear gear--minus" id="gearMinus">
+              <div class="gear-label">−</div>
+            </div>
+            <div class="gear gear--mult" id="gearMult">
+              <div class="gear-label">×</div>
+            </div>
+            <div class="gear gear--div" id="gearDiv">
+              <div class="gear-label">÷</div>
+            </div>
+          </div>
+          <div class="factory-panel">
+            <div class="calc-history" id="calcHistory">
+              <!-- History tape rendered by JS -->
+            </div>
+            <div class="calc-display">
+              <div class="calc-expression" id="calcExpression"></div>
+              <div class="calc-result" id="calcResult">0</div>
+            </div>
+            <div class="calc-buttons">
+              <button class="calc-btn calc-btn--action" data-action="clear">AC</button>
+              <button class="calc-btn calc-btn--action" data-action="sign">+/−</button>
+              <button class="calc-btn calc-btn--action" data-action="percent">%</button>
+              <button class="calc-btn calc-btn--op" data-op="/">÷</button>
+              <button class="calc-btn" data-num="7">7</button>
+              <button class="calc-btn" data-num="8">8</button>
+              <button class="calc-btn" data-num="9">9</button>
+              <button class="calc-btn calc-btn--op" data-op="*">×</button>
+              <button class="calc-btn" data-num="4">4</button>
+              <button class="calc-btn" data-num="5">5</button>
+              <button class="calc-btn" data-num="6">6</button>
+              <button class="calc-btn calc-btn--op" data-op="-">−</button>
+              <button class="calc-btn" data-num="1">1</button>
+              <button class="calc-btn" data-num="2">2</button>
+              <button class="calc-btn" data-num="3">3</button>
+              <button class="calc-btn calc-btn--op" data-op="+">+</button>
+              <button class="calc-btn calc-btn--zero" data-num="0">0</button>
+              <button class="calc-btn" data-action="decimal">.</button>
+              <button class="calc-btn calc-btn--eq" data-action="equals">=</button>
+            </div>
+          </div>
+          <div class="factory-conveyor" id="calcConveyor">
+            <!-- History tape items -->
+          </div>
+        </div>
+      </div>
+      <div class="source-banner">🖩 Данные хранятся локально на вашем устройстве</div>
+    </section>
+
+    <!-- Family section -->
+    <section class="section section--family hidden" id="section-family">
+      <div class="section-topbar">
+        <button class="back-btn" data-section="home">← Назад</button>
+        <h2 class="section-title family-title">👨‍👩‍👧 Семейный режим</h2>
+      </div>
+      <div class="village-scene">
+        <div class="village-board">
+          <div class="village-well">
+            <div class="village-well-label">📋 Общие события</div>
+            <div class="village-events" id="villageEvents"></div>
+            <button class="village-add-event" id="addFamilyEventBtn">+ Событие</button>
+          </div>
+        </div>
+        <div class="village-houses" id="villageHouses">
+          <!-- House per family member rendered by JS -->
+        </div>
+        <button class="village-add-house" id="addFamilyMemberBtn">🏠 + Участник</button>
+        <div class="village-market">
+          <div class="village-market-label">🛒 Список покупок</div>
+          <div class="village-shopping-list" id="villageShoppingList"></div>
+          <div class="village-add-item-row">
+            <input type="text" class="sidebar__input" id="shoppingInput" placeholder="Добавить товар..." />
+            <button class="village-add-item-btn" id="addShoppingItemBtn" aria-label="Добавить товар">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="source-banner">👨‍👩‍👧 Данные хранятся локально на вашем устройстве</div>
+    </section>
+
+    <!-- Recipes section -->
+    <section class="section section--recipes hidden" id="section-recipes">
+      <div class="section-topbar">
+        <button class="back-btn" data-section="home">← Назад</button>
+        <h2 class="section-title recipes-title">🍽️ Рецепты</h2>
+      </div>
+      <div class="market-scene">
+        <div class="market-header">Выберите ингредиенты из вашего холодильника:</div>
+        <div class="market-stalls" id="marketStalls">
+          <!-- Ingredient stalls rendered by JS -->
+        </div>
+        <div class="market-basket-row">
+          <div class="market-basket" id="marketBasket">
+            <span class="market-basket-label">🧺 Корзина:</span>
+            <span id="basketItems">пусто</span>
+          </div>
+          <button class="market-find-btn" id="findRecipesBtn">🍳 Найти рецепты</button>
+        </div>
+        <div class="recipes-scroll hidden" id="recipesScroll">
+          <!-- Recipe scrolls rendered by JS -->
+        </div>
+        <div class="recipes-cellar-btn-wrap">
+          <button class="recipes-cellar-btn" id="recipeCellarBtn">📚 Мой погреб (избранное)</button>
+        </div>
+      </div>
+      <div class="source-banner">🍽️ Источники: Едим Дома · Povarenok.ru</div>
+    </section>
+
+    <!-- Habits section -->
+    <section class="section section--habits hidden" id="section-habits">
+      <div class="section-topbar">
+        <button class="back-btn" data-section="home">← Назад</button>
+        <h2 class="section-title habits-title">🏃 Трекер привычек</h2>
+      </div>
+      <div class="garden-scene">
+        <div class="garden-sky"></div>
+        <div class="garden-beds" id="gardenBeds">
+          <!-- Habit beds rendered by JS -->
+        </div>
+        <button class="garden-add-btn" id="addHabitBtn">🌱 Посадить новую привычку</button>
+      </div>
+      <div class="source-banner">🏃 Данные хранятся локально на вашем устройстве</div>
+    </section>
+
+    <!-- Documents section -->
+    <section class="section section--documents hidden" id="section-documents">
+      <div class="section-topbar">
+        <button class="back-btn" data-section="home">← Назад</button>
+        <h2 class="section-title documents-title">📄 Документы</h2>
+      </div>
+      <div class="mailbox-scene">
+        <div class="mailbox-main">
+          <div class="mailbox-slot-area">
+            <div class="mailbox-icon">📮</div>
+            <button class="mailbox-scan-btn" id="scanDocBtn">📷 Сканировать документ</button>
+            <input type="file" id="docFileInput" accept="image/*,application/pdf" class="hidden" />
+          </div>
+          <div class="mailbox-inbox">
+            <div class="mailbox-inbox-label">📬 Входящие</div>
+            <div class="mailbox-letters" id="mailboxLetters">
+              <!-- Letter cards rendered by JS -->
+            </div>
+          </div>
+        </div>
+        <div class="mailbox-sent">
+          <div class="mailbox-sent-label">📤 Подписанные</div>
+          <div class="mailbox-signed" id="mailboxSigned">
+            <!-- Signed docs rendered by JS -->
+          </div>
+        </div>
+      </div>
+      <div class="source-banner">📄 Документы хранятся локально на вашем устройстве</div>
+    </section>
+
+    <!-- Music section -->
+    <section class="section section--music hidden" id="section-music">
+      <div class="section-topbar">
+        <button class="back-btn" data-section="home">← Назад</button>
+        <h2 class="section-title music-title">🎵 Музыка</h2>
+      </div>
+      <div class="concert-hall">
+        <div class="concert-posters" id="concertPosters">
+          <!-- Recommendation posters rendered by JS -->
+        </div>
+        <div class="concert-stage">
+          <div class="concert-stage-curtain-right"></div>
+          <div class="concert-stage__artist" id="stageArtist">🎤</div>
+          <div class="concert-stage__track" id="stageTrackName">Ничего не играет</div>
+          <div class="concert-stage__curtain-wrap">
+            <div class="concert-curtain" id="stageCurtain"></div>
+          </div>
+          <div class="concert-stage__controls">
+            <button class="concert-control" id="musicPrev" aria-label="Предыдущий трек">⏮</button>
+            <button class="concert-control concert-control--main" id="musicPlayPause" aria-label="Воспроизведение/Пауза">▶</button>
+            <button class="concert-control" id="musicNext" aria-label="Следующий трек">⏭</button>
+          </div>
+        </div>
+        <div class="concert-ticket-booth">
+          <input class="concert-search" type="text" id="musicSearch" placeholder="🎟️ Поиск треков..." />
+          <div class="concert-results" id="musicResults">
+            <!-- Track tickets rendered by JS -->
+          </div>
+        </div>
+      </div>
+      <div class="source-banner">🎵 Источники: VK Музыка · YouTube Music</div>
+    </section>
+
+  </main>
+
+  <!-- Note type picker modal -->
+  <div class="modal hidden" id="noteTypeModal">
+    <div class="modal-card">
+      <h3>Тип записи</h3>
+      <button class="modal-option" data-note-type="list">🧾 Список</button>
+      <button class="modal-option" data-note-type="form">✅ Форма</button>
+      <button class="modal-option" data-note-type="note">📝 Обычная запись</button>
+      <button class="modal-close" id="noteTypeModalClose">Отмена</button>
+    </div>
+  </div>
+
+  <!-- Language picker modal -->
+  <div class="modal hidden" id="langModal">
+    <div class="modal-card modal-card--wide">
+      <h3 id="langModalTitle">Выбор языка</h3>
+      <div class="lang-tower-list" id="langList">
+        <!-- Languages rendered by JS -->
+      </div>
+      <button class="modal-close" id="langModalClose">Отмена</button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/storage.js"></script>
+  <script src="js/visual-effects.js"></script>
+  <script src="js/sidebar.js"></script>
+  <script src="js/notes.js"></script>
+  <script src="js/timer.js"></script>
+  <script src="js/weather.js"></script>
+  <script src="js/movies.js"></script>
+  <script src="js/news.js"></script>
+  <script src="js/games.js"></script>
+  <script src="js/finance.js"></script>
+  <script src="js/translator.js"></script>
+  <script src="js/calc.js"></script>
+  <script src="js/family.js"></script>
+  <script src="js/recipes.js"></script>
+  <script src="js/habits.js"></script>
+  <script src="js/documents.js"></script>
+  <script src="js/music.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
