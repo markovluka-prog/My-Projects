@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: my-projects-webdav
+    env: node
+    rootDir: webdav
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: WD_USER
+        value: luka
+      - key: WD_PASS
+        sync: false
