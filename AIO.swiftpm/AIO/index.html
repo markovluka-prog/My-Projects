@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<title>AIO</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #1a1a2e;
+  --surface: #16213e;
+  --accent: #e94560;
+  --text: #eaeaea;
+  --text-dim: #888;
+  --sidebar-w: 280px;
+  --banner-h: 36px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, 'SF Pro Display', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+#app { display: flex; width: 100%; height: 100%; position: relative; }
+
+/* ===== SIDEBAR ===== */
+#sidebar {
+  width: var(--sidebar-w); height: 100%;
+  background: var(--surface);
+  display: flex; flex-direction: column;
+  padding: 52px 0 calc(var(--banner-h) + var(--safe-bottom)) 0;
+  border-right: 1px solid rgba(255,255,255,0.06);
+  flex-shrink: 0;
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  z-index: 100;
+}
+#sidebar.hidden { position: absolute; left: 0; top: 0; transform: translateX(-100%); box-shadow: 4px 0 20px rgba(0,0,0,0.5); }
+#sidebar.hidden.open { transform: translateX(0); }
+#sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; }
+#sidebar-overlay.show { display: block; }
+
+.sidebar-section { padding: 16px 20px 8px; }
+.sidebar-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); margin-bottom: 12px; }
+
+.user-info { display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 14px; margin-bottom: 8px; }
+.user-avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.user-details { flex: 1; min-width: 0; }
+.user-name { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.user-age { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+.edit-btn { background: none; border: none; color: var(--text-dim); font-size: 18px; cursor: pointer; padding: 4px; }
+
+.ai-box { background: rgba(255,255,255,0.05); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.ai-input-row { display: flex; gap: 8px; align-items: flex-end; }
+.ai-input { flex: 1; background: rgba(255,255,255,0.08); border: none; border-radius: 10px; padding: 10px 12px; color: var(--text); font-size: 14px; outline: none; resize: none; min-height: 80px; line-height: 1.5; font-family: inherit; }
+.ai-input::placeholder { color: var(--text-dim); }
+.ai-mic { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.08); border: none; color: var(--text); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.ai-send { width: 100%; padding: 10px; background: rgba(255,255,255,0.1); border: none; border-radius: 10px; color: var(--text); font-size: 14px; font-weight: 500; cursor: pointer; }
+.ai-send:active { opacity: 0.7; }
+.ai-response { font-size: 13px; color: var(--text-dim); line-height: 1.6; display: none; background: rgba(255,255,255,0.04); border-radius: 10px; padding: 10px 12px; }
+
+.sections-btn { margin: 8px 20px; padding: 12px 16px; background: rgba(233,69,96,0.15); border: 1px solid rgba(233,69,96,0.3); border-radius: 14px; color: var(--accent); font-size: 14px; font-weight: 500; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 8px; }
+.sections-btn:active { opacity: 0.7; }
+
+/* ===== MAIN ===== */
+#main { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+#back-btn { position: absolute; top: 16px; left: 16px; background: rgba(255,255,255,0.12); border: none; border-radius: 12px; color: var(--text); font-size: 14px; font-weight: 500; padding: 10px 14px; cursor: pointer; z-index: 10; display: none; align-items: center; gap: 6px; }
+#back-btn.show { display: flex; }
+
+.screen { display: none; flex: 1; overflow: hidden; flex-direction: column; }
+.screen.active { display: flex; }
+
+/* ===== HOME ===== */
+#home { padding: 52px 20px calc(var(--banner-h) + var(--safe-bottom) + 20px); overflow-y: auto; }
+.home-title { font-size: 32px; font-weight: 700; margin-bottom: 6px; background: linear-gradient(135deg, #fff, #aaa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.home-subtitle { font-size: 14px; color: var(--text-dim); margin-bottom: 28px; }
+.sections-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.section-card { aspect-ratio: 1; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; position: relative; overflow: hidden; transition: transform 0.15s, opacity 0.15s; border: 1px solid rgba(255,255,255,0.08); }
+.section-card:active { transform: scale(0.93); opacity: 0.85; }
+.section-card .card-icon { font-size: 32px; }
+.section-card .card-name { font-size: 12px; font-weight: 500; text-align: center; line-height: 1.2; padding: 0 6px; }
+.card-notes    { background: linear-gradient(135deg, #1e4d2b, #2d7a3a); }
+.card-time     { background: linear-gradient(135deg, #1a3a5c, #2563a8); }
+.card-weather  { background: linear-gradient(135deg, #1a3050, #2980b9); }
+.card-movies   { background: linear-gradient(135deg, #2c1654, #8e44ad); }
+.card-news     { background: linear-gradient(135deg, #2d2416, #8b6914); }
+.card-games    { background: linear-gradient(135deg, #4a1010, #c0392b); }
+.card-finance  { background: linear-gradient(135deg, #0d2b1a, #1a6b3c); }
+.card-translate{ background: linear-gradient(135deg, #2b1a0d, #8b4513); }
+.card-calc     { background: linear-gradient(135deg, #1a1a1a, #555); }
+.card-family   { background: linear-gradient(135deg, #2b1a0d, #c0782a); }
+.card-recipes  { background: linear-gradient(135deg, #1a2b0d, #5a8a2a); }
+.card-habits   { background: linear-gradient(135deg, #0d2b0d, #27ae60); }
+.card-docs     { background: linear-gradient(135deg, #0d1a2b, #2980b9); }
+.card-music    { background: linear-gradient(135deg, #2b0d1a, #8b1a4a); }
+
+/* ===== SECTION SELECTOR ===== */
+#section-selector { padding: 56px 20px calc(var(--banner-h) + var(--safe-bottom) + 20px); overflow-y: auto; }
+.selector-title { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+.selector-subtitle { font-size: 14px; color: var(--text-dim); margin-bottom: 24px; }
+.selector-list { display: flex; flex-direction: column; gap: 10px; }
+.selector-item { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: rgba(255,255,255,0.05); border-radius: 16px; cursor: pointer; transition: background 0.15s; }
+.selector-item:active { background: rgba(255,255,255,0.1); }
+.selector-item .item-icon { font-size: 24px; width: 36px; text-align: center; }
+.selector-item .item-name { flex: 1; font-size: 15px; font-weight: 500; }
+.toggle { width: 50px; height: 28px; background: rgba(255,255,255,0.15); border-radius: 14px; position: relative; transition: background 0.2s; flex-shrink: 0; }
+.toggle.on { background: #30d158; }
+.toggle::after { content: ''; position: absolute; width: 22px; height: 22px; background: #fff; border-radius: 50%; top: 3px; left: 3px; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+.toggle.on::after { left: 25px; }
+
+/* ===== ПРОФИЛЬ ===== */
+#profile-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; align-items: flex-end; justify-content: center; }
+#profile-modal.show { display: flex; }
+.modal-sheet { width: 100%; max-width: 480px; background: #1e1e2e; border-radius: 24px 24px 0 0; padding: 28px 24px calc(var(--safe-bottom) + 28px); }
+.modal-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; }
+.modal-field { margin-bottom: 16px; }
+.modal-field label { font-size: 13px; color: var(--text-dim); margin-bottom: 6px; display: block; }
+.modal-input { width: 100%; background: rgba(255,255,255,0.08); border: none; border-radius: 12px; padding: 12px 14px; color: var(--text); font-size: 16px; outline: none; }
+.modal-save { width: 100%; padding: 14px; background: var(--accent); border: none; border-radius: 14px; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 8px; }
+
+/* ===== BANNER ===== */
+#banner { position: fixed; bottom: 0; left: 0; right: 0; height: calc(var(--banner-h) + var(--safe-bottom)); padding-bottom: var(--safe-bottom); background: rgba(10,10,20,0.95); backdrop-filter: blur(10px); border-top: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 11px; color: var(--text-dim); z-index: 50; }
+.banner-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--text-dim); }
+
+/* ===== PLACEHOLDER ===== */
+.section-placeholder { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding-bottom: calc(var(--banner-h) + var(--safe-bottom)); color: var(--text-dim); }
+.section-placeholder .ph-icon { font-size: 64px; }
+.section-placeholder .ph-title { font-size: 22px; font-weight: 700; color: var(--text); }
+.section-placeholder .ph-sub { font-size: 14px; text-align: center; max-width: 260px; line-height: 1.5; }
+
+/* ===== КАЛЬКУЛЯТОР ===== */
+#calc-section {
+  display: flex; flex-direction: column; height: 100%;
+  background: #080808;
+  background-image:
+    radial-gradient(circle, #1e1e1e 1px, transparent 1px);
+  background-size: 28px 28px;
+  padding-bottom: calc(var(--banner-h) + var(--safe-bottom));
+}
+.calc-tabs {
+  display: flex; padding: 52px 14px 0; gap: 1px;
+}
+.calc-tab {
+  flex: 1; padding: 10px;
+  background: #111; border: 1px solid #222;
+  color: #555; font-size: 13px; font-weight: 600;
+  letter-spacing: 0.05em; cursor: pointer; text-transform: uppercase;
+}
+.calc-tab:first-child { border-radius: 8px 0 0 8px; }
+.calc-tab:last-child  { border-radius: 0 8px 8px 0; }
+.calc-tab.active { background: #1a1200; border-color: #f0a500; color: #f0a500; }
+
+/* Factory header with gears */
+.calc-factory-hdr {
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; padding: 10px 12px 4px;
+  background: linear-gradient(180deg, #111 0%, #0a0a0a 100%);
+  border-bottom: 1px solid #1a1a1a;
+  position: relative;
+}
+.calc-factory-hdr::before {
+  content: ''; position: absolute;
+  left: 0; right: 0; bottom: -4px; height: 4px;
+  background: repeating-linear-gradient(90deg, #1a1a1a 0px, #1a1a1a 8px, #0a0a0a 8px, #0a0a0a 12px);
+}
+.calc-gear-wrap {
+  cursor: pointer; display: flex; flex-direction: column;
+  align-items: center; transition: transform 0.1s;
+}
+.calc-gear-wrap:active { transform: scale(0.94); }
+.calc-gear-svg { display: block; }
+@keyframes gearCW  { to { transform: rotate(360deg); } }
+@keyframes gearCCW { to { transform: rotate(-360deg); } }
+
+/* Pipe between gears */
+.gear-pipe {
+  width: 16px; height: 6px;
+  background: linear-gradient(180deg, #2a2a2a, #111, #2a2a2a);
+  border-radius: 3px; margin-top: 22px;
+  border: 1px solid #333;
+}
+
+/* Display panel */
+.calc-display {
+  margin: 8px 12px 0;
+  background: #050505;
+  border: 1px solid #1e1e1e;
+  border-radius: 10px;
+  padding: 10px 16px 8px;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.8), 0 0 0 1px #0f0f0f;
+  position: relative;
+}
+.calc-display::before {
+  content: 'CALC-9000';
+  position: absolute; top: 6px; left: 12px;
+  font-size: 8px; color: #2a2a2a; letter-spacing: 0.15em;
+  font-weight: 700;
+}
+.calc-expr {
+  font-size: 13px; color: #4a4a2a;
+  min-height: 18px; overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap;
+  text-align: right; margin-top: 10px;
+}
+.calc-number {
+  font-size: 52px; font-weight: 200; color: #f0a500;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  letter-spacing: -2px; text-align: right;
+  text-shadow: 0 0 20px rgba(240,165,0,0.4);
+}
+
+/* Conveyor belt */
+.calc-belt {
+  display: flex; gap: 0; padding: 6px 0;
+  overflow-x: auto; scrollbar-width: none;
+  background: #060606;
+  border-top: 1px solid #111; border-bottom: 1px solid #111;
+  position: relative;
+}
+.calc-belt::before, .calc-belt::after {
+  content: ''; flex-shrink: 0;
+  width: 12px; height: 100%;
+  background: repeating-linear-gradient(0deg, #111 0px, #111 3px, transparent 3px, transparent 8px);
+}
+.calc-belt::-webkit-scrollbar { display: none; }
+.calc-belt-item {
+  flex-shrink: 0;
+  background: #0f0f0f;
+  border-left: 1px solid #1a1a1a; border-right: 1px solid #1a1a1a;
+  padding: 3px 12px;
+  font-size: 11px; color: #3a3a3a; white-space: nowrap;
+  font-family: 'Courier New', monospace;
+}
+
+/* Keypad */
+.calc-keypad {
+  flex: 1; display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px; padding: 8px 10px;
+}
+.c-btn {
+  border: none; border-radius: 10px;
+  font-size: 20px; font-weight: 400;
+  cursor: pointer; display: flex;
+  align-items: center; justify-content: center;
+  background: linear-gradient(160deg, #1e1e1e 0%, #141414 100%);
+  color: #ccc;
+  border: 1px solid #2a2a2a;
+  box-shadow: 0 3px 0 #0a0a0a, inset 0 1px 0 rgba(255,255,255,0.05);
+  transition: transform 0.08s, box-shadow 0.08s;
+  min-height: 0;
+}
+.c-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #0a0a0a, inset 0 1px 0 rgba(255,255,255,0.02);
+}
+.c-btn.top { background: linear-gradient(160deg, #252518 0%, #181810 100%); color: #888; border-color: #333; font-size: 16px; }
+.c-btn.op  { background: linear-gradient(160deg, #2a1800 0%, #1a1000 100%); color: #f0a500; border-color: #3a2200; box-shadow: 0 3px 0 #0a0500, inset 0 1px 0 rgba(240,165,0,0.1); }
+.c-btn.eq  { background: linear-gradient(160deg, #d09000 0%, #a07000 100%); color: #000; font-weight: 700; border-color: #f0a500; box-shadow: 0 3px 0 #604000, inset 0 1px 0 rgba(255,255,255,0.2); }
+.c-btn.zero { grid-column: span 2; justify-content: flex-start; padding-left: 24px; }
+
+/* КОНВЕРТЕР */
+#conv-main {
+  flex: 1; padding: 12px 14px;
+  overflow-y: auto; display: flex; flex-direction: column; gap: 12px;
+}
+.conv-cats { display: flex; gap: 6px; flex-wrap: wrap; }
+.conv-cat {
+  padding: 6px 12px; border: 1px solid #222; border-radius: 8px;
+  background: #111; color: #555; font-size: 12px; font-weight: 600;
+  cursor: pointer; letter-spacing: 0.03em;
+}
+.conv-cat.active { background: #1a1200; border-color: #f0a500; color: #f0a500; }
+.conv-row { display: flex; gap: 8px; align-items: center; }
+.conv-in {
+  flex: 1; background: #0f0f0f; border: 1px solid #222;
+  border-radius: 8px; padding: 12px 14px; color: #f0a500;
+  font-size: 22px; outline: none;
+}
+.conv-sel {
+  flex: 1; background: #0f0f0f; border: 1px solid #222;
+  border-radius: 8px; padding: 12px 10px; color: #aaa;
+  font-size: 13px; outline: none; cursor: pointer;
+}
+.conv-result {
+  background: #0a0800; border: 1px solid rgba(240,165,0,0.3);
+  border-radius: 10px; padding: 18px;
+  font-size: 30px; font-weight: 200; color: #f0a500;
+  text-align: center;
+  text-shadow: 0 0 20px rgba(240,165,0,0.5);
+  font-family: 'Courier New', monospace;
+}
+
+/* ===== ПЕРЕВОДЧИК ===== */
+#translate-section {
+  display: flex; flex-direction: column; height: 100%;
+  background: linear-gradient(180deg, #120a04 0%, #1e1005 100%);
+  padding-bottom: calc(var(--banner-h) + var(--safe-bottom));
+}
+.tr-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 56px 16px 12px;
+}
+.tr-lang-btn {
+  flex: 1; padding: 10px 12px;
+  background: rgba(139,69,19,0.25);
+  border: 1px solid rgba(139,69,19,0.45);
+  border-radius: 12px;
+  color: #d4a96a; font-size: 14px; font-weight: 500;
+  cursor: pointer; text-align: center; overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap;
+}
+.tr-swap-btn {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+  border: none; color: #d4a96a; font-size: 18px;
+  cursor: pointer; flex-shrink: 0;
+}
+.tr-body {
+  flex: 1; display: flex; flex-direction: column;
+  padding: 0 14px; gap: 10px; overflow: hidden;
+}
+.tr-source {
+  flex: 1; background: rgba(60,35,10,0.5);
+  border: 1px solid rgba(139,69,19,0.3);
+  border-radius: 16px; padding: 14px;
+  color: #fff; font-size: 16px; outline: none;
+  resize: none; font-family: inherit; line-height: 1.6;
+}
+.tr-source::placeholder { color: rgba(212,169,106,0.35); }
+.tr-actions { display: flex; gap: 8px; align-items: center; }
+.tr-go {
+  flex: 1; padding: 13px;
+  background: #7a3a10; border: none; border-radius: 12px;
+  color: #fff; font-size: 15px; font-weight: 600; cursor: pointer;
+}
+.tr-go:active { opacity: 0.7; }
+.tr-icon-btn {
+  width: 46px; height: 46px; border-radius: 12px;
+  background: rgba(255,255,255,0.07);
+  border: none; color: #d4a96a; font-size: 18px; cursor: pointer;
+}
+.tr-stone {
+  flex: 1;
+  background: rgba(50,28,8,0.6);
+  border: 2px solid rgba(139,69,19,0.35);
+  border-radius: 16px; padding: 14px;
+  font-size: 16px; color: #d4a96a; line-height: 1.6;
+  overflow-y: auto;
+}
+.tr-stone-hint { color: rgba(212,169,106,0.3); font-style: italic; }
+
+/* Башня (модал) */
+#tower-modal {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.9); z-index: 300;
+  flex-direction: column; align-items: center;
+}
+#tower-modal.show { display: flex; }
+.tower-modal-hdr {
+  padding: 52px 20px 8px; text-align: center;
+  font-size: 17px; font-weight: 700; color: #d4a96a; width: 100%;
+}
+.tower-modal-sub { font-size: 12px; color: #8b5a2a; padding-bottom: 14px; }
+.tower-list {
+  flex: 1; width: 100%; max-width: 420px;
+  overflow-y: auto; padding: 0 16px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.tower-floor {
+  display: flex; align-items: center; gap: 12px;
+  padding: 13px 16px; border-radius: 12px;
+  background: rgba(80,40,10,0.3);
+  border: 1px solid rgba(139,69,19,0.25);
+  cursor: pointer; transition: background 0.15s;
+}
+.tower-floor:active { background: rgba(139,69,19,0.5); }
+.tower-floor.sel { background: rgba(139,69,19,0.5); border-color: #8b4513; }
+.tower-rank { font-size: 11px; color: #5a3010; width: 22px; text-align: right; }
+.tower-flag { font-size: 20px; }
+.tower-name { flex: 1; font-size: 15px; color: #d4a96a; font-weight: 500; }
+.tower-code { font-size: 11px; color: #6a3a10; }
+.tower-close-btn {
+  width: calc(100% - 32px); max-width: 420px;
+  padding: 14px; margin: 12px 0 calc(20px + var(--safe-bottom));
+  background: #7a3a10; border: none; border-radius: 14px;
+  color: #fff; font-size: 16px; font-weight: 600; cursor: pointer;
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Профиль</div>
+      <div class="user-info">
+        <div class="user-avatar">🙂</div>
+        <div class="user-details">
+          <div class="user-name" id="sb-name">Пользователь</div>
+          <div class="user-age" id="sb-age">Возраст не указан</div>
+        </div>
+        <button class="edit-btn" onclick="openProfile()">✏️</button>
+      </div>
+    </div>
+    <div class="sidebar-section" style="flex:1;overflow-y:auto;">
+      <div class="sidebar-label">ИИ-проводник</div>
+      <div class="ai-box">
+        <div class="ai-input-row">
+          <textarea class="ai-input" id="ai-input" placeholder="Спроси что угодно об AIO…"></textarea>
+          <button class="ai-mic" onclick="aiMic()">🎤</button>
+        </div>
+        <button class="ai-send" onclick="aiAnswer()">Спросить →</button>
+        <div class="ai-response" id="ai-response"></div>
+      </div>
+    </div>
+    <button class="sections-btn" onclick="goTo('section-selector')">⚙️ Выбрать разделы</button>
+  </div>
+
+  <div id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+  <!-- MAIN -->
+  <div id="main">
+    <button id="back-btn" onclick="goHome()">← Назад</button>
+
+    <!-- HOME -->
+    <div class="screen active" id="screen-home">
+      <div id="home">
+        <div class="home-title">AIO</div>
+        <div class="home-subtitle">Всё в одном месте</div>
+        <div class="sections-grid" id="sections-grid"></div>
+      </div>
+    </div>
+
+    <!-- SECTION SELECTOR -->
+    <div class="screen" id="screen-section-selector">
+      <div id="section-selector">
+        <div class="selector-title">Мои разделы</div>
+        <div class="selector-subtitle">Включи только то что нужно</div>
+        <div class="selector-list" id="selector-list"></div>
+      </div>
+    </div>
+
+    <!-- КАЛЬКУЛЯТОР -->
+    <div class="screen" id="screen-calc">
+      <div id="calc-section">
+        <div class="calc-tabs">
+          <button class="calc-tab active" id="tab-calc" onclick="calcTab('calc')">Калькулятор</button>
+          <button class="calc-tab" id="tab-conv" onclick="calcTab('conv')">Конвертер</button>
+        </div>
+
+        <!-- Калькулятор -->
+        <div id="calc-main" style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
+          <div class="calc-factory-hdr" id="calc-gears-container"></div>
+          <div class="calc-display">
+            <div class="calc-expr" id="calc-expr"></div>
+            <div class="calc-number" id="calc-number">0</div>
+          </div>
+          <div class="calc-belt" id="calc-belt"></div>
+          <div class="calc-keypad">
+            <button class="c-btn top" onclick="calcKey('C')">C</button>
+            <button class="c-btn top" onclick="calcKey('±')">±</button>
+            <button class="c-btn top" onclick="calcKey('%')">%</button>
+            <button class="c-btn op"  onclick="calcOp('/')">÷</button>
+            <button class="c-btn" onclick="calcKey('7')">7</button>
+            <button class="c-btn" onclick="calcKey('8')">8</button>
+            <button class="c-btn" onclick="calcKey('9')">9</button>
+            <button class="c-btn op" onclick="calcOp('*')">×</button>
+            <button class="c-btn" onclick="calcKey('4')">4</button>
+            <button class="c-btn" onclick="calcKey('5')">5</button>
+            <button class="c-btn" onclick="calcKey('6')">6</button>
+            <button class="c-btn op" onclick="calcOp('-')">−</button>
+            <button class="c-btn" onclick="calcKey('1')">1</button>
+            <button class="c-btn" onclick="calcKey('2')">2</button>
+            <button class="c-btn" onclick="calcKey('3')">3</button>
+            <button class="c-btn op" onclick="calcOp('+')">+</button>
+            <button class="c-btn zero" onclick="calcKey('0')">0</button>
+            <button class="c-btn" onclick="calcKey('.')">.</button>
+            <button class="c-btn eq" onclick="calcEqual()">=</button>
+          </div>
+        </div>
+
+        <!-- Конвертер -->
+        <div id="conv-main" style="display:none;flex:1;flex-direction:column;">
+          <div class="conv-cats" style="padding:0 16px;">
+            <button class="conv-cat active" onclick="convCat(this,'length')">📏 Длина</button>
+            <button class="conv-cat" onclick="convCat(this,'mass')">⚖️ Масса</button>
+            <button class="conv-cat" onclick="convCat(this,'temp')">🌡️ Темп.</button>
+            <button class="conv-cat" onclick="convCat(this,'currency')">💱 Валюта</button>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px;padding:12px 16px;">
+            <div class="conv-row">
+              <input class="conv-in" id="conv-val" type="number" placeholder="Значение" oninput="convCalc()" />
+              <select class="conv-sel" id="conv-from" onchange="convCalc()"></select>
+            </div>
+            <div class="conv-row">
+              <div style="flex:1;text-align:center;color:#555;font-size:22px;">↓</div>
+              <select class="conv-sel" id="conv-to" onchange="convCalc()"></select>
+            </div>
+            <div class="conv-result" id="conv-result">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ПЕРЕВОДЧИК -->
+    <div class="screen" id="screen-translate">
+      <div id="translate-section">
+        <div class="tr-header">
+          <button class="tr-lang-btn" id="tr-from-btn" onclick="openTower('from')">🇷🇺 Русский</button>
+          <button class="tr-swap-btn" onclick="swapLangs()">⇄</button>
+          <button class="tr-lang-btn" id="tr-to-btn" onclick="openTower('to')">🇬🇧 Английский</button>
+        </div>
+        <div class="tr-body">
+          <textarea class="tr-source" id="tr-input" placeholder="Введи текст для перевода…" oninput="trAutoResize(this)"></textarea>
+          <div class="tr-actions">
+            <button class="tr-go" onclick="doTranslate()">Перевести</button>
+            <button class="tr-icon-btn" onclick="trVoice()" title="Голос">🎤</button>
+            <button class="tr-icon-btn" onclick="trCopy()" title="Копировать">📋</button>
+          </div>
+          <div class="tr-stone" id="tr-output">
+            <span class="tr-stone-hint">Перевод появится здесь…</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- БАШНЯ ЯЗЫКОВ -->
+    <div id="tower-modal">
+      <div class="tower-modal-hdr">Вавилонская башня</div>
+      <div class="tower-modal-sub" id="tower-sub">Выбери язык источника</div>
+      <div class="tower-list" id="tower-list"></div>
+      <button class="tower-close-btn" onclick="closeTower()">Закрыть</button>
+    </div>
+
+    <!-- PLACEHOLDER разделы -->
+    <div class="screen" id="screen-notes"><div class="section-placeholder"><div class="ph-icon">📝</div><div class="ph-title">Записи</div><div class="ph-sub">Сессия 3</div></div></div>
+    <div class="screen" id="screen-time"><div class="section-placeholder"><div class="ph-icon">⏱️</div><div class="ph-title">Тайм-менеджер</div><div class="ph-sub">Сессия 4</div></div></div>
+    <div class="screen" id="screen-weather"><div class="section-placeholder"><div class="ph-icon">🌤️</div><div class="ph-title">Погода</div><div class="ph-sub">Сессия 6</div></div></div>
+    <div class="screen" id="screen-movies"><div class="section-placeholder"><div class="ph-icon">🎬</div><div class="ph-title">Фильмы</div><div class="ph-sub">Сессия 9</div></div></div>
+    <div class="screen" id="screen-news"><div class="section-placeholder"><div class="ph-icon">🗞️</div><div class="ph-title">Новости</div><div class="ph-sub">Сессия 7</div></div></div>
+    <div class="screen" id="screen-games"><div class="section-placeholder"><div class="ph-icon">🎮</div><div class="ph-title">Игры</div><div class="ph-sub">Сессия 10</div></div></div>
+    <div class="screen" id="screen-finance"><div class="section-placeholder"><div class="ph-icon">💰</div><div class="ph-title">Финансы</div><div class="ph-sub">Сессия 5</div></div></div>
+    <div class="screen" id="screen-family"><div class="section-placeholder"><div class="ph-icon">👨‍👩‍👧</div><div class="ph-title">Семейный режим</div><div class="ph-sub">Сессия 12</div></div></div>
+    <div class="screen" id="screen-recipes"><div class="section-placeholder"><div class="ph-icon">🍽️</div><div class="ph-title">Рецепты</div><div class="ph-sub">Сессия 8</div></div></div>
+    <div class="screen" id="screen-habits"><div class="section-placeholder"><div class="ph-icon">🏃</div><div class="ph-title">Трекер привычек</div><div class="ph-sub">Сессия 5</div></div></div>
+    <div class="screen" id="screen-docs"><div class="section-placeholder"><div class="ph-icon">📄</div><div class="ph-title">Документы</div><div class="ph-sub">Сессия 11</div></div></div>
+    <div class="screen" id="screen-music"><div class="section-placeholder"><div class="ph-icon">🎵</div><div class="ph-title">Музыка</div><div class="ph-sub">Сессия 9</div></div></div>
+  </div>
+</div>
+
+<div id="banner"><div class="banner-dot"></div><span id="banner-text">AIO — All In One</span><div class="banner-dot"></div></div>
+
+<div id="profile-modal">
+  <div class="modal-sheet">
+    <div class="modal-title">Профиль</div>
+    <div class="modal-field"><label>Имя</label><input class="modal-input" id="input-name" placeholder="Введи имя" /></div>
+    <div class="modal-field"><label>Возраст</label><input class="modal-input" id="input-age" type="number" placeholder="Введи возраст" min="6" max="99" /></div>
+    <button class="modal-save" onclick="saveProfile()">Сохранить</button>
+  </div>
+</div>
+
+<script>
+// ===== ДАННЫЕ =====
+const ALL_SECTIONS = [
+  { id:'notes',     icon:'📝', name:'Записи',          color:'notes',     source:'Локальное хранилище' },
+  { id:'time',      icon:'⏱️', name:'Тайм-менеджер',   color:'time',      source:'Локальное хранилище' },
+  { id:'weather',   icon:'🌤️', name:'Погода',           color:'weather',   source:'Open-Meteo · OpenAQ · OpenStreetMap' },
+  { id:'movies',    icon:'🎬', name:'Фильмы',           color:'movies',    source:'YouTube · VK Video' },
+  { id:'news',      icon:'🗞️', name:'Новости',          color:'news',      source:'BBC · Reuters · NASA · The Verge' },
+  { id:'games',     icon:'🎮', name:'Игры',             color:'games',     source:'CrazyGames · itch.io' },
+  { id:'finance',   icon:'💰', name:'Финансы',          color:'finance',   source:'Frankfurter · Локальное хранилище' },
+  { id:'translate', icon:'🌐', name:'Переводчик',       color:'translate', source:'MyMemory · Web Speech API' },
+  { id:'calc',      icon:'🖩', name:'Калькулятор',      color:'calc',      source:'Frankfurter · Локальное хранилище' },
+  { id:'family',    icon:'👨‍👩‍👧', name:'Семейный режим',  color:'family',    source:'Firebase' },
+  { id:'recipes',   icon:'🍽️', name:'Рецепты',          color:'recipes',   source:'TheMealDB' },
+  { id:'habits',    icon:'🏃', name:'Трекер привычек',  color:'habits',    source:'Локальное хранилище' },
+  { id:'docs',      icon:'📄', name:'Документы',        color:'docs',      source:'Локальное хранилище' },
+  { id:'music',     icon:'🎵', name:'Музыка',           color:'music',     source:'YouTube · VK Музыка' },
+];
+
+// ===== STATE =====
+let state = { user:{name:'',age:''}, enabledSections:ALL_SECTIONS.map(s=>s.id), currentSection:'home' };
+function loadState(){ try{ const s=localStorage.getItem('aio_state'); if(s) state={...state,...JSON.parse(s)}; }catch(e){} }
+function saveState(){ localStorage.setItem('aio_state',JSON.stringify(state)); }
+
+// ===== ROUTER =====
+let currentScreen='home';
+function goTo(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  currentScreen=id; state.currentSection=id;
+  const isHome=id==='home';
+  const sidebar=document.getElementById('sidebar');
+  const backBtn=document.getElementById('back-btn');
+  if(isHome){
+    sidebar.classList.remove('hidden','open');
+    backBtn.classList.remove('show');
+  } else {
+    sidebar.classList.add('hidden'); sidebar.classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('show');
+    backBtn.classList.add('show');
+  }
+  updateBanner(id); closeSidebar();
+}
+function goHome(){ goTo('home'); }
+
+function openSidebar(){ document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebar-overlay').classList.add('show'); }
+function closeSidebar(){ if(currentScreen!=='home'){ document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebar-overlay').classList.remove('show'); } }
+
+function updateBanner(id){ const s=ALL_SECTIONS.find(x=>x.id===id); document.getElementById('banner-text').textContent=s?s.source:'AIO — All In One'; }
+
+function renderGrid(){
+  const g=document.getElementById('sections-grid'); g.innerHTML='';
+  ALL_SECTIONS.filter(s=>state.enabledSections.includes(s.id)).forEach(s=>{
+    const c=document.createElement('div');
+    c.className='section-card card-'+s.color;
+    c.innerHTML=`<div class="card-icon">${s.icon}</div><div class="card-name">${s.name}</div>`;
+    c.onclick=()=>goTo(s.id); g.appendChild(c);
+  });
+}
+function renderSelector(){
+  const l=document.getElementById('selector-list'); l.innerHTML='';
+  ALL_SECTIONS.forEach(s=>{
+    const on=state.enabledSections.includes(s.id);
+    const item=document.createElement('div'); item.className='selector-item';
+    item.innerHTML=`<div class="item-icon">${s.icon}</div><div class="item-name">${s.name}</div><div class="toggle ${on?'on':''}" id="toggle-${s.id}"></div>`;
+    item.onclick=()=>toggleSection(s.id); l.appendChild(item);
+  });
+}
+function toggleSection(id){
+  const i=state.enabledSections.indexOf(id);
+  if(i>-1){ state.enabledSections.splice(i,1); document.getElementById('toggle-'+id).classList.remove('on'); }
+  else { state.enabledSections.push(id); document.getElementById('toggle-'+id).classList.add('on'); }
+  saveState(); renderGrid();
+}
+
+function openProfile(){ document.getElementById('input-name').value=state.user.name; document.getElementById('input-age').value=state.user.age; document.getElementById('profile-modal').classList.add('show'); }
+function saveProfile(){ state.user.name=document.getElementById('input-name').value.trim(); state.user.age=document.getElementById('input-age').value.trim(); saveState(); updateUserUI(); document.getElementById('profile-modal').classList.remove('show'); }
+function updateUserUI(){ document.getElementById('sb-name').textContent=state.user.name||'Пользователь'; document.getElementById('sb-age').textContent=state.user.age?state.user.age+' лет':'Возраст не указан'; }
+
+const AI_ANS={'записи':'Раздел Записи — библиотека с книжным шкафом. Списки, формы и обычные заметки.','погода':'Погода — прогноз на 7 дней, карта мира, качество воздуха.','музыка':'Музыка — концертный зал. YouTube и VK Музыка.','фильм':'Фильмы — корабликовый стиль. YouTube и VK Video.','новост':'Новости — газетный киоск: Мир, Наука, Технологии.','игр':'Игры — ярмарка с палатками по жанрам.','перевод':'Переводчик — Вавилонская башня. Текст, голос, 20 языков.','финанс':'Финансы — банковский сейф. Учёт трат и статистика.','калькул':'Калькулятор — завод с шестерёнками + конвертер валют.','семь':'Семейный режим — деревня с домиками. Общий календарь и заметки.','рецепт':'Рецепты — деревенский рынок. Выбери ингредиенты — получи рецепты.','привыч':'Трекер привычек — сад с грядками.','докум':'Документы — почтовый ящик. Сканируй и подписывай.','тайм':'Тайм-менеджер — таймер (Атлантида), будильник (Китай), календарь (порт).'};
+function aiAnswer(){ const inp=document.getElementById('ai-input'),q=inp.value.toLowerCase().trim(); if(!q)return; const resp=document.getElementById('ai-response'); let ans='Не нашёл ответа. Спроси про раздел — например «погода» или «музыка».'; for(const[k,v]of Object.entries(AI_ANS)){if(q.includes(k)){ans=v;break;}} resp.textContent=ans; resp.style.display='block'; inp.value=''; }
+function aiMic(){ if(!('webkitSpeechRecognition'in window)&&!('SpeechRecognition'in window)){alert('Распознавание речи не поддерживается');return;} const SR=window.SpeechRecognition||window.webkitSpeechRecognition,r=new SR(); r.lang='ru-RU'; r.onresult=e=>{document.getElementById('ai-input').value=e.results[0][0].transcript;aiAnswer();}; r.start(); }
+
+// ===== КАЛЬКУЛЯТОР =====
+let cDisp='0', cExpr='', cPending=null, cOp=null, cNewNum=true, cHistory=[];
+try{ cHistory=JSON.parse(localStorage.getItem('calc_history')||'[]'); }catch(e){}
+
+function calcTab(t){
+  document.getElementById('calc-main').style.display=t==='calc'?'flex':'none';
+  document.getElementById('conv-main').style.display=t==='conv'?'flex':'none';
+  document.getElementById('tab-calc').classList.toggle('active',t==='calc');
+  document.getElementById('tab-conv').classList.toggle('active',t==='conv');
+  if(t==='conv') convInit();
+}
+function calcRender(){
+  document.getElementById('calc-number').textContent=cDisp;
+  document.getElementById('calc-expr').textContent=cExpr;
+}
+function calcRenderBelt(){
+  const b=document.getElementById('calc-belt'); b.innerHTML='';
+  [...cHistory].reverse().slice(0,15).forEach(h=>{
+    const d=document.createElement('div'); d.className='calc-belt-item'; d.textContent=h; b.appendChild(d);
+  });
+}
+function calcGear(op){
+  ['plus','minus','mult','div'].forEach(g=>document.getElementById('gear-'+g).classList.remove('active'));
+  const map={'+':'plus','-':'minus','*':'mult','/':'div'};
+  if(op&&map[op]) document.getElementById('gear-'+map[op]).classList.add('active');
+}
+function calcKey(k){
+  if(k==='C'){ cDisp='0';cExpr='';cPending=null;cOp=null;cNewNum=true; calcGear(null); calcRender(); return; }
+  if(k==='±'){ cDisp=String(-parseFloat(cDisp)||0); calcRender(); return; }
+  if(k==='%'){ cDisp=String(parseFloat(cDisp)/100); calcRender(); return; }
+  if(k==='.'){ if(cNewNum){cDisp='0.';cNewNum=false;} else if(!cDisp.includes('.')) cDisp+='.'; calcRender(); return; }
+  if(cNewNum){cDisp=k;cNewNum=false;} else cDisp=cDisp==='0'?k:cDisp+k;
+  calcRender();
+}
+function calcOp(op){
+  const v=parseFloat(cDisp);
+  if(cPending!==null&&!cNewNum){ const r=calcCompute(cPending,cOp,v); cDisp=String(r); cPending=r; }
+  else cPending=v;
+  cOp=op; cNewNum=true;
+  const opSym={'+':'+','-':'−','*':'×','/':'÷'};
+  cExpr=cDisp+' '+opSym[op];
+  calcGear(op); calcRender();
+}
+function calcEqual(){
+  if(cPending===null) return;
+  const v=parseFloat(cDisp);
+  const r=calcCompute(cPending,cOp,v);
+  const opSym={'+':'+','-':'−','*':'×','/':'÷'};
+  const entry=cPending+' '+(opSym[cOp]||'?')+' '+v+' = '+r;
+  cHistory.push(entry);
+  localStorage.setItem('calc_history',JSON.stringify(cHistory.slice(-50)));
+  cDisp=String(r); cExpr=''; cPending=null; cOp=null; cNewNum=true;
+  calcGear(null); calcRender(); calcRenderBelt();
+}
+function calcCompute(a,op,b){
+  if(op==='+') return Math.round((a+b)*1e10)/1e10;
+  if(op==='-') return Math.round((a-b)*1e10)/1e10;
+  if(op==='*') return Math.round((a*b)*1e10)/1e10;
+  if(op==='/') return b===0?'Ошибка':Math.round((a/b)*1e10)/1e10;
+  return b;
+}
+
+// КОНВЕРТЕР
+const CONV_DATA={
+  length:{ units:['мм','см','м','км','дюйм','фут','миля','морская миля'], to_m:[0.001,0.01,1,1000,0.0254,0.3048,1609.34,1852] },
+  mass:  { units:['мг','г','кг','т','фунт','унция'], to_kg:[1e-6,0.001,1,1000,0.453592,0.0283495] },
+  temp:  { units:['°C','°F','K'], special:true },
+};
+let convCurrency={rates:{},loaded:false};
+let curConvCat='length';
+
+function convInit(){
+  convCat(document.querySelector('.conv-cat.active')||document.querySelector('.conv-cat'),'length');
+}
+function convCat(btn,cat){
+  document.querySelectorAll('.conv-cat').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); curConvCat=cat;
+  const from=document.getElementById('conv-from');
+  const to=document.getElementById('conv-to');
+  from.innerHTML=''; to.innerHTML='';
+  if(cat==='currency'){
+    loadCurrency();
+    return;
+  }
+  const d=CONV_DATA[cat];
+  d.units.forEach((u,i)=>{ from.innerHTML+=`<option value="${i}">${u}</option>`; to.innerHTML+=`<option value="${i}">${u}</option>`; });
+  to.value='1'; convCalc();
+}
+async function loadCurrency(){
+  const from=document.getElementById('conv-from'),to=document.getElementById('conv-to');
+  from.innerHTML='<option>Загрузка…</option>'; to.innerHTML='<option>Загрузка…</option>';
+  if(!convCurrency.loaded){
+    try{
+      const r=await fetch('https://api.frankfurter.app/latest?from=USD');
+      const d=await r.json();
+      convCurrency.rates={USD:1,...d.rates}; convCurrency.loaded=true;
+    }catch(e){ document.getElementById('conv-result').textContent='Нет сети'; return; }
+  }
+  from.innerHTML=''; to.innerHTML='';
+  Object.keys(convCurrency.rates).sort().forEach(c=>{
+    from.innerHTML+=`<option value="${c}">${c}</option>`;
+    to.innerHTML+=`<option value="${c}">${c}</option>`;
+  });
+  from.value='RUB'; to.value='USD'; convCalc();
+}
+function convCalc(){
+  const val=parseFloat(document.getElementById('conv-val').value);
+  const f=document.getElementById('conv-from').value;
+  const t=document.getElementById('conv-to').value;
+  const res=document.getElementById('conv-result');
+  if(isNaN(val)){res.textContent='—';return;}
+  if(curConvCat==='currency'){
+    if(!convCurrency.loaded){res.textContent='—';return;}
+    const inUSD=val/convCurrency.rates[f];
+    const out=inUSD*convCurrency.rates[t];
+    res.textContent=out.toFixed(4)+' '+t;
+    return;
+  }
+  if(curConvCat==='temp'){
+    let c; const fi=parseInt(f),ti=parseInt(t);
+    if(fi===0) c=val;
+    else if(fi===1) c=(val-32)*5/9;
+    else c=val-273.15;
+    let out;
+    if(ti===0) out=c;
+    else if(ti===1) out=c*9/5+32;
+    else out=c+273.15;
+    const u=CONV_DATA.temp.units;
+    res.textContent=Math.round(out*100)/100+' '+u[ti];
+    return;
+  }
+  const d=CONV_DATA[curConvCat];
+  const inBase=val*d.to_m[parseInt(f)];
+  const out=inBase/d.to_m[parseInt(t)];
+  res.textContent=Math.round(out*1e6)/1e6+' '+d.units[parseInt(t)];
+}
+
+// ===== ПЕРЕВОДЧИК =====
+const LANGS=[
+  {code:'ru',flag:'🇷🇺',name:'Русский'},
+  {code:'en',flag:'🇬🇧',name:'Английский'},
+  {code:'zh',flag:'🇨🇳',name:'Китайский'},
+  {code:'es',flag:'🇪🇸',name:'Испанский'},
+  {code:'ar',flag:'🇸🇦',name:'Арабский'},
+  {code:'fr',flag:'🇫🇷',name:'Французский'},
+  {code:'de',flag:'🇩🇪',name:'Немецкий'},
+  {code:'pt',flag:'🇧🇷',name:'Португальский'},
+  {code:'hi',flag:'🇮🇳',name:'Хинди'},
+  {code:'ja',flag:'🇯🇵',name:'Японский'},
+  {code:'ko',flag:'🇰🇷',name:'Корейский'},
+  {code:'it',flag:'🇮🇹',name:'Итальянский'},
+  {code:'tr',flag:'🇹🇷',name:'Турецкий'},
+  {code:'pl',flag:'🇵🇱',name:'Польский'},
+  {code:'nl',flag:'🇳🇱',name:'Нидерландский'},
+  {code:'sv',flag:'🇸🇪',name:'Шведский'},
+  {code:'uk',flag:'🇺🇦',name:'Украинский'},
+  {code:'vi',flag:'🇻🇳',name:'Вьетнамский'},
+  {code:'id',flag:'🇮🇩',name:'Индонезийский'},
+  {code:'he',flag:'🇮🇱',name:'Иврит'},
+];
+let trFrom={code:'ru',flag:'🇷🇺',name:'Русский'};
+let trTo={code:'en',flag:'🇬🇧',name:'Английский'};
+let towerTarget='from';
+
+function openTower(target){
+  towerTarget=target;
+  document.getElementById('tower-sub').textContent=target==='from'?'Выбери язык источника':'Выбери язык перевода';
+  const list=document.getElementById('tower-list'); list.innerHTML='';
+  const sel=target==='from'?trFrom:trTo;
+  LANGS.forEach((l,i)=>{
+    const f=document.createElement('div');
+    f.className='tower-floor'+(l.code===sel.code?' sel':'');
+    f.innerHTML=`<span class="tower-rank">${i+1}</span><span class="tower-flag">${l.flag}</span><span class="tower-name">${l.name}</span><span class="tower-code">${l.code.toUpperCase()}</span>`;
+    f.onclick=()=>pickLang(l);
+    list.appendChild(f);
+  });
+  document.getElementById('tower-modal').classList.add('show');
+}
+function pickLang(l){
+  if(towerTarget==='from') trFrom=l;
+  else trTo=l;
+  updateTrHeader();
+  closeTower();
+}
+function closeTower(){ document.getElementById('tower-modal').classList.remove('show'); }
+function updateTrHeader(){
+  document.getElementById('tr-from-btn').textContent=trFrom.flag+' '+trFrom.name;
+  document.getElementById('tr-to-btn').textContent=trTo.flag+' '+trTo.name;
+}
+function swapLangs(){ const t=trFrom; trFrom=trTo; trTo=t; updateTrHeader(); }
+
+async function doTranslate(){
+  const text=document.getElementById('tr-input').value.trim();
+  if(!text) return;
+  const out=document.getElementById('tr-output');
+  out.innerHTML='<span class="tr-stone-hint">Перевожу…</span>';
+  try{
+    const pair=trFrom.code+'|'+trTo.code;
+    const url=`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${pair}`;
+    const r=await fetch(url);
+    const d=await r.json();
+    if(d.responseStatus===200){
+      out.textContent=d.responseData.translatedText;
+    } else {
+      out.innerHTML='<span class="tr-stone-hint">Ошибка перевода. Попробуй позже.</span>';
+    }
+  }catch(e){
+    out.innerHTML='<span class="tr-stone-hint">Нет подключения к интернету.</span>';
+  }
+}
+function trVoice(){
+  if(!('webkitSpeechRecognition'in window)&&!('SpeechRecognition'in window)){alert('Голос не поддерживается');return;}
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition,r=new SR();
+  r.lang=trFrom.code+'-'+trFrom.code.toUpperCase();
+  r.onresult=e=>{document.getElementById('tr-input').value=e.results[0][0].transcript;doTranslate();};
+  r.start();
+}
+function trCopy(){
+  const t=document.getElementById('tr-output').textContent;
+  if(t&&!t.includes('Перевод')){navigator.clipboard&&navigator.clipboard.writeText(t);}
+}
+function trAutoResize(el){ el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,200)+'px'; }
+
+// ===== INIT =====
+loadState(); updateUserUI(); renderGrid(); renderSelector();
+calcRenderBelt(); calcRender();
+goTo('home');
+</script>
+</body>
+</html>

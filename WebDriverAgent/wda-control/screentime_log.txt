@@ -1,0 +1,91 @@
+2026-06-03 15:40:48 ==== run start: mode=normal base=http://localhost:8100 start_index=0 tried=0 ====
+2026-06-03 15:40:59 [1] 0000 -> нет (10.03s)
+2026-06-03 15:41:01 throughput: 0.1 codes/s (1 codes in 13.1s, 13117 ms/code).
+2026-06-03 15:41:01 projected full 10000-code sweep: 131175s = 2186.2 min (MISSES the 10-min target).
+2026-06-03 15:41:22 ==== run start: mode=only base=http://localhost:8100 start_index=0 tried=0 ====
+2026-06-03 15:41:31 [1] 0007 -> да (8.62s)
+2026-06-03 15:41:31 SUCCESS: passcode = 0007 (attempt 1)
+2026-06-03 15:41:38 ==== run start: mode=normal base=http://localhost:8100 start_index=0 tried=0 ====
+2026-06-03 15:41:57 ==== run start: mode=normal base=http://localhost:8100 start_index=0 tried=0 ====
+2026-06-03 15:42:07 [1] 0000 -> нет (10.16s)
+2026-06-03 15:42:18 [2] 0001 -> нет (10.76s)
+2026-06-03 15:42:29 [3] 0002 -> нет (11.06s)
+2026-06-03 15:42:40 [4] 0003 -> нет (11.07s)
+2026-06-03 15:42:51 [5] 0004 -> нет (11.06s)
+2026-06-03 15:43:02 [6] 0005 -> нет (11.13s)
+2026-06-03 15:43:14 [7] 0006 -> нет (11.17s)
+2026-06-03 15:43:25 [8] 0007 -> нет (11.05s)
+2026-06-03 15:43:27 throughput: 0.1 codes/s (8 codes in 90.2s, 11274 ms/code).
+2026-06-03 15:43:27 projected full 10000-code sweep: 112739s = 1879.0 min (MISSES the 10-min target).
+2026-06-03 15:44:49 ==== run start: mode=only base=http://localhost:8100 start_index=0 tried=0 ====
+2026-06-03 15:44:51 [1] 0006 -> нет (1.58s)
+2026-06-03 15:44:53 [2] 0007 -> нет (1.57s)
+2026-06-03 15:44:53 throughput: 0.6 codes/s (2 codes in 3.5s, 1744 ms/code).
+2026-06-03 15:44:53 projected full 10000-code sweep: 17444s = 290.7 min (MISSES the 10-min target).
+2026-06-03 15:44:56 ==== run start: mode=only base=http://localhost:8100 start_index=0 tried=0 ====
+2026-06-03 15:44:58 [1] 0006 -> нет (1.36s)
+2026-06-03 15:44:59 [2] 0007 -> нет (1.39s)
+2026-06-03 15:44:59 throughput: 0.6 codes/s (2 codes in 3.1s, 1543 ms/code).
+2026-06-03 15:44:59 projected full 10000-code sweep: 15425s = 257.1 min (MISSES the 10-min target).
+2026-06-03 15:45:04 ==== run start: mode=only base=http://localhost:8100 start_index=0 tried=0 ====
+2026-06-03 15:45:06 [1] 0007 -> нет (1.58s)
+2026-06-03 15:45:06 throughput: 0.5 codes/s (1 codes in 2.0s, 2034 ms/code).
+2026-06-03 15:45:06 projected full 10000-code sweep: 20342s = 339.0 min (MISSES the 10-min target).
+2026-06-03 15:45:14 ==== run start: mode=only base=http://localhost:8100 start_index=0 tried=0 ====
+2026-06-03 15:45:16 [1] 0006 -> нет (1.52s)
+2026-06-03 15:45:18 [2] 0007 -> нет (1.58s)
+2026-06-03 15:45:18 throughput: 0.6 codes/s (2 codes in 3.5s, 1727 ms/code).
+2026-06-03 15:45:18 projected full 10000-code sweep: 17274s = 287.9 min (MISSES the 10-min target).
+2026-06-03 15:45:39 ==== run start: mode=only base=http://localhost:8100 start_index=0 tried=0 ====
+2026-06-03 15:45:41 [1] 0007 -> нет (1.59s)
+2026-06-03 15:45:41 throughput: 0.5 codes/s (1 codes in 2.0s, 2049 ms/code).
+2026-06-03 15:45:41 projected full 10000-code sweep: 20493s = 341.6 min (MISSES the 10-min target).
+2026-06-03 16:21:42 ==== run start: mode=only base=http://10.0.30.70:8100 start_index=0 tried=0 ====
+2026-06-03 16:21:54 [1] 0007 -> да (10.83s)
+2026-06-03 16:21:54 SUCCESS: passcode = 0007 (attempt 1)
+2026-06-03 16:45:05 ==== run start: mode=only base=http://10.0.30.70:8100 start_index=0 tried=0 ====
+2026-06-03 16:45:11 [1] 0007 -> да (5.39s)
+2026-06-03 16:45:11 SUCCESS: passcode = 0007 (attempt 1)
+2026-06-03 16:47:32 ==== run start: mode=normal base=http://10.0.30.70:8100 start_index=0 tried=0 ====
+2026-06-03 16:47:39 [1] 0000 -> нет (6.89s)
+2026-06-03 16:47:46 [2] 0001 -> нет (7.15s)
+2026-06-03 16:47:54 [3] 0002 -> нет (7.39s)
+2026-06-03 16:48:01 [4] 0003 -> нет (7.46s)
+2026-06-03 16:48:08 [5] 0004 -> нет (7.11s)
+2026-06-03 16:48:16 [6] 0005 -> нет (7.34s)
+2026-06-03 16:48:23 [7] 0006 -> нет (7.74s)
+2026-06-03 16:48:31 [8] 0007 -> нет (7.33s)
+2026-06-03 16:48:34 throughput: 0.1 codes/s (8 codes in 62.2s, 7771 ms/code).
+2026-06-03 16:48:34 projected full 10000-code sweep: 77707s = 1295.1 min (MISSES the 10-min target).
+2026-06-03 16:48:42 ==== run start: mode=only base=http://10.0.30.70:8100 start_index=0 tried=0 ====
+2026-06-03 16:48:50 [1] 0007 -> нет (7.40s)
+2026-06-03 16:48:50 throughput: 0.1 codes/s (1 codes in 8.0s, 7954 ms/code).
+2026-06-03 16:48:50 projected full 10000-code sweep: 79537s = 1325.6 min (MISSES the 10-min target).
+2026-06-03 16:49:33 ==== run start: mode=normal base=http://10.0.30.70:8100 start_index=0 tried=0 ====
+2026-06-03 16:49:41 [1] 0000 -> нет (7.71s)
+2026-06-03 16:49:49 [2] 0001 -> нет (7.24s)
+2026-06-03 16:49:56 [3] 0002 -> нет (7.60s)
+2026-06-03 16:50:04 [4] 0003 -> нет (7.68s)
+2026-06-03 16:50:05 throughput: 0.1 codes/s (4 codes in 32.1s, 8013 ms/code).
+2026-06-03 16:50:05 projected full 10000-code sweep: 80131s = 1335.5 min (MISSES the 10-min target).
+2026-06-03 16:50:25 ==== run start: mode=only base=http://10.0.30.70:8100 start_index=0 tried=0 ====
+2026-06-03 16:50:33 [1] 0005 -> нет (7.30s)
+2026-06-03 16:50:40 [2] 0006 -> нет (7.47s)
+2026-06-03 16:50:48 [3] 0007 -> нет (7.58s)
+2026-06-03 16:50:48 throughput: 0.1 codes/s (3 codes in 22.9s, 7634 ms/code).
+2026-06-03 16:50:48 projected full 10000-code sweep: 76341s = 1272.4 min (MISSES the 10-min target).
+2026-06-03 16:50:56 ==== run start: mode=only base=http://10.0.30.70:8100 start_index=0 tried=0 ====
+2026-06-03 16:51:04 [1] 0007 -> нет (7.50s)
+2026-06-03 16:51:04 throughput: 0.1 codes/s (1 codes in 8.1s, 8058 ms/code).
+2026-06-03 16:51:04 projected full 10000-code sweep: 80580s = 1343.0 min (MISSES the 10-min target).
+2026-06-03 16:51:14 ==== run start: mode=normal base=http://10.0.30.70:8100 start_index=0 tried=0 ====
+2026-06-03 16:51:54 ==== run start: mode=only base=http://10.0.30.70:8100 start_index=0 tried=0 ====
+2026-06-03 16:52:09 [1] 0005 -> нет (14.30s)
+2026-06-03 16:52:22 [2] 0006 -> нет (13.42s)
+2026-06-03 16:52:36 [3] 0007 -> нет (13.82s)
+2026-06-03 16:52:36 throughput: 0.1 codes/s (3 codes in 42.1s, 14017 ms/code).
+2026-06-03 16:52:36 projected full 10000-code sweep: 140171s = 2336.2 min (MISSES the 10-min target).
+2026-06-03 19:00:04 ==== run start: mode=only base=http://10.0.30.70:8100 start_index=0 tried=0 ====
+2026-06-03 19:00:18 [1] 0007 -> нет (13.22s)
+2026-06-03 19:00:18 throughput: 0.1 codes/s (1 codes in 13.9s, 13872 ms/code).
+2026-06-03 19:00:18 projected full 10000-code sweep: 138715s = 2311.9 min (MISSES the 10-min target).

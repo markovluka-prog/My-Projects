@@ -1,0 +1,16 @@
+{
+  "attempts_tried": 8,
+  "verified_submissions": 8,
+  "unverified": 0,
+  "elapsed_s": 75.27,
+  "verified_per_s": 0.11,
+  "mean_submit_s": 4.9008,
+  "mean_interval_s": 8.6619,
+  "max_interval_s": 8.7789,
+  "lockout_events": 0,
+  "lockout_messages": [],
+  "backoff_growth": null,
+  "projected_full_sweep_s": 94085.6,
+  "projected_full_sweep_min": 1568.1,
+  "verdict": "NO RATE-LIMIT OBSERVED across 8 VERIFIED wrong submissions — space appears brute-forceable"
+}

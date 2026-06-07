@@ -114,7 +114,21 @@
       "Bash(curl -s -X PATCH \"https://eetgsrcitolkvdifltns.supabase.co/rest/v1/about_sections?id=eq.1\" -H \"apikey: $ANON\" -H \"Authorization: Bearer $ANON\" -H \"Content-Type: application/json\" -H \"Prefer: return=minimal\" -d '{:*)",
       "Bash(echo \"exit: $?\")",
       "Bash(ANON=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVldGdzcmNpdG9sa3ZkaWZsdG5zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk5NTMxNzYsImV4cCI6MjA4NTUyOTE3Nn0.Ry5C_nlp27IZYRWLrnTvnBZH5yqKvHavLMM7uBXZI2I\" curl -s \"https://eetgsrcitolkvdifltns.supabase.co/rest/v1/about_sections?select=title_en,blocks\" -H \"apikey: $ANON\" -H \"Authorization: Bearer $ANON\")",
-      "Bash(pip3 install:*)"
+      "Bash(pip3 install:*)",
+      "Bash(xcrun simctl *)",
+      "Bash(osascript -e ' *)",
+      "Bash(curl -L -o /tmp/wda.ipa \"https://github.com/danielpaulus/go-ios/releases/download/v1.0.130/wdaRunner.ipa\")",
+      "Bash(curl -sI \"https://github.com/appium/WebDriverAgent/releases\")",
+      "Bash(xcodebuild test *)",
+      "Bash(xcodebuild -showdestinations -project /Users/free/My-Projects/WebDriverAgent/WebDriverAgent.xcodeproj -scheme WebDriverAgentRunner)",
+      "Bash(brew install *)",
+      "Bash(sudo chmod *)",
+      "Bash(xcrun devicectl *)",
+      "Bash(open \"x-apple.systempreferences:com.apple.Screen-Time-Settings.extension\")",
+      "Bash(open \"/System/Applications/System Settings.app\")",
+      "Bash(screencapture /tmp/mac_screentime.png)",
+      "Bash(osascript -e 'tell application \"System Settings\" to activate')",
+      "Bash(screencapture /tmp/mac_st2.png)"
     ]
   }
 }
