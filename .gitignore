@@ -1,2 +1,7 @@
 .claude/
 __pycache__/
+.DS_Store
+**/.DS_Store
+**/xcuserdata/
+*.xcuserstate
+Vocabulary Race.swiftpm/dist/

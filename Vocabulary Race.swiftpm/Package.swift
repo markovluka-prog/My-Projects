@@ -17,8 +17,8 @@ let package = Package(
             name: "Vocabulary Race",
             targets: ["AppModule"],
             teamIdentifier: "HHYKJYGQMV",
-            displayVersion: "1",
-            bundleVersion: "1",
+            displayVersion: "1.1",
+            bundleVersion: "2",
             appIcon: .asset("AppIcon"),
             accentColor: .presetColor(.blue),
             supportedDeviceFamilies: [

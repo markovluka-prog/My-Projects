@@ -77,9 +77,7 @@ html, body {
 #screen-game { background: #1a1a2e; flex-direction: column; padding: 0; }
 
 #game-header {
-  width: 100%;
-  /* Опускаем панель ниже чёлки/статус-бара (status-bar style = black-translucent) */
-  padding: calc(env(safe-area-inset-top, 0px) + 10px) 16px 8px;
+  width: 100%; padding: 8px 16px;
   display: flex; align-items: center; justify-content: space-between;
   background: #12122a; flex-shrink: 0;
 }
@@ -97,7 +95,7 @@ html, body {
   color: #f0c040;
 }
 .score-chip .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-.chip-cards { font-size: 15px; padding: 1px 5px; border-radius: 8px; background: rgba(255,255,255,0.14); margin-left: 2px; letter-spacing: 1px; }
+.chip-cards { font-size: 13px; filter: drop-shadow(0 0 4px #0008); }
 #turn-label { font-size: 13px; color: #f0c040; font-weight: 600; white-space: nowrap; }
 #opp-status { font-size: 12px; font-weight: 700; white-space: nowrap; }
 #opp-status.opp-on  { color: #4caf50; }
@@ -109,25 +107,27 @@ html, body {
   overflow: hidden;
 }
 #field-img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
-#cells-layer { position: absolute; pointer-events: none; z-index: 5; }
-.cell-num {
+#cells-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
+.cell-dot {
   position: absolute; transform: translate(-50%, -50%);
-  width: 20px; height: 20px; border-radius: 50%;
+  width: 26px; height: 26px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-family: 'Arial Rounded MT Bold', 'Nunito', system-ui, sans-serif;
-  font-size: 11px; font-weight: 900; line-height: 1;
-  color: #fff; -webkit-text-stroke: 0.4px rgba(0,0,0,0.35);
-  background: radial-gradient(circle at 32% 28%, #5b6680, #2b3247 70%, #1a2030);
-  border: 1.5px solid rgba(255,255,255,0.85);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.45), inset 0 1px 1px rgba(255,255,255,0.4);
-  text-shadow: 0 1px 1px rgba(0,0,0,0.5);
+  font-size: 12px; font-weight: 800; color: #fff;
+  background: rgba(18,26,48,0.82); border: 2px solid rgba(255,255,255,0.6);
+  box-shadow: 0 2px 6px #0008;
 }
-.cell-num.start  { background: radial-gradient(circle at 32% 28%, #59e07a, #1f9a3e 70%, #136b2a); border-color: #d4ffdf; }
-.cell-num.finish { background: radial-gradient(circle at 32% 28%, #ffe27a, #f0b021 70%, #c8860b); border-color: #fff4cf; color: #3a2a00; -webkit-text-stroke: 0; }
-.cell-num.pit    { background: radial-gradient(circle at 32% 28%, #57c8e8, #1f93c4 70%, #136a8a); border-color: #d4f4ff; }
-.cell-num.fwd    { background: radial-gradient(circle at 32% 28%, #6be08a, #1f9a4a 70%, #136b2e); border-color: #d4ffe0; }
-.cell-num.back   { background: radial-gradient(circle at 32% 28%, #ff8a7a, #d6402f 70%, #8a1e14); border-color: #ffd8d0; }
-#tokens-layer { position: absolute; pointer-events: none; z-index: 10; }
+.cell-dot.start  { background: #1f7a32; border-color: #8ff0a0; }
+.cell-dot.finish { background: #15151f; border-color: #f0c040; }
+.cell-dot.fwd    { background: #1c8a3a; border-color: #8ff0a0; }
+.cell-dot.back   { background: #b0322a; border-color: #ffaba3; }
+.cell-dot.pit    { background: #15627d; border-color: #8fe2f5; }
+.cell-badge {
+  position: absolute; transform: translate(-50%, -50%);
+  padding: 2px 8px; border-radius: 11px; font-size: 11px; font-weight: 800;
+  white-space: nowrap; background: rgba(8,8,22,0.86);
+  box-shadow: 0 1px 4px #0008;
+}
+#tokens-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
 
 /* ── ГЛАВНОЕ МЕНЮ ────────────────────────── */
 @keyframes menuStripe  { from{background-position:0 0} to{background-position:80px 0} }
@@ -303,8 +303,7 @@ html, body {
   padding: 24px 16px;
 }
 .btn-back {
-  /* Опускаем кнопку ниже чёлки/статус-бара (как верхнюю панель) */
-  position: absolute; top: calc(env(safe-area-inset-top, 0px) + 14px); left: 14px;
+  position: absolute; top: 14px; left: 14px;
   background: none; border: none; color: #6677aa;
   font-size: 15px; font-weight: 700; cursor: pointer; padding: 8px 12px;
   border-radius: 10px; transition: color 0.15s;
@@ -388,45 +387,19 @@ html, body {
 #btn-play-turn:active { transform: scale(0.93); }
 #btn-play-turn:disabled { background: #444; color: #777; }
 
-/* Карточки в руке — только показ, не кликабельны */
+/* Карточки в руке */
 .hand-card {
   padding: 7px 12px; border-radius: 12px;
   border: 2px solid; font-size: 13px; font-weight: 700;
-  pointer-events: none; user-select: none;
+  cursor: pointer; transition: all 0.15s;
   animation: slideUp 0.3s ease;
 }
 .hand-card.racer { border-color: #ff9900; color: #ff9900; background: #1a1000; }
+.hand-card.racer:active { background: #ff9900; color: #000; }
 .hand-card.judge { border-color: #cc44ff; color: #cc44ff; background: #110022; }
-
-/* ── DEBUG-панель ─────────────────────────── */
-#debug-toggle {
-  position: fixed; bottom: 12px; right: 12px; z-index: 400;
-  width: 44px; height: 44px; border-radius: 50%; border: none;
-  background: rgba(20,20,30,0.85); color: #fff; font-size: 20px; cursor: pointer;
-  box-shadow: 0 2px 8px #0008;
-}
-#debug-panel {
-  position: fixed; bottom: 64px; right: 12px; z-index: 400;
-  display: flex; flex-direction: column; gap: 6px;
-  background: rgba(16,16,26,0.96); border: 1px solid #444; border-radius: 12px;
-  padding: 12px; width: 200px; box-shadow: 0 4px 16px #000a;
-}
-#debug-panel.hidden { display: none; }
-.debug-title { color: #f0c040; font-size: 12px; font-weight: 800; text-align: center; }
-.debug-btn {
-  padding: 8px 10px; border-radius: 8px; border: 1px solid #555;
-  background: #232333; color: #ddd; font-size: 13px; font-weight: 700; cursor: pointer;
-}
-.debug-btn:active { background: #3a3a4a; }
-.debug-btn.racer { border-color: #ff9900; color: #ff9900; }
-.debug-btn.judge { border-color: #cc44ff; color: #cc44ff; }
-.debug-row { display: flex; gap: 6px; }
-.debug-row input {
-  width: 56px; padding: 6px; border-radius: 8px; border: 1px solid #555;
-  background: #232333; color: #fff; font-size: 13px; text-align: center;
-}
-.debug-row .debug-btn { flex: 1; }
-.debug-hint { color: #777; font-size: 10px; text-align: center; line-height: 1.4; }
+.hand-card.judge:active { background: #cc44ff; color: #000; }
+.hand-card:disabled { opacity: 0.5; cursor: default; }
+.hand-card:disabled:active { transform: none; }
 
 /* ── ЗАГЛУШКА ─────────────────────────────── */
 #screen-blind { background: #1a1a2e; gap: 20px; cursor: pointer; }
@@ -593,12 +566,6 @@ html, body {
 #btn-use-special.racer { background: #ff9900; color: #000; }
 #btn-use-special.judge { background: #cc44ff; color: #000; }
 #btn-skip-special { background: #2a2a3a; color: #888; }
-#btn-switch-special {
-  margin-top: 8px; padding: 8px 18px; border-radius: 18px;
-  border: 1.5px solid #555; background: transparent; color: #bbb;
-  font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s;
-}
-#btn-switch-special:active { transform: scale(0.93); background: #2a2a3a; }
 
 /* ── ТОСТ ─────────────────────────────────── */
 #toast {
@@ -752,18 +719,6 @@ html, body {
 #calib-reset { background: #500; color: #f88; }
 #calib-done  { background: #f0c040; color: #1a1a2e; }
 #calib-done.ready { background: #4caf50; color: #fff; }
-
-#arrows-layer { position: absolute; pointer-events: none; z-index: 6; overflow: visible; }
-#editor-bar {
-  display: none;
-  position: absolute; bottom: 0; left: 0; right: 0;
-  background: #000d; backdrop-filter: blur(4px);
-  padding: 8px 12px; align-items: center; justify-content: space-between;
-  z-index: 96; gap: 8px;
-}
-#editor-bar.show { display: flex; }
-#editor-count { font-size: 13px; font-weight: 800; color: #8fe2f5; flex-shrink: 0; }
-.editor-pick { outline: 3px solid #ffd24a !important; outline-offset: 1px; }
 </style>
 </head>
 <body>
@@ -829,9 +784,8 @@ html, body {
     <div id="turn-label">Ход: —</div>
   </div>
   <div id="field-wrap" onclick="handleFieldTap(event)">
-    <img id="field-img" src="assets/field.png" alt="field" />
+    <img id="field-img" src="assets/board.svg" alt="field" />
     <div id="cells-layer"></div>
-    <svg id="arrows-layer"></svg>
     <div id="tokens-layer"></div>
     <div id="debug-overlay"></div>
     <div id="calib-bar">
@@ -840,18 +794,12 @@ html, body {
       <button class="calib-btn" id="calib-reset" onclick="calibReset(event)">✕ Сброс</button>
       <button class="calib-btn" id="calib-done"  onclick="calibDone(event)">✓ Готово</button>
     </div>
-    <div id="editor-bar">
-      <div id="editor-count">Редактор</div>
-      <button class="calib-btn" id="editor-undo"  onclick="editorUndo(event)">↩ Отмена</button>
-      <button class="calib-btn" id="editor-reset" onclick="editorReset(event)">✕ Сброс</button>
-      <button class="calib-btn" id="editor-done"  onclick="editorDone(event)">✓ Готово</button>
-    </div>
   </div>
   <div id="game-footer">
     <div id="special-cards-ui"></div>
     <button id="btn-play-turn" onclick="startTurn()">Начать ход</button>
   </div>
-  </div>
+</div>
 
 <!-- ЗАГЛУШКА -->
 <div id="screen-blind" class="screen" onclick="beginTask()">
@@ -969,7 +917,6 @@ html, body {
     <div class="special-popup-icon" id="special-popup-icon">🏎️</div>
     <h3 id="special-card-title">Карточка гонщика</h3>
     <p id="special-card-desc">Продвинуться вперёд без задания</p>
-    <button id="btn-switch-special" onclick="switchSpecialCard()" style="display:none;">↔ Другая карта</button>
     <div class="special-popup-btns">
       <button id="btn-use-special" onclick="useSpecialCard()" data-i18n="use">Использовать</button>
       <button id="btn-skip-special" onclick="hideSpecialOverlay()" data-i18n="skip">Пропустить</button>
@@ -999,55 +946,21 @@ html, body {
 // ═══════════════════════════════════════════
 // КОНФИГУРАЦИЯ
 // ═══════════════════════════════════════════
-// Debug-режим: 🐞-панель и ROUTE-калибровка. По умолчанию ВЫКЛ (релиз/TestFlight чистый).
-// Включить для разработки: открыть с ?debug=1 в URL, либо localStorage vr_debug=1.
-const DEBUG_ENABLED = false; /* debug вырезан для релиза */
-
-const WIN_SCORE  = 49;   // последняя 50-я клетка (индексы 0..49, на табло 1..50)
+const WIN_SCORE  = 49;   // финиш = последняя клетка трассы (старт + 49 клеток)
 const TASK_TIME  = 60;
-
-// Спецклетки-стрелки (нарисованы на board_art): встал на клетку → прыжок на to.
-// Индексы 0-based (клетка на табло = индекс+1). to>from — вперёд, to<from — назад.
-// Ключи и to — НОМЕРА клеток с поля (1..50), как видит игрок.
-// В коде сравниваем boardPos(p)+1 с ключом (см. moveToken/renderCells).
-const SPECIAL = {
-  12: { type: 'back', to: 7  },
-  11: { type: 'fwd',  to: 16 },
-  28: { type: 'fwd',  to: 33 },
-  29: { type: 'back', to: 24 },
-  34: { type: 'fwd',  to: 39 },
-  43: { type: 'back', to: 38 },
-  42: { type: 'fwd',  to: 47 },
-};
-
-// Питстоп — путь-срезка (нарисован на board_art). Вход = ближайшая клетка к
-// первой точке PIT_ROUTE, выход = к последней. Пока едешь — очки заморожены,
-// начисляются разом в конце (продвижение до выходной клетки).
-const PIT_ROUTE = [
-  [29.3,75.5],[32.3,73.4],[34.1,72],[36.3,70.6],[37.6,68.9],[37.6,67.5],
-  [37.8,66.6],[37.6,64.8],[35.8,63.2],[33.6,61.8],[31.3,60.2],[28.3,58.4],
-];
-// Внутренние клетки питстопа-срезки (между входом кл.14 и выходом кл.19) — 10 шт.
-// По ним идёшь пошагово: каждый шаг = слово, пропустить нельзя.
-const PIT_CELLS = PIT_ROUTE.slice(1, PIT_ROUTE.length - 1);
 const MOVE_DELAY = 420;
 let wordsNeeded  = 2;
 
 // Сила бота — явная вероятность успеха хода (не зависит от кубика/выборки)
 const BOT_LEVELS = ['easy', 'normal', 'hard'];
-const BOT_RATE   = { easy: 0.65, normal: 0.80, hard: 0.92 };
+const BOT_RATE   = { easy: 0.40, normal: 0.65, hard: 0.90 };
 const BOT_EMOJI  = { easy: '😊', normal: '😐', hard: '🔥' };
 const BOT_NAME   = { easy: 'Лёгкий', normal: 'Средний', hard: 'Сложный' };
 
 const SPECIAL_DEF = {
-  racer: { type: 'racer', icon: '🏎️' },
-  judge: { type: 'judge', icon: '⚖️' },
+  racer: { type: 'racer', label: '🏎️ Гонщик', icon: '🏎️' },
+  judge: { type: 'judge', label: '⚖️ Судья',  icon: '⚖️' },
 };
-// Локализованная подпись карты по типу (вычисляется в рантайме через t()).
-function cardLabel(type) {
-  const icon = SPECIAL_DEF[type] ? SPECIAL_DEF[type].icon : '🃏';
-  return icon + ' ' + (type === 'racer' ? t('racerName') : t('judgeName'));
-}
 
 const PLAYERS_CONFIG = [
   { id:0, name:'Синий',   color:'#4a9eff', img:'assets/PlayerBlue.png'   },
@@ -1056,28 +969,30 @@ const PLAYERS_CONFIG = [
   { id:3, name:'Красный', color:'#ff5252', img:'assets/PlayerRed.png'    },
 ];
 
-// Маршрут: [left%, top%] — 48 точек по треку (откалиброваны вручную)
-// 50 клеток (индексы 0..49, на табло 1..50) — ручная калибровка по центрам клеток.
+// Маршрут трассы: [left%, top%] — 50 точек (0 = СТАРТ, 49 = ФИНИШ).
+// Сгенерировано gen_board.py вместе с assets/board.svg — править там, не вручную.
 const ROUTE = [
-  [27.1,91.4],[36.8,91],[46.9,91],[56.9,91],[66.8,91.2],[76.5,90.6],
-  [83.3,86.7],[84.1,81.2],[78.6,76.8],[69.3,75.3],[60.1,74.5],[50,74],
-  [39.5,75.9],[29.5,75.3],[19.9,74.1],[13.6,70],[12.3,64.4],[19.1,60],
-  [28.4,58.8],[38.6,58.7],[48.3,58.7],[58.2,58.7],[68.2,58.8],[78,57.7],
-  [83.8,53.2],[85.4,46.9],[76.5,43.4],[68.1,42.3],[58.1,42.2],[48.9,42.2],
-  [38.4,42.2],[28.4,42.2],[18.3,40.7],[14.1,36.6],[12.8,30.5],[18.7,26.6],
-  [29,25.8],[38.4,25.5],[49.3,26.9],[59.7,26],[69.6,25.8],[79,24.2],
-  [84.1,19.6],[83.4,14.1],[77.1,10.2],[66.8,9.5],[56.8,9.2],[47.7,9.4],
-  [37.2,9.2],[27.6,9.5],
+  [22.5,88.0],[28.85,88.59],[35.27,88.77],[41.69,88.8],[48.12,88.8],[54.54,88.81],
+  [60.96,88.78],[67.39,88.64],[73.78,88.26],[79.99,87.21],[84.88,84.54],[87.54,80.66],
+  [88.75,76.46],[88.9,72.19],[85.71,68.63],[82.02,65.27],[84.13,61.29],[87.34,57.59],
+  [89.16,53.51],[89.38,49.23],[88.94,44.96],[87.88,40.74],[85.78,36.7],[82.37,33.08],
+  [77.49,30.35],[71.3,29.32],[66.48,31.44],[62.38,34.12],[56.49,32.44],[50.4,31.12],
+  [44.05,30.49],[37.65,30.15],[31.23,30.2],[25.08,31.31],[19.82,33.75],[16.22,37.2],
+  [19.82,40.53],[24.61,43.37],[28.16,46.94],[31.17,50.72],[32.15,54.9],[28.88,58.53],
+  [24.59,61.71],[21.8,65.48],[24.49,69.29],[28.57,72.59],[29.98,76.51],[25.42,79.48],
+  [20.16,81.93],[17.57,85.57],
 ];
 
-// Вход/выход питстопа — ближайшие клетки ROUTE к концам PIT_ROUTE.
-function _nearestRouteIdx(pt) {
-  let best = 0, bd = 1e9;
-  ROUTE.forEach((r, i) => { const d = Math.hypot(r[0]-pt[0], r[1]-pt[1]); if (d < bd) { bd = d; best = i; } });
-  return best;
-}
-const PIT_ENTRY = _nearestRouteIdx(PIT_ROUTE[0]);
-const PIT_EXIT  = _nearestRouteIdx(PIT_ROUTE[PIT_ROUTE.length - 1]);
+// Спецклетки — по индексу. Источник правды для board.svg (gen_board.py).
+// fwd — стрелка вперёд (+n), back — назад (−n), pit — объезд пит-лейна (пропустить).
+const SPECIAL = {
+  1:  { type:'pit',  to:7,  n:6 },
+  17: { type:'fwd',  to:20, n:3 },
+  26: { type:'back', to:22, n:4 },
+  35: { type:'fwd',  to:39, n:4 },
+  44: { type:'back', to:40, n:4 },
+};
+const FINISH = ROUTE.length - 1;
 
 // ═══════════════════════════════════════════
 // СОСТОЯНИЕ
@@ -1088,8 +1003,6 @@ let currentLang = 'ru';
 try { const _l = localStorage.getItem('vr_lang'); if (_l === 'en' || _l === 'ru') currentLang = _l; } catch (e) {}
 let deck = [];
 let usedWords = new Set();
-let turnsUntilSpecial = 0;   // спецкарта выдаётся раз в 5–10 ходов
-let _spectFoundSig = '';     // подпись найденных слов соперника (онлайн) — против лишних перерисовок
 let players = [];
 let currentPlayerIdx = 0;
 let currentCard = null;
@@ -1103,8 +1016,8 @@ let activeScreen = 'screen-logo';
 let gameOver = false;
 let preferredCard = null;
 
-// Гонка до финиша: позиция ограничена [0, WIN_SCORE], без зацикливания.
-function boardPos(p) { return Math.max(0, Math.min(p.score, WIN_SCORE)); }
+// Гонка до финиша: позиция = очки, без зацикливания, ограничена [0, FINISH]
+function boardPos(p) { return Math.max(0, Math.min(p.score, FINISH)); }
 
 // ═══════════════════════════════════════════
 // ЗВУК (Web Audio — синтез, без файлов)
@@ -1222,7 +1135,7 @@ const I18N = {
     racerCardTitle: 'Карточка гонщика', judgeCardTitle: 'Карточка судьи', useRacer: '🏎️ Использовать', useJudge: '⚖️ Выбрать жертву',
     diceMake: (n) => `Составить ${n} ${wordNoun(n)}!`,
     getReady: (name, color) => `<span style="color:${color}">${name}</span>,<br>приготовься!`,
-    fwd: (n) => `+${n} ${cellNoun(n)} вперёд`, backN: (n) => `-${n} ${cellNoun(n)} назад`,
+    fwd: (n) => `+${n} ${cellNoun(n)} вперёд`, back: (n) => `-${n} ${cellNoun(n)} назад`,
     great: (name) => `✅ Отлично, ${name}!`, timeUp: (n) => `⏰ Время вышло, -${n}`,
     could: (list) => `Можно было: ${list}`,
     botDid: (name) => `🤖 ${name} справился!`, botFail: (name) => `🤖 ${name} не справился`,
@@ -1235,11 +1148,6 @@ const I18N = {
     judgePunished: (name) => `⚖️ ${name} наказан!`, judgeResult: (amt, loss, name) => `+${amt} тебе · -${loss} у ${name}`,
     contArrow: (t) => t ? `Продолжить → (${t})` : 'Продолжить →',
     winChip: (medal, name, score) => `${medal} ${name}: ${score}`,
-    pitToast: '⏩ Питстоп — очки в конце!', fwdToast: '🟢 Рывок вперёд!', backToast: '🔴 Откат назад!',
-    pitDone: (n) => `🏁 Питстоп пройден +${n}!`,
-    switchToRacer: '↔ 🏎️ Гонщик', switchToJudge: '↔ ⚖️ Судья',
-    cardInHand: 'Карта в руке — разыграется при «Начать ход»',
-    judgeNoVictims: 'Не у кого отбирать очки — у соперников 0',
   },
   en: {
     subtitle: 'Word Race', play: '🏁 Play', online: '🌐 Online', continueGame: '▶️ Continue game',
@@ -1268,7 +1176,7 @@ const I18N = {
     racerCardTitle: 'Racer card', judgeCardTitle: 'Judge card', useRacer: '🏎️ Use', useJudge: '⚖️ Choose victim',
     diceMake: (n) => `Make ${n} ${wordNoun(n)}!`,
     getReady: (name, color) => `<span style="color:${color}">${name}</span>,<br>get ready!`,
-    fwd: (n) => `+${n} ${cellNoun(n)} forward`, backN: (n) => `-${n} ${cellNoun(n)} back`,
+    fwd: (n) => `+${n} ${cellNoun(n)} forward`, back: (n) => `-${n} ${cellNoun(n)} back`,
     great: (name) => `✅ Great, ${name}!`, timeUp: (n) => `⏰ Time's up, -${n}`,
     could: (list) => `You could: ${list}`,
     botDid: (name) => `🤖 ${name} made it!`, botFail: (name) => `🤖 ${name} failed`,
@@ -1281,11 +1189,6 @@ const I18N = {
     judgePunished: (name) => `⚖️ ${name} punished!`, judgeResult: (amt, loss, name) => `+${amt} to you · -${loss} to ${name}`,
     contArrow: (t) => t ? `Continue → (${t})` : 'Continue →',
     winChip: (medal, name, score) => `${medal} ${name}: ${score}`,
-    pitToast: '⏩ Pit stop — points at the end!', fwdToast: '🟢 Boost forward!', backToast: '🔴 Slide back!',
-    pitDone: (n) => `🏁 Pit stop done +${n}!`,
-    switchToRacer: '↔ 🏎️ Racer', switchToJudge: '↔ ⚖️ Judge',
-    cardInHand: 'Card in hand — plays on “Start turn”',
-    judgeNoVictims: 'No one to steal points from — opponents at 0',
   },
 };
 
@@ -1537,7 +1440,7 @@ function handleNetMsg(m) {
       showOpponentResult(m.success, m.title, m.sub);
       break;
     case 'sync':
-      applySync(m.scores, m.cur, m.hands, m.tus);
+      applySync(m.scores, m.cur, m.hands);
       break;
     case 'win':
       applyWin(m.scores);
@@ -1600,30 +1503,21 @@ function applySpect(m) {
   const timerEl = document.getElementById('task-timer');
   timerEl.textContent = `${m.time}⏰`;
   timerEl.className = (m.time <= 10 ? 'panic' : '');
-  // Перерисовываем список найденных слов ТОЛЬКО при реальном изменении —
-  // иначе на каждый тик/нажатие соперника теги пересоздаются и мигает анимация.
   const uw = document.getElementById('task-used-words');
-  const sig = (m.card || '') + '::' + (m.found || []).join('|');
-  if (sig !== _spectFoundSig) {
-    _spectFoundSig = sig;
-    uw.innerHTML = '';
-    (m.found || []).forEach(w => { const t = document.createElement('span'); t.className = 'used-word-tag'; t.textContent = w; uw.appendChild(t); });
-  }
+  uw.innerHTML = '';
+  (m.found || []).forEach(w => { const t = document.createElement('span'); t.className = 'used-word-tag'; t.textContent = w; uw.appendChild(t); });
   document.getElementById('task-actions').style.display = 'none';
   document.getElementById('task-error').textContent = t('watching');
   if (activeScreen !== 'screen-task') showScreen('screen-task');
 }
 
-function applySync(scores, cur, hands, tus) {
+function applySync(scores, cur, hands) {
   showScreen('screen-game');
   players.forEach((p, i) => {
     const delta = scores[i] - p.score;
     if (delta !== 0) moveToken(p, Math.abs(delta), delta > 0 ? 1 : -1);
   });
   currentPlayerIdx = cur;
-  // Счётчик спецкарт ведётся общий: принимаем значение от активного игрока,
-  // чтобы спецкарта выпадала раз в 5–10 ОБЩИХ ходов, а не у каждого по отдельности.
-  if (tus != null) turnsUntilSpecial = tus;
   if (hands) hands.forEach((arr, i) => { if (players[i]) players[i].specialCards = arr.map(t => ({ ...SPECIAL_DEF[t] })).filter(c => c.type); });
   renderScoreboard(); updateTurnLabel(); renderSpecialCards();
   updateOnlineTurnUI();
@@ -1808,13 +1702,6 @@ function onDictReady() {
 
 async function init() {
   applyStaticI18n();
-  // В релизе прячем debug-панель (🐞)
-  if (!DEBUG_ENABLED) {
-    const dt = document.getElementById('debug-toggle');
-    const dp = document.getElementById('debug-panel');
-    if (dt) dt.style.display = 'none';
-    if (dp) dp.style.display = 'none';
-  }
   document.querySelectorAll('.sound-toggle').forEach(b => b.textContent = SFX.isOn() ? '🔊' : '🔇');
   updateLangButton();
   updateLoadingBar(20);
@@ -1901,44 +1788,31 @@ function startGameFromSetup() {
 // ═══════════════════════════════════════════
 function startGame(n, slots) {
   const source = slots || PLAYERS_CONFIG.slice(0, n);
-  players = source.map(cfg => ({ ...cfg, name: colorName(cfg.id), score: 0, pit: null, specialCards: [] }));
+  players = source.map(cfg => ({ ...cfg, name: colorName(cfg.id), score: 0, specialCards: [] }));
   gameOver = false;
   currentPlayerIdx = 0;
-  turnsUntilSpecial = rollSpecialGap();
   buildDeck();
   renderScoreboard();
   updateTurnLabel();
   updateOnlineTurnUI();
   updateOppStatus();
-  showScreen('screen-game');  // showScreen сам вызовет drawBoard для screen-game
+  showScreen('screen-game');
+  // Позиционируем фишки после того, как экран стал видимым (иначе getBoundingClientRect = 0)
+  setTimeout(() => { renderTokens(); renderCells(); }, 60);
 }
-
-// Отрисовать поле: ждём, пока картинка получит реальный размер (экран виден),
-// затем синхронизируем слои, создаём фишки и рисуем клетки. Без этого при первом
-// показе getBoundingClientRect = 0 и поле остаётся пустым до первого хода.
-function drawBoard(tries = 0) {
-  const img = document.getElementById('field-img');
-  const ir  = img ? imageContentRect(img) : { width: 0 };
-  if (ir.width <= 0) {
-    if (tries < 40) requestAnimationFrame(() => drawBoard(tries + 1));
-    return;
-  }
-  syncLayers();
-  // Создаём фишки, только если их ещё нет; иначе просто переставляем (без сброса анимации).
-  const haveTokens = players.length && document.getElementById('token-' + players[0].id);
-  if (!haveTokens) renderTokens();
-  else players.forEach(p => positionToken(p, true));
-  renderCells();
-}
-
-// Случайный интервал (в ходах) до следующей спецкарты: 5..10.
-function rollSpecialGap() { return 5 + Math.floor(Math.random() * 6); }
 
 function buildDeck() {
   const cardWords = dictionary.filter(w => w.length >= 7);
   const shuffled = [...cardWords].sort(() => Math.random() - 0.5);
-  // Колода — только слова-карточки. Спецкарты выдаются по счётчику ходов (см. startTurn).
-  deck = shuffled.slice(0, Math.min(shuffled.length, 200));
+  usedWords.clear();
+  const specials = [
+    { ...SPECIAL_DEF.racer }, { ...SPECIAL_DEF.racer },
+    { ...SPECIAL_DEF.judge }, { ...SPECIAL_DEF.judge },
+  ];
+  const base = shuffled.slice(0, Math.min(shuffled.length, 200));
+  const step = Math.floor(base.length / (specials.length + 1));
+  specials.forEach((s, i) => base.splice((i + 1) * step, 0, s));
+  deck = base;
 }
 
 function drawCard() {
@@ -1958,16 +1832,14 @@ function canMakeFrom(w, counts) {
   return true;
 }
 
-// Сколько РЕАЛЬНЫХ слов из словаря можно составить из карточки (ранний выход на limit).
-// exclude — необязательный Set слов, которые пропустить (напр. уже найденные игроком).
-function findSubWords(card, limit, exclude) {
+// Сколько РЕАЛЬНЫХ слов из словаря можно составить из карточки (ранний выход на limit)
+function findSubWords(card, limit) {
   const counts = {};
   for (const ch of card) counts[ch] = (counts[ch] || 0) + 1;
   const out = [];
   for (let i = 0; i < dictionary.length; i++) {
     const w = dictionary[i];
     if (w.length < 2 || w.length > card.length || w === card) continue;
-    if (exclude && exclude.has(w)) continue;
     if (canMakeFrom(w, counts)) {
       out.push(w);
       if (out.length >= limit) break;
@@ -1984,41 +1856,28 @@ async function startTurn(pref = null) {
   preferredCard = pref;
   document.getElementById('btn-play-turn').disabled = true;
 
-  // Спецкарта раз в 5–10 ходов — выдаётся текущему игроку.
-  let gotSpecial = false;
-  if (--turnsUntilSpecial <= 0) {
-    const type = Math.random() < 0.5 ? 'racer' : 'judge';
-    const sp = { ...SPECIAL_DEF[type] };
-    currentPlayer().specialCards.push(sp);
-    renderSpecialCards();
-    renderScoreboard();
-    showToast(t('gotCard', sp.icon + ' ' + (type === 'racer' ? t('racerName') : t('judgeName'))));
-    gotSpecial = true;
-    turnsUntilSpecial = rollSpecialGap();
-  }
-
-  // Бросок кубика (1–6): сколько слов нужно и на сколько ходов двигаться.
-  const rolled = 1 + Math.floor(Math.random() * 6);
-
-  // Подбираем карточку, из которой реально складывается нужное число слов.
-  // Если ни одна за попытки не дотягивает — берём ЛУЧШУЮ и урезаем число слов
-  // до того, сколько из неё можно собрать, чтобы задание всегда было выполнимо.
-  let card = drawCard();
-  let best = card, bestCount = findSubWords(card, rolled).length;
-  let tries = 0;
-  while (tries < 40 && bestCount < rolled) {
-    card = drawCard();
-    const cnt = findSubWords(card, rolled).length;
-    if (cnt > bestCount) { best = card; bestCount = cnt; }
-    tries++;
-  }
-  if (bestCount < rolled) card = best;   // ни одна не дотянула — берём лучшую
-  currentCard = card;
-  wordsNeeded = Math.max(1, Math.min(rolled, findSubWords(card, rolled).length));
-
-  // Кубик показываем уже с ФИНАЛЬНЫМ числом слов (после возможного урезания).
-  await rollDice(wordsNeeded);
+  wordsNeeded = await rollDice();
   if (online.active && online.started && isMyTurn()) netSend({ t: 'dice', v: wordsNeeded });
+
+  let card = drawCard();
+  let gotSpecial = false;
+  let tries = 0;
+  while (true) {
+    if (typeof card === 'object') {
+      currentPlayer().specialCards.push(card);
+      renderSpecialCards();
+      renderScoreboard();
+      showToast(t('gotCard', card.icon + ' ' + (card.type === 'racer' ? t('racerName') : t('judgeName'))));
+      gotSpecial = true;
+      card = drawCard();
+      continue;
+    }
+    // Слово-карточка: годится, только если из неё можно составить ≥ wordsNeeded слов
+    if (tries >= 60 || findSubWords(card, wordsNeeded).length >= wordsNeeded) break;
+    tries++;
+    card = drawCard();
+  }
+  currentCard = card;
   if (gotSpecial && online.active && isMyTurn()) netSend({ t: 'hands', hands: serializeHands() });
 
   if (currentPlayer().isBot) {
@@ -2056,32 +1915,8 @@ function showSpecialOverlay(card) {
   useBtn.className = isRacer ? 'racer' : 'judge';
   useBtn.textContent = isRacer ? t('useRacer') : t('useJudge');
 
-  // Судью нельзя использовать, если не у кого отбирать очки (все соперники на 0).
-  const player = currentPlayer();
-  const noVictims = !isRacer && !players.some(p => p.id !== player.id && p.score > 0);
-  useBtn.disabled = noVictims;
-  useBtn.style.opacity = noVictims ? '0.4' : '';
-  useBtn.style.cursor  = noVictims ? 'default' : '';
-  if (noVictims) {
-    document.getElementById('special-card-desc').textContent = t('judgeNoVictims');
-  }
-
-  // Если в руке несколько РАЗНЫХ карт — даём выбрать другую.
-  const cards = currentPlayer().specialCards;
-  const hasOther = cards.some(c => c.type !== card.type);
-  const switchBtn = document.getElementById('btn-switch-special');
-  switchBtn.style.display = hasOther ? '' : 'none';
-  switchBtn.textContent = (card.type === 'racer' ? t('switchToJudge') : t('switchToRacer'));
-
   document.getElementById('overlay-special').classList.add('show');
   SFX.card();
-}
-
-// Переключить оверлей на другую карту в руке (Гонщик ↔ Судья).
-function switchSpecialCard() {
-  const cards = currentPlayer().specialCards;
-  const other = cards.find(c => c.type !== currentSpecialCard.type);
-  if (other) showSpecialOverlay(other);
 }
 
 function hideSpecialOverlay() {
@@ -2136,20 +1971,16 @@ function applyJudge(victim) {
   const amount = wordsNeeded;
   const player = currentPlayer();
   const isBot = player.isBot;
-  // Судья отбирает у жертвы ровно столько, сколько у неё есть (не больше amount),
-  // и даёт игроку РОВНО ту же сумму (сколько отнял).
   const actualLoss = Math.min(victim.score, amount);
-  victim.score = Math.max(0, victim.score - actualLoss);
+  victim.score = Math.max(0, victim.score - amount);
 
-  showResult(true, t('judgePunished', victim.name), t('judgeResult', actualLoss, actualLoss, victim.name), async () => {
+  showResult(true, t('judgePunished', victim.name), t('judgeResult', amount, actualLoss, victim.name), async () => {
     showScreen('screen-game');
     await sleep(80);
-    if (actualLoss > 0) {
-      await moveToken(player, actualLoss, 1, false);  // без срабатывания спецклеток
-      spawnScoreFloat(player.id, `+${actualLoss}`, player.color);
-      await moveToken(victim, actualLoss, -1);
-      spawnScoreFloat(victim.id, `-${actualLoss}`, '#ff5252');
-    }
+    await moveToken(player, amount, 1);
+    spawnScoreFloat(player.id, `+${amount}`, player.color);
+    await moveToken(victim, actualLoss, -1);
+    if (actualLoss > 0) spawnScoreFloat(victim.id, `-${actualLoss}`, '#ff5252');
     renderScoreboard();
     if (checkWin()) return;
     afterMove();
@@ -2304,11 +2135,10 @@ function finishTask(success) {
       afterMove();
     });
   } else {
-    // Подсказка-«можно было собрать»: исключаем слова, которые игрок уже нашёл.
-    const hints = findSubWords(currentCard, 3, new Set(taskWordsFound));
+    const hints = findSubWords(currentCard, 3);
     const hintSub = hints.length > 0
       ? t('could', hints.slice(0, 3).join(', '))
-      : t('backN', wordsNeeded);
+      : t('back', wordsNeeded);
     showResult(false, t('timeUp', wordsNeeded), hintSub, async () => {
       showScreen('screen-game');
       await sleep(80);
@@ -2322,176 +2152,75 @@ function finishTask(success) {
 // ═══════════════════════════════════════════
 // ДВИЖЕНИЕ ФИШКИ
 // ═══════════════════════════════════════════
-function _stepAnim(el) {
-  if (!el) return;
-  el.classList.remove('moving');
-  void el.offsetHeight; // перезапускаем анимацию
-  el.classList.add('moving');
-}
-function _landFx(el) {
-  if (!el) return;
-  el.classList.add('landing');
-  setTimeout(() => el.classList.remove('landing'), 500);
-}
-
-// Шаг за шагом по клеткам питстопа-срезки. Очки заморожены (стоим на кл.14),
-// начисляются разом при выходе на кл.19. Возвращает остаток шагов после выхода.
-async function walkPit(player, steps, el) {
-  for (let i = 0; i < steps; i++) {
-    if (player.pit >= PIT_CELLS.length) {
-      // Прошли все клетки срезки → выходим на основную дорогу (кл.19), очки начисляются.
-      player.pit = null;
-      player.score = PIT_EXIT;
-      SFX.move(); _stepAnim(el);
-      positionToken(player); renderScoreboard();
-      await sleep(MOVE_DELAY);
-      if (el) el.classList.remove('moving');
-      showToast(t('pitDone', PIT_EXIT - PIT_ENTRY));
-      return steps - i - 1;   // остаток шагов идёт уже по основной дороге
-    }
-    player.pit += 1;          // встаём на следующую клетку срезки (1..10)
-    SFX.move(); _stepAnim(el);
-    positionToken(player); renderScoreboard();
-    await sleep(MOVE_DELAY);
-    if (el) el.classList.remove('moving');
-  }
-  return 0;   // шаги кончились, всё ещё внутри питстопа
-}
-
 async function moveToken(player, steps, direction, applySpecial = true) {
   const el = document.getElementById(`token-${player.id}`);
-  let remaining = steps;
-
-  // Движение назад (напр. карта Судьи) сбрасывает заход в питстоп — фишка на основной дороге.
-  if (direction < 0 && player.pit != null) { player.pit = null; positionToken(player); }
-
-  // Если игрок зашёл на вход питстопа (стоит на кл.14) и идёт вперёд — шагаем по срезке.
-  if (direction > 0 && player.pit != null) {
-    remaining = await walkPit(player, remaining, el);
-    if (remaining <= 0) { _landFx(el); return; }
-    // вышли из питстопа на кл.19 — остаток шагов продолжаем по основной дороге
-  }
-
-  for (let i = 0; i < remaining; i++) {
-    const newScore = player.score + direction;
+  for (let i = 0; i < steps; i++) {
+    let newScore = player.score + direction;
     if (newScore < 0) break;
+    if (newScore > FINISH) newScore = FINISH;   // не перепрыгиваем финиш
     player.score = newScore;
     SFX.move();
-    _stepAnim(el);
+    if (el) {
+      el.classList.remove('moving');
+      void el.offsetHeight; // перезапускаем анимацию
+      el.classList.add('moving');
+    }
     positionToken(player);
     renderScoreboard();
     await sleep(MOVE_DELAY);
     if (el) el.classList.remove('moving');
-
-    // Зашли РОВНО на вход питстопа последним шагом — со следующего хода идём по срезке.
-    if (direction > 0 && player.pit == null && player.score === PIT_ENTRY && i === remaining - 1) {
-      player.pit = 0;
-      showToast(t('pitToast'));
-    }
+    if (player.score === FINISH) break;          // дошёл до финиша — стоп
   }
-  _landFx(el);
-  // Спецклетки-стрелки (нарисованы на field.png), только при движении вперёд.
-  // Внутри/на входе питстопа стрелки не срабатывают.
-  if (applySpecial && direction > 0 && player.pit == null && player.score < WIN_SCORE) {
-    const pos = boardPos(player);
-    {
-      // Стрелка: SPECIAL по НОМЕРУ клетки (pos+1), to — тоже номер → индекс = to-1.
-      const sp = SPECIAL[pos + 1];
-      const toIdx = sp ? sp.to - 1 : -1;
-      if (sp && toIdx !== player.score) {
-        await sleep(380);
-        SFX.card();
-        showToast(toIdx > pos ? t('fwdToast') : t('backToast'));
-        player.score = Math.max(0, Math.min(toIdx, WIN_SCORE));
-        if (el) {
-          el.classList.remove('moving'); void el.offsetHeight; el.classList.add('moving');
-          el.classList.add('landing');
-          setTimeout(() => { el.classList.remove('moving'); el.classList.remove('landing'); }, 600);
-        }
-        positionToken(player);
-        renderScoreboard();
-        await sleep(MOVE_DELAY + 200);
+  if (el) {
+    el.classList.add('landing');
+    setTimeout(() => el.classList.remove('landing'), 500);
+  }
+  // Спецклетка под фишкой: стрелка вперёд/назад или объезд питстопа.
+  // Плавный скачок сразу к цели (объезд перепрыгивает петлю, а не едет по ней).
+  if (applySpecial) {
+    const sp = SPECIAL[boardPos(player)];
+    if (sp && player.score !== sp.to && player.score < FINISH) {
+      await sleep(420);
+      SFX.card();
+      showToast(specialToast(sp));
+      player.score = Math.max(0, Math.min(sp.to, FINISH));
+      if (el) {
+        el.classList.remove('moving'); void el.offsetHeight; el.classList.add('moving');
+        el.classList.add('landing');
+        setTimeout(() => { el.classList.remove('moving'); el.classList.remove('landing'); }, 600);
       }
+      positionToken(player);
+      renderScoreboard();
+      await sleep(MOVE_DELAY + 200);
     }
   }
 }
 
-// Поставить фишку по произвольным процентным координатам (для проезда питстопа).
-function positionTokenAt(player, lPct, tPct) {
-  const el = document.getElementById(`token-${player.id}`);
-  if (!el) return;
-  syncLayers();
-  el.style.left = lPct + '%';   // процент от tokens-layer (= видимая картинка)
-  el.style.top  = tPct + '%';
-}
-
-// Реальный прямоугольник ВИДИМОЙ картинки внутри #field-img (object-fit:contain).
-// getBoundingClientRect даёт размер ЭЛЕМЕНТА (с возможными полями-letterbox),
-// а нам нужна область самой картинки — иначе клетки/фишки съезжают.
-function imageContentRect(img) {
-  const r = img.getBoundingClientRect();
-  const nW = img.naturalWidth, nH = img.naturalHeight;
-  if (!nW || !nH) return r;
-  const elemRatio = r.width / r.height, imgRatio = nW / nH;
-  let cw, ch, ox = 0, oy = 0;
-  if (imgRatio > elemRatio) { cw = r.width; ch = r.width / imgRatio; oy = (r.height - ch) / 2; }
-  else { ch = r.height; cw = r.height * imgRatio; ox = (r.width - cw) / 2; }
-  return { left: r.left + ox, top: r.top + oy, width: cw, height: ch };
-}
-
-// Ставим слои клеток/фишек/стрелок ТОЧНО поверх видимой картинки.
-// После этого позиции внутри слоёв задаются простыми процентами — letterbox не влияет.
-function syncLayers() {
-  const img = document.getElementById('field-img');
-  const wrap = document.getElementById('field-wrap');
-  if (!img || !wrap) return;
-  const ir = imageContentRect(img);
-  const wr = wrap.getBoundingClientRect();
-  if (!ir.width) return;
-  const L = ir.left - wr.left, T = ir.top - wr.top;
-  ['cells-layer', 'tokens-layer', 'arrows-layer'].forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.style.left = L + 'px'; el.style.top = T + 'px';
-    el.style.width = ir.width + 'px'; el.style.height = ir.height + 'px';
-  });
+function specialToast(sp) {
+  if (sp.type === 'fwd')  return `🟢 Рывок вперёд +${sp.n}!`;
+  if (sp.type === 'back') return `🔴 Откат назад −${sp.n}!`;
+  return `🔵 Объезд питстопа — короткий путь!`;
 }
 
 function positionToken(player, instant = false) {
   const el = document.getElementById(`token-${player.id}`);
   if (!el) return;
-
-  const img = document.getElementById('field-img');
-  const ir  = imageContentRect(img);
-  syncLayers();
-
-  // Питстоп: фишка стоит на клетке срезки (pit=1..10 → PIT_CELLS[pit-1]).
-  // pit=0 — стоим ещё на входе (кл.14), обрабатывается обычной веткой ниже.
-  if (player.pit != null && player.pit >= 1) {
-    const [pl, pt] = PIT_CELLS[player.pit - 1];
-    const nxt = PIT_CELLS[player.pit] || ROUTE[PIT_EXIT];
-    const ang = Math.atan2((nxt[1] - pt) * ir.height, (nxt[0] - pl) * ir.width) * 180 / Math.PI + 90;
-    if (instant) el.classList.add('no-anim');
-    el.style.left = pl + '%';
-    el.style.top  = pt + '%';
-    el.style.setProperty('--ta', ang + 'deg');
-    if (instant) { void el.offsetHeight; el.classList.remove('no-anim'); }
-    return;
-  }
-
   const pos = boardPos(player);
   const [lPct, tPct] = ROUTE[pos];
 
-  // Раскладка фишек на одной клетке: 1 — по центру, 2+ — симметрично, без налезания.
-  // Фишки внутри питстопа не участвуют в раскладке основной дороги.
-  const onCell = players.filter(p => p.pit == null && boardPos(p) === pos);
-  const total  = onCell.length;
-  const myIdx  = onCell.findIndex(p => p.id === player.id);
-  const d = 13;   // px — половина шага между фишками (фишка 24px)
-  let off = [0, 0];
-  if (total === 2)      off = [[-d, 0], [d, 0]][myIdx];
-  else if (total === 3) off = [[0, -d], [-d, d], [d, d]][myIdx];
-  else if (total >= 4)  off = [[-d, -d], [d, -d], [-d, d], [d, d]][myIdx] || [0, 0];
+  const img  = document.getElementById('field-img');
+  const wrap = document.getElementById('field-wrap');
+  const ir   = img.getBoundingClientRect();
+  const wr   = wrap.getBoundingClientRect();
+
+  const x = (ir.left - wr.left) + (lPct / 100) * ir.width;
+  const y = (ir.top  - wr.top)  + (tPct / 100) * ir.height;
+
+  const sameCell = players.filter(p => boardPos(p) === pos && p.id !== player.id);
+  const myIdx    = sameCell.filter(p => p.id < player.id).length;
+  const d = Math.round(ir.width * 0.032);
+  const offsets  = [[0,0],[d,0],[-d,0],[0,-d]];
+  const off      = offsets[myIdx] || [myIdx * d, 0];
 
   // Угол поворота — вдоль трассы к следующей клетке (круг замкнут, после 49 → 0)
   const b = (pos + 1) % ROUTE.length;
@@ -2500,9 +2229,8 @@ function positionToken(player, instant = false) {
   const angle = Math.atan2(dy, dx) * 180 / Math.PI + 90;
 
   if (instant) el.classList.add('no-anim');
-  // Позиция в процентах от tokens-layer (= видимая картинка) + px-сдвиг для совмещённых фишек
-  el.style.left = `calc(${lPct}% + ${off[0]}px)`;
-  el.style.top  = `calc(${tPct}% + ${off[1]}px)`;
+  el.style.left = (x + off[0]) + 'px';
+  el.style.top  = (y + off[1]) + 'px';
   el.style.setProperty('--ta', angle + 'deg');
   if (instant) { void el.offsetHeight; el.classList.remove('no-anim'); }
 }
@@ -2603,7 +2331,7 @@ function afterMove() {
   setTimeout(() => players.forEach(p => positionToken(p, true)), 60);
   saveGame();
   if (online.active && online.started) {
-    netSend({ t: 'sync', scores: players.map(p => p.score), cur: currentPlayerIdx, hands: serializeHands(), tus: turnsUntilSpecial });
+    netSend({ t: 'sync', scores: players.map(p => p.score), cur: currentPlayerIdx, hands: serializeHands() });
     updateOnlineTurnUI();
   }
 }
@@ -2649,14 +2377,18 @@ async function botPlayTurn() {
     return;
   }
 
-  // Auto-use judge card — только если есть у кого отбирать очки
+  // Auto-use judge card
   const judgeIdx = player.specialCards.findIndex(c => c.type === 'judge');
-  const victims = players.filter(p => p.id !== player.id && p.score > 0);
-  if (judgeIdx >= 0 && victims.length > 0) {
+  if (judgeIdx >= 0) {
     player.specialCards.splice(judgeIdx, 1);
     renderSpecialCards();
-    const victim = victims.reduce((a, b) => a.score > b.score ? a : b);
-    applyJudge(victim);
+    const victims = players.filter(p => p.id !== player.id && p.score > 0);
+    if (victims.length > 0) {
+      const victim = victims.reduce((a, b) => a.score > b.score ? a : b);
+      applyJudge(victim);
+    } else {
+      await botDoTask(player);
+    }
     return;
   }
 
@@ -2683,7 +2415,7 @@ async function botDoTask(player) {
     spawnScoreFloat(player.id, `+${wordsNeeded}`, player.color);
     checkWin();
   } else {
-    showResult(false, t('botFail', player.name), t('backN', wordsNeeded));
+    showResult(false, t('botFail', player.name), t('back', wordsNeeded));
     await sleep(1800);
     showScreen('screen-game');
     await sleep(80);
@@ -2698,24 +2430,36 @@ async function botDoTask(player) {
 // ═══════════════════════════════════════════
 // РЕНДЕР
 // ═══════════════════════════════════════════
-// Номера клеток 1..50 поверх поля (старт/финиш/питстоп/стрелки подсвечены).
-// Номер в центре клетки — на той же позиции, где стоит фишка.
+// Слой клеток поверх фона-иллюстрации (50 клеток + старт/финиш + бейджи стрелок)
 function renderCells() {
   const layer = document.getElementById('cells-layer');
   if (!layer) return;
-  syncLayers();
+  const img  = document.getElementById('field-img');
+  const wrap = document.getElementById('field-wrap');
+  if (!img || !wrap) return;
+  const ir = img.getBoundingClientRect();
+  const wr = wrap.getBoundingClientRect();
+  if (ir.width === 0) return;
   layer.innerHTML = '';
   ROUTE.forEach((pt, i) => {
-    const num = i + 1;
-    // На поле оставляем только метки-вёрсты: 10, 20, 30, 40, 50.
-    // Старт/финиш/стрелки уже нарисованы на самой картинке поля.
-    if (num % 10 !== 0) return;
-    const d = document.createElement('div');
-    d.className = 'cell-num';
-    d.style.left = pt[0] + '%';   // процент от слоя (= видимая картинка)
-    d.style.top  = pt[1] + '%';
-    d.textContent = num;
-    layer.appendChild(d);
+    const x = (ir.left - wr.left) + (pt[0] / 100) * ir.width;
+    const y = (ir.top  - wr.top)  + (pt[1] / 100) * ir.height;
+    const sp = SPECIAL[i];
+    const dot = document.createElement('div');
+    dot.className = 'cell-dot' + (i === 0 ? ' start' : i === FINISH ? ' finish' : sp ? ' ' + sp.type : '');
+    dot.style.left = x + 'px';
+    dot.style.top  = y + 'px';
+    dot.textContent = i === 0 ? '🏁' : i === FINISH ? '🏆' : i;
+    layer.appendChild(dot);
+    if (sp) {
+      const b = document.createElement('div');
+      b.className = 'cell-badge';
+      b.style.left = x + 'px';
+      b.style.top  = (y - 24) + 'px';
+      b.style.color = sp.type === 'fwd' ? '#8ff0a0' : sp.type === 'back' ? '#ffaba3' : '#8fe2f5';
+      b.textContent = sp.type === 'fwd' ? '▲ +' + sp.n : sp.type === 'back' ? '▼ −' + sp.n : '⏩ ОБЪЕЗД';
+      layer.appendChild(b);
+    }
   });
 }
 
@@ -2740,7 +2484,7 @@ function renderScoreboard() {
     chip.className = 'score-chip' + (i === currentPlayerIdx ? ' active-turn' : '');
     const cards = (p.specialCards && p.specialCards.length)
       ? ` <span class="chip-cards">${p.specialCards.map(c => c.icon).join('')}</span>` : '';
-    chip.innerHTML = `<span class="dot" style="background:${p.color}"></span>${p.isBot ? '🤖' : ''}${p.name}: ${boardPos(p)}/50${cards}`;
+    chip.innerHTML = `<span class="dot" style="background:${p.color}"></span>${p.isBot ? '🤖' : ''}${p.name}: ${p.score}/${WIN_SCORE}${cards}`;
     sb.appendChild(chip);
   });
 }
@@ -2755,50 +2499,18 @@ function renderSpecialCards() {
   const player = online.active ? players[online.myIdx] : currentPlayer();
   if (!player) { ui.innerHTML = ''; return; }
   ui.innerHTML = '';
-  // Карты в руке — только показ (что есть у игрока). Кликать по ним нельзя:
-  // разыгрываются автоматически при «Начать ход».
+  const myTurn = !player.isBot && !gameOver
+    && !document.getElementById('btn-play-turn').disabled
+    && (online.active ? isMyTurn() : true);
   player.specialCards.forEach(card => {
-    const chip = document.createElement('div');
-    chip.className = 'hand-card ' + card.type;
-    chip.textContent = cardLabel(card.type);
-    chip.title = t('cardInHand');
-    ui.appendChild(chip);
+    const btn = document.createElement('button');
+    btn.className = 'hand-card ' + card.type;
+    btn.textContent = card.label;
+    btn.title = myTurn ? 'Нажми — использовать в этот ход' : 'Карта в руке';
+    if (myTurn) btn.onclick = () => startTurn(card);
+    else btn.disabled = true;
+    ui.appendChild(btn);
   });
-}
-
-// ═══════════════════════════════════════════
-// DEBUG — тестирование спецкарт
-// ═══════════════════════════════════════════
-function toggleDebugPanel() {
-  document.getElementById('debug-panel').classList.toggle('hidden');
-}
-function debugGiveCard(type) {
-  const p = currentPlayer();
-  if (!p) { showToast('Сначала начни партию'); return; }
-  p.specialCards.push({ ...SPECIAL_DEF[type] });
-  renderSpecialCards();
-  showToast(`+ ${cardLabel(type)}`);
-}
-async function debugMove(n) {
-  const p = currentPlayer();
-  if (!p) { showToast('Сначала начни партию'); return; }
-  await moveToken(p, n, 1);
-  if (checkWin()) return;
-  renderScoreboard();
-}
-async function debugTeleport() {
-  const p = currentPlayer();
-  if (!p) { showToast('Сначала начни партию'); return; }
-  const v = parseInt(document.getElementById('debug-cell').value, 10);  // номер клетки 1..50
-  if (isNaN(v) || v < 1 || v > WIN_SCORE + 1) { showToast('Клетка 1–' + (WIN_SCORE + 1)); return; }
-  // Ставим на клетку ПЕРЕД указанной и шагаем 1 вперёд — чтобы сработали
-  // спецклетки/питстоп (они активны только при движении на клетку).
-  p.score = v - 2 < 0 ? 0 : v - 2;
-  positionToken(p, true);
-  renderScoreboard();
-  await moveToken(p, v - 1 - p.score, 1);
-  if (checkWin()) return;
-  renderScoreboard();
 }
 
 // ═══════════════════════════════════════════
@@ -2813,8 +2525,6 @@ let calibActive   = false;
 let calibPoints   = [];  // [[l%, t%], ...]
 
 function handleFieldTap(event) {
-  if (!DEBUG_ENABLED) return;   // в релизе калибровка отключена
-  if (editorActive) { editorClick(event); return; }
   if (calibActive) {
     placeCalibPoint(event);
     return;
@@ -2835,7 +2545,7 @@ function startCalib() {
   document.getElementById('calib-bar').classList.add('show');
   renderCalibDots();
   updateCalibBar();
-  showToast('📍 Жми по треку — расставь ' + ROUTE.length + ' точек', 3000);
+  showToast('📍 Жми по треку — расставь 50 точек (0→49, старт→финиш)', 3000);
 }
 
 function stopCalib() {
@@ -2845,11 +2555,10 @@ function stopCalib() {
   document.getElementById('calib-bar').classList.remove('show');
 }
 
-const CALIB_MAX = 60;   // максимум клеток при калибровке
 function placeCalibPoint(event) {
-  if (calibPoints.length >= CALIB_MAX) return;
+  if (calibPoints.length >= ROUTE.length) return;
   const img = document.getElementById('field-img');
-  const ir  = imageContentRect(img);
+  const ir  = img.getBoundingClientRect();
   const x   = event.clientX - ir.left;
   const y   = event.clientY - ir.top;
   if (x < 0 || x > ir.width || y < 0 || y > ir.height) return;
@@ -2864,7 +2573,7 @@ function renderCalibDots() {
   const overlay = document.getElementById('debug-overlay');
   const img  = document.getElementById('field-img');
   const wrap = document.getElementById('field-wrap');
-  const ir   = imageContentRect(img);
+  const ir   = img.getBoundingClientRect();
   const wr   = wrap.getBoundingClientRect();
   overlay.innerHTML = '';
 
@@ -2879,7 +2588,7 @@ function renderCalibDots() {
   });
 
   // Следующая точка — пунктирный кружок-подсказка (центр поля)
-  if (calibPoints.length < CALIB_MAX) {
+  if (calibPoints.length < ROUTE.length) {
     const ghost = document.createElement('div');
     ghost.className = 'debug-dot next-dot';
     ghost.textContent = calibPoints.length;
@@ -2891,10 +2600,11 @@ function renderCalibDots() {
 
 function updateCalibBar() {
   const n = calibPoints.length;
-  document.getElementById('calib-count').textContent = `Клеток: ${n}`;
+  const N = ROUTE.length;
+  document.getElementById('calib-count').textContent = `Точка: ${n} / ${N}`;
   const done = document.getElementById('calib-done');
-  done.className = 'calib-btn' + (n >= 2 ? ' ready' : '');
-  done.textContent = n >= 2 ? `✓ Применить (${n})` : '✓ Готово';
+  done.className = 'calib-btn' + (n === N ? ' ready' : '');
+  done.textContent = n === N ? '✓ Применить!' : `✓ Готово (${n})`;
 }
 
 function calibUndo(e) {
@@ -2916,8 +2626,9 @@ function calibDone(e) {
   e.stopPropagation();
   if (calibPoints.length === 0) { stopCalib(); return; }
 
-  // Берём ровно расставленные точки (любое число) — новый ROUTE
-  const newRoute = calibPoints.slice();
+  // Дополняем до полного маршрута из старого ROUTE если нужно
+  const newRoute = calibPoints.slice(0, ROUTE.length);
+  while (newRoute.length < ROUTE.length) newRoute.push(ROUTE[newRoute.length]);
 
   // Применяем в памяти
   ROUTE.splice(0, ROUTE.length, ...newRoute);
@@ -2942,163 +2653,6 @@ function selectCalibText() {
 }
 
 // ═══════════════════════════════════════════
-// РЕДАКТОР ПОЛЯ — стрелки и путь питстопа (debug)
-// ═══════════════════════════════════════════
-let editorActive = false;
-let editorMode   = null;       // 'arrows' | 'pit'
-let editorArrows = [];         // [[fromIdx, toIdx], ...]
-let editorPit    = [];         // [[l%, t%], ...] точки траектории питстопа
-let editorPickFrom = null;     // выбранная клетка-источник стрелки
-
-function startEditor(mode) {
-  if (!players.length) { showToast('Сначала начни партию'); return; }
-  editorActive = true;
-  editorMode = mode;
-  editorPickFrom = null;
-  // Инициализируем из текущих данных, чтобы можно было дополнять
-  if (mode === 'arrows' && editorArrows.length === 0) {
-    editorArrows = Object.entries(SPECIAL).map(([k, v]) => [parseInt(k, 10), v.to]);
-  }
-  if (mode === 'pit' && editorPit.length === 0) {
-    editorPit = PIT_ROUTE.map(p => p.slice());
-  }
-  document.getElementById('debug-panel').classList.add('hidden');
-  document.getElementById('editor-bar').classList.add('show');
-  updateEditorBar();
-  renderEditor();
-  showToast(mode === 'arrows'
-    ? '➡️ Клик на клетку-ИСТОЧНИК, потом на ЦЕЛЬ'
-    : '🔧 Клик по точкам пути питстопа (по порядку)', 3200);
-}
-
-function stopEditor() {
-  editorActive = false;
-  document.getElementById('editor-bar').classList.remove('show');
-  document.getElementById('arrows-layer').innerHTML = '';
-  document.getElementById('debug-overlay').innerHTML = '';
-}
-
-// Индекс ближайшей клетки ROUTE к точке клика
-function nearestCell(lPct, tPct) {
-  let best = 0, bd = 1e9;
-  ROUTE.forEach((pt, i) => {
-    const d = Math.hypot(pt[0] - lPct, pt[1] - tPct);
-    if (d < bd) { bd = d; best = i; }
-  });
-  return best;
-}
-
-function editorClick(event) {
-  const img = document.getElementById('field-img');
-  const ir = imageContentRect(img);
-  const lPct = (event.clientX - ir.left) / ir.width  * 100;
-  const tPct = (event.clientY - ir.top)  / ir.height * 100;
-  if (lPct < 0 || lPct > 100 || tPct < 0 || tPct > 100) return;
-
-  if (editorMode === 'arrows') {
-    const idx = nearestCell(lPct, tPct);
-    if (editorPickFrom === null) {
-      editorPickFrom = idx;
-    } else {
-      if (idx !== editorPickFrom) editorArrows.push([editorPickFrom, idx]);
-      editorPickFrom = null;
-    }
-  } else { // pit — добавляем точку траектории
-    editorPit.push([Math.round(lPct * 10) / 10, Math.round(tPct * 10) / 10]);
-  }
-  updateEditorBar();
-  renderEditor();
-}
-
-function updateEditorBar() {
-  const c = document.getElementById('editor-count');
-  if (editorMode === 'arrows') {
-    c.textContent = `Стрелок: ${editorArrows.length}` + (editorPickFrom !== null ? ` (из ${editorPickFrom + 1} → ?)` : '');
-  } else {
-    c.textContent = `Точек питстопа: ${editorPit.length}`;
-  }
-}
-
-function renderEditor() {
-  const svg = document.getElementById('arrows-layer');
-  const ov  = document.getElementById('debug-overlay');
-  const img = document.getElementById('field-img');
-  const wrap = document.getElementById('field-wrap');
-  const ir = imageContentRect(img);
-  const wr = wrap.getBoundingClientRect();
-  if (!ir.width) return;
-  const X = p => (ir.left - wr.left) + (p / 100) * ir.width;
-  const Y = p => (ir.top  - wr.top)  + (p / 100) * ir.height;
-  svg.innerHTML = ''; ov.innerHTML = '';
-
-  // defs со стрелкой
-  svg.insertAdjacentHTML('beforeend',
-    '<defs><marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">' +
-    '<path d="M0,0 L6,3 L0,6 Z" fill="#ffd24a"/></marker></defs>');
-
-  // Стрелки источник→цель
-  editorArrows.forEach(([f, to]) => {
-    const x1 = X(ROUTE[f][0]), y1 = Y(ROUTE[f][1]);
-    const x2 = X(ROUTE[to][0]), y2 = Y(ROUTE[to][1]);
-    svg.insertAdjacentHTML('beforeend',
-      `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#ffd24a" stroke-width="3" marker-end="url(#ah)" opacity="0.9"/>`);
-  });
-
-  // Путь питстопа — линия + точки
-  if (editorPit.length) {
-    const pts = editorPit.map(([l, t]) => `${X(l)},${Y(t)}`).join(' ');
-    svg.insertAdjacentHTML('beforeend',
-      `<polyline points="${pts}" fill="none" stroke="#8fe2f5" stroke-width="3" stroke-dasharray="6 4"/>`);
-    editorPit.forEach(([l, t], i) => {
-      const dot = document.createElement('div');
-      dot.className = 'debug-dot placed';
-      dot.textContent = i + 1;
-      dot.style.left = X(l) + 'px'; dot.style.top = Y(t) + 'px';
-      ov.appendChild(dot);
-    });
-  }
-
-  // Подсветка выбранного источника
-  document.querySelectorAll('.cell-num.editor-pick').forEach(e => e.classList.remove('editor-pick'));
-  if (editorPickFrom !== null) {
-    const nums = document.querySelectorAll('#cells-layer .cell-num');
-    if (nums[editorPickFrom]) nums[editorPickFrom].classList.add('editor-pick');
-  }
-}
-
-function editorUndo(e) {
-  e.stopPropagation();
-  if (editorMode === 'arrows') { editorPickFrom = null; editorArrows.pop(); }
-  else editorPit.pop();
-  updateEditorBar(); renderEditor();
-}
-
-function editorReset(e) {
-  e.stopPropagation();
-  if (editorMode === 'arrows') { editorArrows = []; editorPickFrom = null; }
-  else editorPit = [];
-  updateEditorBar(); renderEditor();
-}
-
-function editorDone(e) {
-  e.stopPropagation();
-  let txt = '';
-  if (editorMode === 'arrows') {
-    const lines = editorArrows.map(([f, to]) => `  ${f}: { type: 'fwd', to: ${to} },`);
-    txt = 'const SPECIAL = {\n' + lines.join('\n') + '\n};';
-  } else {
-    const rows = [];
-    for (let i = 0; i < editorPit.length; i += 6) {
-      rows.push('  ' + editorPit.slice(i, i + 6).map(([l, t]) => `[${l},${t}]`).join(','));
-    }
-    txt = 'const PIT_ROUTE = [\n' + rows.join(',\n') + '\n];';
-  }
-  stopEditor();
-  document.getElementById('calib-route-text').value = txt;
-  document.getElementById('overlay-calib-copy').style.display = 'flex';
-}
-
-// ═══════════════════════════════════════════
 // УТИЛИТЫ
 // ═══════════════════════════════════════════
 function currentPlayer() { return players[currentPlayerIdx]; }
@@ -3113,7 +2667,7 @@ function saveGame() {
   try {
     const data = {
       players: players.map(p => ({
-        id: p.id, score: p.score, pit: (p.pit ?? null), isBot: !!p.isBot,
+        id: p.id, score: p.score, isBot: !!p.isBot,
         botDifficulty: p.botDifficulty || 'normal',
         cards: (p.specialCards || []).map(c => c.type)
       })),
@@ -3138,16 +2692,16 @@ function continueGame() {
   online.active = false;
   players = s.players.map(sp => ({
     ...PLAYERS_CONFIG[sp.id], name: colorName(sp.id),
-    score: sp.score, pit: (sp.pit ?? null), isBot: sp.isBot, botDifficulty: sp.botDifficulty,
+    score: sp.score, isBot: sp.isBot, botDifficulty: sp.botDifficulty,
     specialCards: (sp.cards || []).map(tp => ({ ...SPECIAL_DEF[tp] })).filter(c => c.type)
   }));
   gameOver = false;
   currentPlayerIdx = Math.min(s.cur || 0, players.length - 1);
-  turnsUntilSpecial = rollSpecialGap();
   buildDeck();
   renderScoreboard(); updateTurnLabel(); renderSpecialCards();
   document.getElementById('btn-play-turn').disabled = false;
-  showScreen('screen-game');  // showScreen сам вызовет drawBoard
+  showScreen('screen-game');
+  setTimeout(() => { renderTokens(); renderCells(); }, 60);
 }
 
 function showScreen(id) {
@@ -3162,21 +2716,6 @@ function showScreen(id) {
   const next = document.getElementById(id);
   next.classList.add('active');
   activeScreen = id;
-
-  // Экран игры стал видимым — перерисовать поле (ждёт готовности размеров внутри).
-  if (id === 'screen-game' && players.length) {
-    drawBoard();
-    // Появление идёт с анимацией fadeIn (scale 0.97→1): при синхронном вызове выше
-    // картинка ещё уменьшена, и слои считаются по искажённому размеру. Пересчитываем
-    // после завершения анимации — иначе поле «обновляется только после первого хода».
-    next.addEventListener('animationend', function onAnim(e) {
-      if (e.animationName !== 'fadeIn') return;
-      next.removeEventListener('animationend', onAnim);
-      drawBoard();
-    });
-    // Подстраховка на случай, если animationend не сработает.
-    setTimeout(() => { if (activeScreen === 'screen-game') drawBoard(); }, 300);
-  }
 }
 
 function showToast(msg, duration = 2200) {
@@ -3206,37 +2745,9 @@ function spawnScoreFloat(playerId, text, color) {
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 window.addEventListener('resize', () => {
-  syncLayers();
   if (players.length > 0) players.forEach(p => positionToken(p, true));
-  renderCells();
   if (calibActive) renderCalibDots();
-  if (editorActive) renderEditor();
 });
-
-// ResizeObserver на поле: надёжно ловит момент, когда #field-wrap получает размер
-// (при показе экрана игры он переходит из скрытого 0 в реальный) — и сразу рисует.
-(function () {
-  const fw  = document.getElementById('field-wrap');
-  const img = document.getElementById('field-img');
-  // Перерисовка при готовности картинки (в т.ч. если она уже в кэше).
-  if (img) {
-    const onReady = () => { if (activeScreen === 'screen-game') drawBoard(); };
-    if (img.complete && img.naturalWidth) onReady();
-    img.addEventListener('load', onReady);
-  }
-  if (!fw || !window.ResizeObserver) return;
-  let lastW = 0;
-  new ResizeObserver(() => {
-    const r = fw.getBoundingClientRect();
-    if (r.width === 0 || r.width === lastW) return;
-    lastW = r.width;
-    syncLayers();
-    if (activeScreen === 'screen-game') {
-      renderCells();
-      if (players.length) players.forEach(p => positionToken(p, true));
-    }
-  }).observe(fw);
-})();
 
 init();
 </script>

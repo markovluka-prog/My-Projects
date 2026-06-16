@@ -15,12 +15,18 @@ class WebViewCoordinator: NSObject, WKNavigationDelegate {
     }
 
     private func injectDictionary(into webView: WKWebView) async {
-        guard let dictText = await loader.getDictionaryText() else { return }
+        // Инжектим оба словаря: русский и английский
+        await inject(into: webView, lang: "ru", name: "dictionary")
+        await inject(into: webView, lang: "en", name: "dictionary_en")
+    }
+
+    private func inject(into webView: WKWebView, lang: String, name: String) async {
+        guard let dictText = await loader.getDictionaryText(name) else { return }
         // Экранируем для безопасной передачи в JS-строку
         let escaped = dictText
             .replacingOccurrences(of: "\\", with: "\\\\")
             .replacingOccurrences(of: "`", with: "\\`")
-        let js = "window.__injectDictionary(`\(escaped)`);"
+        let js = "window.__injectDict('\(lang)', `\(escaped)`);"
         await MainActor.run {
             webView.evaluateJavaScript(js, completionHandler: nil)
         }
