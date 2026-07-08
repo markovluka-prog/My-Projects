@@ -63,14 +63,14 @@
 
 <div id="panel">
   <h2>Пружинная гравитация Луки</h2>
-  <div class="label">Формула 1 — давление:</div>
-  <div class="formula">P = b·k / (2·r)</div>
-  <div class="label">Механизм: A(k) = r/k → P = b/A(k)/2</div>
-  <div class="formula" style="font-size:11px">A(k)↓ с расстоянием → P↑ (пружина)</div>
+  <div class="label">Протон (микро) — пружина:</div>
+  <div class="formula">F = G·m·mₚ·k / rₚ³  (k ≤ rₚ)</div>
+  <div class="label" style="margin-top:4px">Планета (макро) — N протонов:</div>
+  <div class="formula">F = G · m · b / k²  (k ≤ k_макс)</div>
+  <div class="formula" style="font-size:11px">Концентрация полей ~ 1/k² → F=0 за k_макс</div>
   <div class="label" style="margin-top:6px">Формула 2 — радиус поля:</div>
-  <div class="formula">k_макс = b^(1/g)</div>
-  <div class="label">Формула 3 — ускорение:</div>
-  <div class="formula">a = G·b·k / R_b³</div>
+  <div class="formula">k_макс = C · r · √m</div>
+  <div class="formula" style="font-size:11px">C = 2.469×10⁻¹¹ | Земля = 384 400 км ✅</div>
   <div id="stats"><span class="label">Наведи курсор на объект</span></div>
 </div>
 
@@ -118,7 +118,10 @@ window.addEventListener('resize', resize);
 const CX = () => canvas.width / 2;
 const CY = () => canvas.height / 2;
 
-const K_SPRING = 0.00025;
+// Формула Луки: F = G·m·b/k² (концентрация полей протонов убывает как 1/k²)
+// Один протон = пружина (F~k внутри r_p), N протонов → 1/k² на макроуровне
+// В симуляторе: ускорение = GM/k² направлено к центру
+const GM = 0.00025 * K_MAX_PX * K_MAX_PX;  // G·b в пиксельных единицах (калибровка)
 const K_MAX_PX = Math.min(window.innerWidth, window.innerHeight) * 0.38;
 const CORE_R = 22;
 const TRAIL_LEN = 200;
@@ -154,11 +157,13 @@ class Body {
 
     if (this.dist > CORE_R) {
       if (inField(dx, dy)) {
-        const ax = -K_SPRING * dx;
-        const ay = -K_SPRING * dy;
-        this.vx += ax * dt; this.vy += ay * dt;
+        // Формула Луки: F = G·m·b/k² — убывает с расстоянием, = 0 за k_макс
+        // Механизм: концентрация полей N протонов-пружин убывает как 1/k²
+        const nx = -dx / this.dist, ny = -dy / this.dist;
+        const a = GM / (this.dist * this.dist);
+        this.vx += nx * a * dt; this.vy += ny * a * dt;
         this.inField = true;
-        this.force = K_SPRING * this.dist;
+        this.force = a;
       } else {
         this.inField = false; this.force = 0;
       }
@@ -219,8 +224,8 @@ function hexRgb(hex) {
 }
 
 function makeOrbital(radius, colorIdx) {
-  const omega = Math.sqrt(K_SPRING);
-  const v = radius * omega;
+  // v² = GM/k → v = sqrt(GM/k) для круговой орбиты
+  const v = Math.sqrt(GM / radius);
   const angle = Math.random() * Math.PI * 2;
   const x = CX() + radius * Math.cos(angle);
   const y = CY() + radius * Math.sin(angle);
@@ -371,18 +376,15 @@ function updateStats() {
   const el = document.getElementById('stats');
   const b = hoveredBody || (bodies.length > 0 ? bodies[0] : null);
   if (!b) { el.innerHTML='<span class="label">Нет объектов</span>'; return; }
-  const omega = Math.sqrt(K_SPRING);
-  const period = (2 * Math.PI / omega).toFixed(0);
-  // A(k) normalized: A = K_MAX_PX / k (using field radius as r)
-  const Ak = b.dist > 1 ? (K_MAX_PX / b.dist).toFixed(2) : '∞';
-  const Pnorm = b.dist > 1 ? (b.dist / K_MAX_PX / 2).toFixed(3) : '0';
+  const F_val = b.dist > 1 ? (GM / (b.dist * b.dist)).toFixed(4) : '∞';
+  const v_orb = b.dist > 1 ? Math.sqrt(GM / b.dist).toFixed(2) : '—';
+  const kRatio = (b.dist / K_MAX_PX * 100).toFixed(1);
   el.innerHTML = `
-    <span class="label">k (расст.):</span> <span class="stat-val">${b.dist.toFixed(0)} px</span><br>
-    <span class="label">A(k) = r/k:</span> <span class="stat-hi">${Ak}</span> <span class="label">↓ с расст.</span><br>
-    <span class="label">P норм.:</span> <span class="stat-hi">${Pnorm}</span> <span class="label">↑ с расст.</span><br>
-    <span class="label">v (скор.):</span> <span class="stat-val">${b.speed.toFixed(2)} px/кадр</span><br>
-    <span class="label">Период T:</span> <span class="stat-val">${period} кадров (= у всех)</span><br>
-    <span class="label">В поле:</span> <span class="stat-val">${b.inField ? '✓ да' : '✗ вылетел'}</span>
+    <span class="label">k (расст.):</span> <span class="stat-val">${b.dist.toFixed(0)} px (${kRatio}% поля)</span><br>
+    <span class="label">F = GM/k²:</span> <span class="stat-hi">${F_val}</span> <span class="label">↓ убывает</span><br>
+    <span class="label">v орбит.:</span> <span class="stat-hi">${v_orb}</span> <span class="label">px/кадр</span><br>
+    <span class="label">v факт.:</span> <span class="stat-val">${b.speed.toFixed(2)}</span> <span class="label">px/кадр</span><br>
+    <span class="label">В поле:</span> <span class="stat-val">${b.inField ? '✓ да' : '✗ вылетел (F=0)'}</span>
   `;
 }
 
@@ -418,8 +420,8 @@ document.getElementById('btnAdd').onclick = () => {
 
 document.getElementById('btnEject').onclick = () => {
   const r = K_MAX_PX * 0.7;
-  const omega = Math.sqrt(K_SPRING);
-  bodies.push(new Body(CX()+r, CY(), 0, r*omega*2.2, 6, '#ff4444'));
+  const v = Math.sqrt(GM / r) * 2.2;  // скорость выше орбитальной → вылетит
+  bodies.push(new Body(CX()+r, CY(), 0, v, 6, '#ff4444'));
 };
 
 document.getElementById('btnReset').onclick = () => { colorIdx=0; init(); };
